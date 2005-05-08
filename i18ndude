@@ -1,0 +1,506 @@
+#!/usr/bin/env python
+
+#    Copyright (C) 2003 Daniel Nouri <daniel.nouri@con-fuse.org>,
+
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+# -----------------------------------------------------------------------------
+
+"""Usage: i18ndude command [options] [file1 [file2 ...]]
+
+i18ndude performs various tasks related to Zope Page Templates and i18n.
+
+Unless the -h, or --help option is given one of the commands below must be
+present:
+
+   find-untranslated [-s] [file1 [file2 ...]]
+          Provide a list of ZPT filenames and I will output a report of places
+          where I suspect untranslated messages, i.e. tags for which
+          "i18n:translate" or "i18n:attributes" are missing.
+
+          If you provide the -s option, the report will only contain a summary
+          of errors and warnings for each file (or no output if there are no
+          errors or warnings).
+
+   rebuild-pot --pot <filename> [--create <domain> [--merge <filename>] -s]
+   file1 [file2 ...] | directory
+          Given a pot-file via the --pot option you can either specify a list
+          of ZPT filenames or provide a directory that including all sub-folders
+          will be searched for PageTemplates (*.pt and *.cpt).
+          I first remove non-literal msgids from the pot. Next, I put all
+          message ids that I find in the ZPTs into the pot-file (including
+          context info).
+
+          Make sure you have a backup copy of the original pot-file in case
+          you need to fill back in ids by hand.
+
+          If you provide the --create <domain> option (in addition to --pot), I
+          will create a new pot-file, the domain of which is <domain>.
+
+          If you give me an additional pot-file with the --merge <filename>
+          option, I try to merge these msgids into the target-pot file
+          afterwards. If a msgid already exists in the ones I found in the
+          ZPTs, I'll warn you and ignore that msgid. I take the mime-header
+          from this additional pot-file.
+
+          Normally I'll append a comment to the pot-file containing one list of
+          msgids that I added and one of msgids that I removed.
+          Supply the -s option to suppress that.
+
+   merge --pot <filename> --merge <filename> [-s]
+          Given a pot-file via the --pot option and a second
+          pot-file with the --merge <filename> option, I try to merge
+          these msgids into the target-pot file. If a msgid already
+          exists, I'll warn you and ignore that msgid.
+
+          Normally I'll append a comment to the pot-file containing
+          one list of msgids that I added and one of msgids that I
+          removed.  Supply the -s option to suppress that.
+
+   sync --pot <filename> [-s] file1 [file2 ...]
+          Given a pot-file with the --pot option and a list of po-files I'll
+          remove from the po files those message translations of which the
+          msgids are not in the pot-file and add messages that the pot-file has
+          but the po-file doesn't.
+
+          Normally I'll append a comment to each modified po-file containing
+          one list of msgids that I added and one of msgids that I removed.
+          Supply the -s option to suppress that.
+
+   extract-literals --pot <filename>
+          Given a pot-file with the --pot option I will write to stdout a
+          POT-file that contains only messages with literal ids. (I
+          assume that all ids that don't look like 'this_one'
+          (underscore, no spaces) are literal.)
+
+   filter <file1> <file2>
+          Given two pot-files I will write a copy of file1 to stdout with all
+          messages removed that are also in file2, i.e. where msgids match.
+
+          file2 is usually the generated catalog via 'rebuild-pot --create'
+          and file1 the catalog with messages that you retrieved by applying
+          'extract-literals'.
+
+   admix <file1> <file2>
+          Given two po-files I will look for translated entries in file2 that
+          are untranslated in file1. I add these translations (msgstrs) to
+          file1. Note that this will not affect the number of entries in file1.
+
+   chart -o <imagefile> --pot <filename> file1 [file2 ...]
+          This will create a chart that displays how much of the pot-file the
+          po-files translate.
+
+"""
+
+import os, sys
+import getopt
+import xml.sax
+
+try:
+    import common, untranslated, catalog, visualisation
+except:
+    from i18ndude import common, untranslated, catalog, visualisation
+
+def usage(code, msg=''):
+    print >> sys.stderr, __doc__
+    if msg:
+        print >> sys.stderr, msg
+    sys.exit(code)
+
+def filter_isfile(files):
+    result = []
+    for name in files: # parse file by file
+        if os.path.isdir(name): # descend recursively
+            join = lambda file: os.path.join(name, file)
+            subdirs = filter_isfile([path for path in
+                                     map(join, os.listdir(name))
+                                     if os.path.isdir(path) or
+                                     os.path.splitext(path)[1].endswith('pt')])
+            result += subdirs
+
+        elif not os.path.isfile(name):
+            print >> sys.stderr, 'Warning: %s is not a file.' % name
+
+        else:
+            result.append(name)
+    return result
+
+def find_untranslated():
+    try:
+        opts, files = getopt.getopt(sys.argv[2:], 's', ('silent',))
+    except getopt.GetoptError, e:
+        usage(1)
+
+    parser = xml.sax.make_parser(['expat'])
+    handler = untranslated.VerboseHandler(parser, sys.stdout) # default
+
+    for opt, arg in opts:
+        if opt in ('-s', '--silent'):
+            handler = untranslated.SilentHandler(parser, sys.stdout)
+        elif opt in ('-h', '--help'):
+            usage(0)
+
+    parser.setContentHandler(handler)
+
+    for filename in filter_isfile(files): # parse file by file
+        handler.set_filename(filename)
+        content = common.prepare_xml(open(filename))
+
+        try:
+            parser.parse(content)
+        except xml.sax.SAXException, e:
+            handler.log('ERROR in document:\n%s' % e, 'FATAL')
+        except KeyboardInterrupt:
+            print >> sys.stderr, 'Interrupted by user.'
+            sys.exit(0)
+        except Exception, e:
+            handler.log('ERROR in document:\n%s' % e, 'FATAL')
+
+
+def rebuild_pot():
+    try:
+        opts, files = getopt.getopt(sys.argv[2:], 'smp:c:',
+                                   ('silent', 'pot=', 'create=', 'merge='))
+    except:
+        usage(1)
+
+    pot_fn = None
+    merge_fn = None
+    silent = False
+    create_domain = None
+    for opt, arg in opts:
+        if opt in ('-p', '--pot'):
+            pot_fn = arg
+        if opt in ('-s', '--silent'):
+            silent = True
+        if opt in ('-c', '--create'):
+            create_domain = arg
+        if opt in ('-m', '--merge'):
+            merge_fn = arg
+
+    if not pot_fn:
+        usage(1)
+
+    files = filter_isfile(files)
+    merge_ctl = None
+
+    try:
+        if create_domain:
+            orig_ctl = catalog.MessageCatalog(domain=create_domain)
+        else:
+            orig_ctl = catalog.MessageCatalog(filename=pot_fn)
+        if merge_fn:
+            merge_ctl = catalog.MessageCatalog(filename=merge_fn)
+        reader = catalog.PTReader(files)
+    except IOError, e:
+        print >> sys.stderr, 'I/O Error: %s' % e
+        usage(0)
+
+    troubles = reader.read()
+
+    if troubles:
+        print >> sys.stderr, \
+              "there were fatal errors (didn't touch %s):" % pot_fn
+        for t in troubles:
+            print >> sys.stderr, '%s:\n%s\n' % (t[0], t[1])
+            sys.exit(1)
+
+    orig_msgids = orig_ctl.keys()
+    domain = orig_ctl.domain
+    if not reader.catalogs.has_key(domain):
+        print >> sys.stderr, 'No entries for domain "%s".' % orig_ctl.domain
+        usage(0)
+
+    ctl = reader.catalogs[domain]
+    comments = {} # keyed by msgid
+    for key in orig_ctl.keys():
+        if key in ctl:
+            # preserve comments
+            comments = ctl[key][2] + orig_ctl.get_comment(key)
+            ctl[key] = (ctl[key][0], ctl[key][1], comments)
+
+
+    # keep 'literal' ids only
+    orig_ctl.accept_fct(lambda id, str: catalog.is_literal_id(id))
+    orig_ctl.add_missing(ctl)
+
+    added_by_merge=[]
+    if merge_ctl is not None:
+        # use headers from merge-catalog
+        ctl.commentary_header = merge_ctl.commentary_header
+        ctl.mime_header = merge_ctl.mime_header
+        # merge
+        added_by_merge=ctl.add_missing(merge_ctl,'',1)
+    else:
+        # use headers from orig-catalog
+        ctl.commentary_header = orig_ctl.commentary_header
+        ctl.mime_header = orig_ctl.mime_header
+
+    ctl.mime_header['POT-Creation-Date'] = catalog.now()
+    file = open(pot_fn, 'w')
+    writer = catalog.POWriter(file, ctl)
+    writer.write(msgstrToComment=True)
+
+    if not silent:
+        oldmsgids = [common.quote(id) for id in orig_msgids
+                    if id not in ctl.keys()]
+        newmsgids = [common.quote(id) for id in ctl.keys()
+                    if id not in orig_msgids]
+        print >> file, '#- Removed msgids:'
+        lines = common.make_lines(oldmsgids)
+        for line in lines:
+            print >> file, '# %s' % line
+
+        print >> file
+        print >> file, '#- Added msgids:'
+        lines = common.make_lines(newmsgids)
+        for line in lines:
+            print >> file, '# %s' % line
+
+        print >> file
+        print >> file, '#- Added msgids by merging file %s:' % merge_fn
+        lines = common.make_lines(added_by_merge)
+        for line in lines:
+            print >> file, '# %s' % line
+
+def merge():
+    try:
+        opts, files = getopt.getopt(sys.argv[2:], 'sm:p:',
+                                   ('silent', 'pot=', 'merge='))
+    except:
+        usage(1)
+
+    pot_fn = None
+    merge_fn = None
+    silent = False
+    create_domain = None
+    for opt, arg in opts:
+        if opt in ('-p', '--pot'):
+            pot_fn = arg
+        if opt in ('-s', '--silent'):
+            silent = True
+        if opt in ('-m', '--merge'):
+            merge_fn = arg
+
+    if not pot_fn or not merge_fn:
+        usage(1)
+
+    try:
+        orig_ctl = catalog.MessageCatalog(filename=pot_fn)
+        merge_ctl = catalog.MessageCatalog(filename=merge_fn)
+    except IOError, e:
+        print >> sys.stderr, 'I/O Error: %s' % e
+        usage(0)
+
+    # merge
+    added_by_merge = orig_ctl.add_missing(merge_ctl, '', 1)
+    orig_ctl.mime_header['POT-Creation-Date'] = catalog.now()
+    file = open(pot_fn, 'w')
+    writer = catalog.POWriter(file, orig_ctl)
+    writer.write()
+
+    if not silent:
+        print >> file
+        print >> file, '#- Added msgids by merging file %s:' % merge_fn
+        lines = common.make_lines(added_by_merge)
+        for line in lines:
+            print >> file, '# %s' % line
+
+
+def sync():
+    try:
+        opts, files = getopt.getopt(sys.argv[2:], 'sp:', ('silent', 'pot='))
+    except getopt.GetoptError, e:
+        usage(1)
+
+    pot_fn = None
+    silent = False
+    for opt, arg in opts:
+        if opt in ('-p', '--pot'):
+            pot_fn = arg
+        if opt in ('-s', '--silent'):
+            silent = True
+
+    if not pot_fn:
+        usage(1)
+
+    files = filter_isfile(files)
+
+    try:
+        pot_ctl = catalog.MessageCatalog(filename=pot_fn)
+        po_ctls = [catalog.MessageCatalog(filename=fn) for fn in files]
+    except IOError, e:
+        print >> sys.stderr, 'I/O Error: %s' % e
+        usage(1)
+
+    for po in po_ctls:
+        removed_msgids = [common.quote(msgid)
+                          for msgid in po.accept_ids(pot_ctl.keys())]
+
+        po.overwrite_context(pot_ctl)
+        added_msgids = [common.quote(msgid)
+                        for msgid in po.add_missing(pot_ctl)]
+
+        md = po.mime_header
+        md['POT-Creation-Date'] = pot_ctl.mime_header['POT-Creation-Date']
+
+        file = open(po.filename, 'w')
+        writer = catalog.POWriter(file, po)
+        writer.write()
+
+        if not silent:
+            print >> file, '#- Removed msgids:'
+            lines = common.make_lines(removed_msgids)
+            for line in lines:
+                print >> file, '# %s' % line
+
+
+            print >> file
+            print >> file, '#- Added msgids:'
+            lines = common.make_lines(added_msgids)
+            for line in lines:
+                print >> file, '# %s' % line
+
+        print '%s: %s added, %s removed' % (po.filename,
+                                            len(added_msgids),
+                                            len(removed_msgids))
+
+        file.close()
+
+def extract_literals():
+    try:
+        opts, nouse = getopt.getopt(sys.argv[2:], 'p:', ('pot=',))
+    except getopt.GetoptError, e:
+        usage(1)
+
+    pot_fn = None
+    for opt, arg in opts:
+        if opt in ('-p', '--pot'):
+            pot_fn = arg
+
+    if not pot_fn or nouse:
+        usage(1)
+
+    try:
+        pot_ctl = catalog.MessageCatalog(filename=pot_fn)
+    except IOError, e:
+        print >> sys.stderr, 'I/O Error: %s' % e
+        usage(1)
+
+    for msgid in pot_ctl.keys():
+        if not catalog.is_literal_id(msgid):
+            del pot_ctl[msgid]
+
+    pot_ctl.mime_header['POT-Creation-Date'] = catalog.now()
+    writer = catalog.POWriter(sys.stdout, pot_ctl)
+    writer.write(sort=False)
+
+def filter():
+    if len(sys.argv[2:]) != 2:
+        usage(1)
+
+    file1 = sys.argv[2]
+    file2 = sys.argv[3]
+
+    f1_ctl = catalog.MessageCatalog(filename=file1)
+    f2_ctl = catalog.MessageCatalog(filename=file2)
+
+    for msgid in f1_ctl.keys():
+        if msgid in f2_ctl:
+            del f1_ctl[msgid]
+
+    writer = catalog.POWriter(sys.stdout, f1_ctl)
+    writer.write(sort=False, msgstrToComment=True)
+
+def admix():
+    if len(sys.argv) != 4:
+        usage(1)
+
+    fn = sys.argv[2]
+    base_ctl = catalog.MessageCatalog(filename=fn)
+
+    fn = sys.argv[3]
+    mixin_ctl = catalog.MessageCatalog(filename=fn)
+
+    for msgid in mixin_ctl:
+        mixin_msgstr = mixin_ctl[msgid][0]
+
+        if mixin_msgstr and \
+           msgid in base_ctl and \
+           not base_ctl[msgid][0]:
+            entry = list(base_ctl[msgid])
+            entry[0] = mixin_ctl[msgid][0]
+            base_ctl[msgid] = entry
+
+    writer = catalog.POWriter(sys.stdout, base_ctl)
+    writer.write(sort=False)
+
+def chart():
+    try:
+        opts, files = getopt.getopt(sys.argv[2:], 'o:p:', ('out=', 'pot='))
+    except:
+        usage(1)
+
+    pot_fn = None
+    out = None
+    for opt, arg in opts:
+        if opt in ('-o', '--out'):
+            out = arg
+        elif opt in ('-p', '--pot'):
+            pot_fn = arg
+
+    if not (pot_fn and out):
+        usage(1)
+
+    files = filter_isfile(files)
+
+    try:
+        pot_ctl = catalog.MessageCatalog(filename=pot_fn)
+        po_ctls = [catalog.MessageCatalog(filename=fn) for fn in files]
+    except IOError, e:
+        print >> sys.stderr, 'I/O Error: %s' % e
+        usage(1)
+
+    visualisation.make_chart(pot_ctl, po_ctls, out)
+
+def main():
+    if len(sys.argv) == 1:
+        usage(0)
+
+    commands = {'find-untranslated': find_untranslated,
+                'rebuild-pot': rebuild_pot,
+                'merge': merge,
+                'sync': sync,
+                'extract-literals': extract_literals,
+                'filter': filter,
+                'admix': admix,
+                'chart': chart}
+
+    command = sys.argv[1]
+
+    try:
+        fun = commands[command]
+    except KeyError:
+        if command in ('-h', '--help'):
+            fun = lambda: usage(0)
+        else:
+            print >> sys.stderr, 'Unknown command %s' % command
+            sys.exit(1)
+
+    fun()
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,24 @@
+** TODO **
+
+- Assume a domain called "default" if the i18n:domain attribute is not present.
+
+- Produce translation ids from the content of tags when no id is given, e.g.:
+
+   <span i18n:translate=''>
+     <span tal:replace='here/name' i18n:name='name' /> was born in
+     <span tal:replace='here/country_of_birth' i18n:name='country' />.
+   </span>
+
+  should produce the msg id "${name} was born in ${country}."
+
+-  PTReader should provide line and column numbers when printing messages.
+
+-  PTReader should use twisted.web.microdom so that it does not bail out so
+   easily. More specifically it not require < and & to be escaped inside
+   attribute values.
+
+-  untranslated.py does not handle xml namespaces, e.g. it just looks for an
+   attribute 'i18n:translate' even if the tag itself is in the i18n namespace.
+
+-  Sometimes untranslated.py spits out errors that are actually warnings. That
+   happens for tal:replace and metal:use-macro tags that contain other tags.

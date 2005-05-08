@@ -1,0 +1,63 @@
+<!--
+It's ok for page templates to lack the DOCTYPE definition.
+DOCTYPE definitions may also be inside tags, like this:
+-->
+
+<metal:page define-macro="master">
+
+<metal:doctype define-slot="doctype">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+</metal:doctype>
+
+
+
+<!--
+Each tag that has a title attribute must have it i18ned.
+Image tags must have their alt attribute i18ned.
+This example has title i18ned but not alt:
+-->
+
+<img src=""
+     alt="Some alt"
+     title="Some title"
+     i18n:attributes="title" />
+
+
+
+<!--
+Text generally needs an i18n:translate msgid:
+-->
+
+<p i18n:translate="">Buzz</p>
+
+
+
+<!--
+Dummy text inside metal:use-macros is ignored and does not need to be replaced.
+-->
+
+<p metal:use-macro="somemacro">Dummy</p>
+
+
+
+<!--
+This tag is replaced on runtime. We only warn about these and tal:content ones.
+-->
+
+<p tal:replace="something">Dumbo</p>
+
+
+
+<!--
+<input type="submit" *or* type="button"> requires its value attribute to be
+i18ned:
+-->
+
+<form>
+<input type="submit" value="Dig this" />
+</form>
+
+
+</metal:page>
+
