@@ -391,18 +391,16 @@ class POWriter:
             print >> f, '## %s more: %s' % (len(occurrences) - no,
                                             ', '.join(filenames))
 
+        if msgstrToComment:
+            if msgstr:
+                print >> f, '## English translation: "%s"' % msgstr
+                msgstr = ''
+
         for comment in comments:
             print >> f, '# %s' % comment
 
-        if msgstrToComment:
-            if msgstr:
-                print >> f, '# English translation: "%s"' % msgstr
-
-            print >> f, 'msgid "%s"' % id
-            print >> f, 'msgstr ""'
-        else:
-            print >> f, 'msgid "%s"' % id
-            print >> f, 'msgstr "%s"' % msgstr
+        print >> f, 'msgid "%s"' % id
+        print >> f, 'msgstr "%s"' % msgstr
 
         print >> f
 

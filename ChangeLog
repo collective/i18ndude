@@ -1,3 +1,9 @@
+2005-05-09  Daniel Nouri  <dpunktnpunkt at web.de>
+
+	* catalog.py (POWriter._print_entry): Added a second # to "English
+	translation" lines so that those lines don't get written out twice.
+	Which happens because we try to preserve comments.
+	
 2005-05-08 Jodok Batlogg <batlogg at solution2u dot net>
 
 	* moved from cvs.sf.net to svn.plone.org. history was NOT migrated
