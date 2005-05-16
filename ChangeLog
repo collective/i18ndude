@@ -1,3 +1,10 @@
+2005-05-16 Hanno Schlichting <schlichting at bakb dot org>
+
+	* Included a new option to scan python scripts for messages.
+        Currently it looks for the _(), translate() and uranslate()
+        functions. It is based on pygettext.py from Python and some
+        ideas taken from Zope's extract.py.
+
 2005-05-09  Daniel Nouri  <dpunktnpunkt at web.de>
 
 	* catalog.py (POWriter._print_entry): Added a second # to "English

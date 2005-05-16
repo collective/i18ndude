@@ -91,4 +91,4 @@ Their usage is explained in their headers.
 Development
 ===========
 
-i18ndude is being developed at http://sourceforge.net/projects/plone-i18n
+i18ndude is being developed at http://plone.org/products/i18ndude

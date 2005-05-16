@@ -391,10 +391,9 @@ class POWriter:
             print >> f, '## %s more: %s' % (len(occurrences) - no,
                                             ', '.join(filenames))
 
-        if msgstrToComment:
-            if msgstr:
-                print >> f, '## English translation: "%s"' % msgstr
-                msgstr = ''
+        if msgstrToComment and msgstr:
+            print >> f, '## English translation: "%s"' % msgstr
+            msgstr = ''
 
         for comment in comments:
             print >> f, '# %s' % comment
@@ -547,3 +546,47 @@ class PTReader:
 
         self.catalogs[domain].add(msgid, msgstr=msgstr,
                                   filename=filename, excerpt=excerpt)
+
+class PYReader:
+    """Reads in a list of python scripts"""
+    def __init__(self, path, domain):
+
+        self.domain = domain
+        self.catalogs = {} # keyed by domain name
+        self.path = path
+
+    def read(self):
+        """Reads in from all given PYs and builds up MessageCatalogs
+        accordingly.
+
+        The MessageCatalogs can after this call be accessed through attribute
+        ``catalogs``, which indexes the MessageCatalogs by their domain.
+
+        read returns the list of tuples (filename, errormsg), where filename
+        is the name of the file that could not be read and errormsg a human
+        readable error message.
+        """
+
+        include_default_domain = False
+        python_only = True
+
+        from pystrings import py_strings
+        py = py_strings(self.path, self.domain)
+
+        for msgid in py:
+            self._add_msg(msgid, '', py[msgid][0][0], [], self.domain)
+
+        return []
+
+    def _add_msg(self, msgid, msgstr, filename, excerpt, domain):
+        if not domain:
+            print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
+                  (msgid, filename)
+            return
+
+        if not self.catalogs.has_key(domain):
+            self.catalogs[domain] = MessageCatalog(domain=domain)
+
+        self.catalogs[domain].add(msgid, msgstr=msgstr,
+                                  filename=filename, excerpt=excerpt)
+

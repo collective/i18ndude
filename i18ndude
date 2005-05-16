@@ -20,7 +20,7 @@
 
 """Usage: i18ndude command [options] [file1 [file2 ...]]
 
-i18ndude performs various tasks related to Zope Page Templates and i18n.
+i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
 
 Unless the -h, or --help option is given one of the commands below must be
 present:
@@ -38,16 +38,17 @@ present:
    file1 [file2 ...] | directory
           Given a pot-file via the --pot option you can either specify a list
           of ZPT filenames or provide a directory that including all sub-folders
-          will be searched for PageTemplates (*.pt and *.cpt).
+          will be searched for PageTemplates (*.pt and *.cpt) and Python scripts.
           I first remove non-literal msgids from the pot. Next, I put all
-          message ids that I find in the ZPTs into the pot-file (including
-          context info).
+          message ids that I find in the ZPTs (and eventually PYs) into the
+          pot-file (including context info).
 
           Make sure you have a backup copy of the original pot-file in case
           you need to fill back in ids by hand.
 
           If you provide the --create <domain> option (in addition to --pot), I
-          will create a new pot-file, the domain of which is <domain>.
+          will create a new pot-file, the domain of which is <domain> (This is
+          necessary for including py files, because these have no i18n domain).
 
           If you give me an additional pot-file with the --merge <filename>
           option, I try to merge these msgids into the target-pot file
@@ -134,7 +135,8 @@ def filter_isfile(files):
             print >> sys.stderr, 'Warning: %s is not a file.' % name
 
         else:
-            result.append(name)
+            if name.endswith('pt'):
+                result.append(name)
     return result
 
 def find_untranslated():
@@ -193,8 +195,10 @@ def rebuild_pot():
     if not pot_fn:
         usage(1)
 
+    path = files[0]
     files = filter_isfile(files)
     merge_ctl = None
+    pyreader = None
 
     try:
         if create_domain:
@@ -203,38 +207,57 @@ def rebuild_pot():
             orig_ctl = catalog.MessageCatalog(filename=pot_fn)
         if merge_fn:
             merge_ctl = catalog.MessageCatalog(filename=merge_fn)
-        reader = catalog.PTReader(files)
+        ptreader = catalog.PTReader(files)
+        if (os.path.isdir(path)):
+            pyreader = catalog.PYReader(path, create_domain)
     except IOError, e:
         print >> sys.stderr, 'I/O Error: %s' % e
         usage(0)
 
-    troubles = reader.read()
+    pttroubles = ptreader.read()
+    if pyreader:
+        pytroubles = pyreader.read()
 
-    if troubles:
+    if pttroubles:
         print >> sys.stderr, \
               "there were fatal errors (didn't touch %s):" % pot_fn
-        for t in troubles:
+        for t in pttroubles:
             print >> sys.stderr, '%s:\n%s\n' % (t[0], t[1])
             sys.exit(1)
 
     orig_msgids = orig_ctl.keys()
     domain = orig_ctl.domain
-    if not reader.catalogs.has_key(domain):
-        print >> sys.stderr, 'No entries for domain "%s".' % orig_ctl.domain
+
+    if not ptreader.catalogs.has_key(domain):
+        print >> sys.stderr, 'No entries for domain "%s".' % domain
         usage(0)
 
-    ctl = reader.catalogs[domain]
+    ptctl = ptreader.catalogs[domain]
     comments = {} # keyed by msgid
     for key in orig_ctl.keys():
-        if key in ctl:
+        if key in ptctl:
             # preserve comments
-            comments = ctl[key][2] + orig_ctl.get_comment(key)
-            ctl[key] = (ctl[key][0], ctl[key][1], comments)
+            comments = ptctl[key][2] + orig_ctl.get_comment(key)
+            ptctl[key] = (ptctl[key][0], ptctl[key][1], comments)
 
+    if pyreader and pyreader.catalogs.has_key(domain):
+        pyctl = pyreader.catalogs[domain]
+        comments = {} # keyed by msgid
+        for key in orig_ctl.keys():
+            if key in pyctl:
+                # preserve comments
+                comments = pyctl[key][2] + orig_ctl.get_comment(key)
+                pyctl[key] = (pyctl[key][0], pyctl[key][1], comments)
 
     # keep 'literal' ids only
     orig_ctl.accept_fct(lambda id, str: catalog.is_literal_id(id))
-    orig_ctl.add_missing(ctl)
+    orig_ctl.add_missing(ptctl)
+
+    ctl = ptctl
+
+    if pyreader and pyreader.catalogs.has_key(domain):
+        orig_ctl.add_missing(pyctl)
+        ctl.add_missing(pyctl)
 
     added_by_merge=[]
     if merge_ctl is not None:
