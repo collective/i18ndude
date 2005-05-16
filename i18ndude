@@ -135,8 +135,7 @@ def filter_isfile(files):
             print >> sys.stderr, 'Warning: %s is not a file.' % name
 
         else:
-            if name.endswith('pt'):
-                result.append(name)
+            result.append(name)
     return result
 
 def find_untranslated():
