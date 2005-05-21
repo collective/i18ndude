@@ -4,7 +4,7 @@ try:
 except ImportError:
     gdchart = None
 
-def make_chart(pot, pos, out, size=(800, 500), **kwargs):
+def make_chart(pot, pos, out, size=(1000, 500), **kwargs):
     if not gdchart:
         raise ImportError, 'No module named gdchart'
 

@@ -1,3 +1,7 @@
+2005-05-21  Hanno Schlichting <schlichting at bakb dot org>
+
+	* Set chart width to 1000px. Plone has too many translations ;)
+
 2005-05-16 Hanno Schlichting <schlichting at bakb dot org>
 
 	* Included a new option to scan python scripts for messages.
