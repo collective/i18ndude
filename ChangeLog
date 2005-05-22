@@ -1,4 +1,10 @@
-2005-05-21  Hanno Schlichting <schlichting at bakb dot org>
+2005-05-22 Hanno Schlichting <schlichting at bakb dot org>
+
+	* Added optional allcomments argument and get_original() method
+	These are used in the latest PloneTranslations tests to compare
+	the original value of a msgid with the msgstr
+
+2005-05-21 Hanno Schlichting <schlichting at bakb dot org>
 
 	* Set chart width to 1000px. Plone has too many translations ;)
 

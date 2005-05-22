@@ -54,7 +54,7 @@ class MessageCatalog(odict):
     in the page templates. A comment is a string."""
 
 
-    def __init__(self, filename=None, domain=None):
+    def __init__(self, filename=None, domain=None, allcomments=False):
         """Build a MessageCatalog, either by reading from a .po-file or
         specifying a domain."""
 
@@ -73,7 +73,7 @@ class MessageCatalog(odict):
         self.domain = domain
 
         if filename:
-            self._initialize_with(filename)
+            self._initialize_with(filename, allcomments=allcomments)
         elif domain:
             self.mime_header['Domain'] = domain
 
@@ -95,6 +95,29 @@ class MessageCatalog(odict):
 
         assert msgid in self
         return self[msgid][2][:]
+
+    def get_original_comment(self, msgid):
+        """Returns the commentary line starting with English translation: that
+        I have for msgid."""
+
+        orig_comment = None
+        assert msgid in self
+        for comment in self[msgid][2][:]:
+            if comment.startswith('# English translation: '):
+                orig_comment = comment
+
+        return orig_comment
+
+    def get_original(self, msgid):
+        """Returns the original text for a msgid as found in the comment starting
+        with English translation: ."""
+
+        assert msgid in self
+        orig_comment = self.get_original_comment(msgid)
+        if orig_comment is not None:
+            orig = orig_comment.replace('# English translation: \"','')
+            return orig[:-1]
+        return None
 
     def add_missing(self, msgctl, defaultmsgstr='', mergewarn=None):
         """Each msgid that I miss and ``msgctl`` contains will be included in
@@ -164,10 +187,10 @@ class MessageCatalog(odict):
 
         return removed_ids
 
-    def _initialize_with(self, filename):
+    def _initialize_with(self, filename, allcomments=False):
         file = open(filename)
         parser = POParser(file)
-        parser.read()
+        parser.read(allcomments=allcomments)
         file.close()
         self.update(parser.msgdict)
         try:
@@ -196,7 +219,7 @@ class POParser:
         self._in_paren = re.compile(r'"(.*)"')
         self.msgdict = odict() # see MessageCatalog for structure
 
-    def read(self):
+    def read(self, allcomments=False):
         """Start reading from file.
 
         After the call to read() has finished, you may access the structure
@@ -217,12 +240,12 @@ class POParser:
 
             oldstate = state['stateid']
             fun = self._get_statefun(oldstate)
-            fun(state)
+            fun(state, allcomments=allcomments)
             newstate = state['stateid']
             if oldstate != newstate:
                 # function changed stateid: call new function with same line
                 fun = self._get_statefun(newstate)
-                fun(state)
+                fun(state, allcomments=allcomments)
 
         # last msg
         if not self.msgdict.has_key(state['msgid']):
@@ -241,7 +264,7 @@ class POParser:
         assert fun
         return fun
 
-    def _do_state1(self, state):
+    def _do_state1(self, state, allcomments=False):
         """We're reading special comments (#: and #.) and msgid."""
 
         line = state['line']
@@ -272,7 +295,7 @@ class POParser:
             # this one isnt the solution, but better than having generated
             # lines "## 2 more: file1, file2, file3" generated several times.
             # Ignore those lines!
-            if not line.startswith('##'):
+            if not line.startswith('##') or allcomments:
                 state['comment'].append(line[1:].strip())
 
         else:
@@ -285,7 +308,7 @@ class POParser:
 ##                       "Expected quotation marks at L%s in %s." % \
 ##                       (state['lineno'], self._file.name)
 
-    def _do_state2(self, state):
+    def _do_state2(self, state, allcomments=False):
         """We're reading msgstr."""
 
         line = state['line']
