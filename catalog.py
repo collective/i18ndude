@@ -29,6 +29,8 @@ DEFAULT_PO_MIME = (('Project-Id-Version', 'PACKAGE VERSION'),
 
 MAX_OCCUR = 3 # maximum number of occurrences listed
 
+ORIGINAL_COMMENT = 'Original: '
+
 def now():
     fmt = '%Y-%m-%d %H:%M+0000'
     return time.strftime(fmt, time.gmtime())
@@ -97,25 +99,25 @@ class MessageCatalog(odict):
         return self[msgid][2][:]
 
     def get_original_comment(self, msgid):
-        """Returns the commentary line starting with English translation: that
+        """Returns the commentary line starting with Original: that
         I have for msgid."""
 
         orig_comment = None
         assert msgid in self
         for comment in self[msgid][2][:]:
-            if comment.startswith('# English translation: '):
+            if comment.startswith(ORIGINAL_COMMENT):
                 orig_comment = comment
 
         return orig_comment
 
     def get_original(self, msgid):
         """Returns the original text for a msgid as found in the comment starting
-        with English translation: ."""
+        with Original: ."""
 
         assert msgid in self
         orig_comment = self.get_original_comment(msgid)
         if orig_comment is not None:
-            orig = orig_comment.replace('# English translation: \"','')
+            orig = orig_comment.replace(ORIGINAL_COMMENT+'\"','')
             return orig[:-1]
         return None
 
@@ -345,11 +347,11 @@ class POWriter:
         self._file = file
         self._msgctl = catalog
 
-    def write(self, sort=True, msgstrToComment=False):
+    def write(self, sort=True, msgstrToComment=False, sync=False):
         """Start writing to file."""
 
         self._write_header()
-        self._write_messages(sort=sort, msgstrToComment=msgstrToComment)
+        self._write_messages(sort=sort, msgstrToComment=msgstrToComment, sync=sync)
 
     def _write_header(self):
         """Writes out commentary and mime headers."""
@@ -372,7 +374,7 @@ class POWriter:
         for key in ctl.mime_header.keys():
             print >> f, '"%s: %s\\n"' % (key, ctl.mime_header[key])
 
-    def _write_messages(self, sort, msgstrToComment):
+    def _write_messages(self, sort, msgstrToComment, sync):
         """Writes the messages out."""
 
         f = self._file
@@ -381,9 +383,9 @@ class POWriter:
 
         for id in ids:
             entry = self._msgctl[id]
-            self._print_entry(f, id, entry, msgstrToComment=msgstrToComment)
+            self._print_entry(f, id, entry, msgstrToComment=msgstrToComment, sync=sync)
 
-    def _print_entry(self, f, id, entry, msgstrToComment):
+    def _print_entry(self, f, id, entry, msgstrToComment, sync):
 
         print >> f
 
@@ -414,12 +416,28 @@ class POWriter:
             print >> f, '## %s more: %s' % (len(occurrences) - no,
                                             ', '.join(filenames))
 
+        # used in pot methods
         if msgstrToComment and msgstr:
-            print >> f, '## English translation: "%s"' % msgstr
+            print >> f, '# %s"%s"' % (ORIGINAL_COMMENT, msgstr)
             msgstr = ''
 
+        msg_changed = False
+
+        # used in sync to filter duplicate Original comments
+        if sync:
+            original_comments = [o for o in comments if o.startswith(ORIGINAL_COMMENT)]
+            if len(original_comments) > 1:
+                msg_changed = True
+                # the first element is the old comment, the second the new one
+                comments.remove(original_comments[0])
+
         for comment in comments:
-            print >> f, '# %s' % comment
+            if not comment.startswith('English trans') and not comment.startswith(', fuzzy'):
+                print >> f, '# %s' % comment
+
+        fuzzy = len([c for c in comments if c.startswith(', fuzzy')])
+        if msg_changed or fuzzy>0:
+            print >> f, '#, fuzzy'
 
         print >> f, 'msgid "%s"' % id
         print >> f, 'msgstr "%s"' % msgstr

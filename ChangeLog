@@ -1,3 +1,11 @@
+2005-05-27 Hanno Schlichting <schlichting at bakb dot org>
+
+	* Refactored the English Translation stuff and renamed it to Original
+
+	* When syncing po-files the old and new original comments are compared and
+	the msgid is set to fuzzy if these aren't the same, meaning the msgid has
+	changed and needs some verification
+
 2005-05-22 Hanno Schlichting <schlichting at bakb dot org>
 
 	* Added optional allcomments argument and get_original() method

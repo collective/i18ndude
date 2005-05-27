@@ -331,7 +331,7 @@ def merge():
     orig_ctl.mime_header['POT-Creation-Date'] = catalog.now()
     file = open(pot_fn, 'w')
     writer = catalog.POWriter(file, orig_ctl)
-    writer.write()
+    writer.write(msgstrToComment=True)
 
     if not silent:
         print >> file
@@ -380,7 +380,7 @@ def sync():
 
         file = open(po.filename, 'w')
         writer = catalog.POWriter(file, po)
-        writer.write()
+        writer.write(msgstrToComment=False, sync=True)
 
         if not silent:
             print >> file, '#- Removed msgids:'
