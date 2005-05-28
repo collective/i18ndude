@@ -527,23 +527,24 @@ class PTReader:
         
         # construct list of (attrname, msgid) pairs
         if i18nattrs.find(';') == -1:	# old syntax without explicit msgids
-            attrs = [(attrname, element.getAttribute(attrname))
+            attrs = [(attrname, element.getAttribute(attrname), element.getAttribute(attrname))
                      for attrname in i18nattrs.split()]
         else:                           # new syntax with explicit msgids
             attrs = [(adata[0],
                       len(adata) > 1 and adata[1]  # explicit msgid given
-                                      or element.getAttribute(adata[0]))
+                                      or element.getAttribute(adata[0]),
+                                      element.getAttribute(adata[0]))
                      for adata in [attr.strip().split(None, 1)
                                    for attr in i18nattrs.split(';')]
                      if adata]
 
-        for attrname, msgid in attrs:
+        for attrname, msgid, msgstr in attrs:
             if attrname in rendered:
                 print >> sys.stderr, 'Assuming rendered msgid in %s:\n%s\n' % \
                       (self._curr_fn, element.toprettyxml('  '))
                 continue
             if msgid:
-                self._add_msg(msgid, '', filename, excerpt, domain)
+                self._add_msg(msgid, msgstr, filename, excerpt, domain)
 
     def _make_excerpt(self, element):
         prettynode = copy.deepcopy(element)

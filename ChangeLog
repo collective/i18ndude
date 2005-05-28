@@ -1,3 +1,8 @@
+2005-05-28 Hanno Schlichting <schlichting at bakb dot org>
+
+	* Also fill in the Original comments when parsing i18n:attributes
+	This allows for efficient handling of named i18n:attributes
+
 2005-05-27 Hanno Schlichting <schlichting at bakb dot org>
 
 	* Refactored the English Translation stuff and renamed it to Original
