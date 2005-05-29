@@ -92,6 +92,22 @@ class MessageCatalog(odict):
                 occurrences = self[msgid][1]
                 occurrences.append((filename, excerpt))
 
+    def addToSameFileName(self, msgid, msgstr='', filename='', excerpt=[]):
+        """Add a entry into the catalogue to an existing filename.
+
+        I will only add excerpt to the entry.
+        """
+        assert filename
+
+        if not self.has_key(msgid):
+            self[msgid] = (msgstr, [(filename, excerpt)], [])
+        else:
+            if filename and excerpt:
+                occurrences = self[msgid][1]
+                for occur in occurrences:
+                    if filename == occur[0]:
+                        occurrences = (filename, occur[1].extend(excerpt))
+
     def get_comment(self, msgid):
         """Returns the commentary lines that I have for msgid."""
 
@@ -347,11 +363,11 @@ class POWriter:
         self._file = file
         self._msgctl = catalog
 
-    def write(self, sort=True, msgstrToComment=False, sync=False):
+    def write(self, sort=True, msgstrToComment=False, sync=False, noMoreComments=False):
         """Start writing to file."""
 
         self._write_header()
-        self._write_messages(sort=sort, msgstrToComment=msgstrToComment, sync=sync)
+        self._write_messages(sort=sort, msgstrToComment=msgstrToComment, sync=sync, noMoreComments=noMoreComments)
 
     def _write_header(self):
         """Writes out commentary and mime headers."""
@@ -374,7 +390,7 @@ class POWriter:
         for key in ctl.mime_header.keys():
             print >> f, '"%s: %s\\n"' % (key, ctl.mime_header[key])
 
-    def _write_messages(self, sort, msgstrToComment, sync):
+    def _write_messages(self, sort, msgstrToComment, sync, noMoreComments):
         """Writes the messages out."""
 
         f = self._file
@@ -383,9 +399,9 @@ class POWriter:
 
         for id in ids:
             entry = self._msgctl[id]
-            self._print_entry(f, id, entry, msgstrToComment=msgstrToComment, sync=sync)
+            self._print_entry(f, id, entry, msgstrToComment=msgstrToComment, sync=sync, noMoreComments=noMoreComments)
 
-    def _print_entry(self, f, id, entry, msgstrToComment, sync):
+    def _print_entry(self, f, id, entry, msgstrToComment, sync, noMoreComments):
 
         print >> f
 
@@ -411,7 +427,7 @@ class POWriter:
             if no >= MAX_OCCUR: break
 
 
-        if no < len(occurrences):
+        if not noMoreComments and no < len(occurrences):
             filenames = [occ[0] for occ in occurrences[no:]]
             print >> f, '## %s more: %s' % (len(occurrences) - no,
                                             ', '.join(filenames))

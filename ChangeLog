@@ -1,3 +1,17 @@
+2005-05-29 Hanno Schlichting <schlichting at bakb dot org>
+
+	* i18ndude now takes a second pot to merge in the merge and rebuild-pot
+	commands, this is useful if you have both a manual.pot and a generated.pot
+
+	* catalog.py (MessageCatalog) added a new method addToSameFileName() which
+	adds in a msgid but adds the excerpt to an existing filename occurrence
+	This is used in i18ngenerator.py of PloneTranslations to add in actions
+	like "Edit" as msgids and adds all types these are definied to the same
+	occurrence rather than generating a new one for each type
+
+	* catalog.py (POWriter.write) takes a new argument noMoreComments that
+	supresses the "## xx More..." comments
+
 2005-05-28 Hanno Schlichting <schlichting at bakb dot org>
 
 	* Also fill in the Original comments when parsing i18n:attributes

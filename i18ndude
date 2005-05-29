@@ -2,6 +2,9 @@
 
 #    Copyright (C) 2003 Daniel Nouri <daniel.nouri@con-fuse.org>,
 
+#    If you find any bugs in here they were probably added by
+#    Hanno Schlichting <schlichting@bakb.net>
+
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -34,14 +37,14 @@ present:
           of errors and warnings for each file (or no output if there are no
           errors or warnings).
 
-   rebuild-pot --pot <filename> [--create <domain> [--merge <filename>] -s]
-   file1 [file2 ...] | directory
+   rebuild-pot --pot <filename> [--create <domain> [--merge <filename>
+   [--merge2 <filename>]] -s] file1 [file2 ...] | directory
           Given a pot-file via the --pot option you can either specify a list
-          of ZPT filenames or provide a directory that including all sub-folders
-          will be searched for PageTemplates (*.pt and *.cpt) and Python scripts.
-          I first remove non-literal msgids from the pot. Next, I put all
-          message ids that I find in the ZPTs (and eventually PYs) into the
-          pot-file (including context info).
+          of ZPT filenames or provide a directory that including all
+          sub-folders will be searched for PageTemplates (*.pt and *.cpt) and
+          Python scripts. I first remove non-literal msgids from the pot. Next,
+          I put all message ids that I find in the ZPTs (and eventually PYs)
+          into the pot-file (including context info).
 
           Make sure you have a backup copy of the original pot-file in case
           you need to fill back in ids by hand.
@@ -54,17 +57,21 @@ present:
           option, I try to merge these msgids into the target-pot file
           afterwards. If a msgid already exists in the ones I found in the
           ZPTs, I'll warn you and ignore that msgid. I take the mime-header
-          from this additional pot-file.
+          from this additional pot-file. If you provide a second pot-file via
+          --merge2 <filename> I'll merge this into the first merge's result
 
           Normally I'll append a comment to the pot-file containing one list of
           msgids that I added and one of msgids that I removed.
           Supply the -s option to suppress that.
 
-   merge --pot <filename> --merge <filename> [-s]
+   merge --pot <filename> --merge <filename> [--merge2 <filename>] [-s]
           Given a pot-file via the --pot option and a second
           pot-file with the --merge <filename> option, I try to merge
           these msgids into the target-pot file. If a msgid already
           exists, I'll warn you and ignore that msgid.
+
+          If you provide a --merge2 <filename> I'll first merge this one
+          in addition to the first one.
 
           Normally I'll append a comment to the pot-file containing
           one list of msgids that I added and one of msgids that I
@@ -173,7 +180,7 @@ def find_untranslated():
 def rebuild_pot():
     try:
         opts, files = getopt.getopt(sys.argv[2:], 'smp:c:',
-                                   ('silent', 'pot=', 'create=', 'merge='))
+                                   ('silent', 'pot=', 'create=', 'merge=', 'merge2='))
     except:
         usage(1)
 
@@ -190,6 +197,8 @@ def rebuild_pot():
             create_domain = arg
         if opt in ('-m', '--merge'):
             merge_fn = arg
+        if opt in ('--merge2'):
+            merge2_fn = arg
 
     if not pot_fn:
         usage(1)
@@ -206,6 +215,8 @@ def rebuild_pot():
             orig_ctl = catalog.MessageCatalog(filename=pot_fn)
         if merge_fn:
             merge_ctl = catalog.MessageCatalog(filename=merge_fn)
+        if merge2_fn:
+            merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
         ptreader = catalog.PTReader(files)
         if (os.path.isdir(path)):
             pyreader = catalog.PYReader(path, create_domain)
@@ -270,6 +281,10 @@ def rebuild_pot():
         ctl.commentary_header = orig_ctl.commentary_header
         ctl.mime_header = orig_ctl.mime_header
 
+    added_by_merge2=[]
+    if merge2_fn:
+        added_by_merge2=ctl.add_missing(merge2_ctl,'',1)
+
     ctl.mime_header['POT-Creation-Date'] = catalog.now()
     file = open(pot_fn, 'w')
     writer = catalog.POWriter(file, ctl)
@@ -297,10 +312,17 @@ def rebuild_pot():
         for line in lines:
             print >> file, '# %s' % line
 
+        if merge2_fn:
+            print >> file
+            print >> file, '#- Added msgids by merging file %s:' % merge2_fn
+            lines = common.make_lines(added_by_merge2)
+            for line in lines:
+                print >> file, '# %s' % line
+
 def merge():
     try:
         opts, files = getopt.getopt(sys.argv[2:], 'sm:p:',
-                                   ('silent', 'pot=', 'merge='))
+                                   ('silent', 'pot=', 'merge=', 'merge2='))
     except:
         usage(1)
 
@@ -315,6 +337,8 @@ def merge():
             silent = True
         if opt in ('-m', '--merge'):
             merge_fn = arg
+        if opt in ('--merge2'):
+            merge2_fn = arg
 
     if not pot_fn or not merge_fn:
         usage(1)
@@ -322,12 +346,16 @@ def merge():
     try:
         orig_ctl = catalog.MessageCatalog(filename=pot_fn)
         merge_ctl = catalog.MessageCatalog(filename=merge_fn)
+        if merge2_fn:
+            merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
     except IOError, e:
         print >> sys.stderr, 'I/O Error: %s' % e
         usage(0)
 
     # merge
     added_by_merge = orig_ctl.add_missing(merge_ctl, '', 1)
+    if merge2_fn:
+        added_by_merge2 = orig_ctl.add_missing(merge2_ctl, '', 1)
     orig_ctl.mime_header['POT-Creation-Date'] = catalog.now()
     file = open(pot_fn, 'w')
     writer = catalog.POWriter(file, orig_ctl)
@@ -339,7 +367,12 @@ def merge():
         lines = common.make_lines(added_by_merge)
         for line in lines:
             print >> file, '# %s' % line
-
+        if merge2_fn:
+            print >> file
+            print >> file, '#- Added msgids by merging file %s:' % merge_fn2
+            lines = common.make_lines(added_by_merge2)
+            for line in lines:
+                print >> file, '# %s' % line
 
 def sync():
     try:
