@@ -106,7 +106,8 @@ class MessageCatalog(odict):
                 occurrences = self[msgid][1]
                 for occur in occurrences:
                     if filename == occur[0]:
-                        occurrences = (filename, occur[1].extend(excerpt))
+                        if not excerpt[0] in occur[1]:
+                            occurrences = (filename, occur[1].extend(excerpt))
 
     def get_comment(self, msgid):
         """Returns the commentary lines that I have for msgid."""

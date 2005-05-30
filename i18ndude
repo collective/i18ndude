@@ -203,6 +203,9 @@ def rebuild_pot():
     if not pot_fn:
         usage(1)
 
+    if merge2_fn == merge_fn:
+        merge2_fn = False
+
     path = files[0]
     files = filter_isfile(files)
     merge_ctl = None
