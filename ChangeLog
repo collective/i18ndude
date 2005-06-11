@@ -1,3 +1,8 @@
+2005-06-11 Hanno Schlichting <schlichting at bakb dot org>
+
+	* untranslated.py: Added a new handler available through a command line
+	switch, generally ignore text in script and style tags
+
 2005-06-02 Hanno Schlichting <schlichting at bakb dot org>
 
 	* Fixed whitespace error in generation of #, fuzzy comments

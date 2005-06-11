@@ -126,7 +126,7 @@ class Handler(xml.sax.ContentHandler):
         data = data.strip()
 
         if _translatable(data):
-            if self._i18nlevel == 0: # not enclosed
+            if (self._i18nlevel == 0) and not tag in ['script', 'style']: # not enclosed
                 severity = _severity(tag, attrs) or ''
                 if severity:
                     self.log('i18n:translate missing for this:\n' \
@@ -178,3 +178,35 @@ class VerboseHandler(Handler):
               'Processing of %s finished. (%s warnings, %s errors)' \
               % (self._filename, self._stats['WARNING'], self._stats['ERROR'])
         print >> self._out, '=' * 79
+
+
+class NoSummaryVerboseHandler(Handler):
+
+    def endElement(self, tag):
+        tag, attrs, data = self._history.pop()
+        data = data.strip()
+
+        if _translatable(data):
+            if (self._i18nlevel == 0) and not tag in ['script', 'style']: # not enclosed
+                severity = _severity(tag, attrs) or ''
+                if severity and severity != 'WARNING':
+                    self.log('i18n:translate missing for this:\n' \
+                             '"""\n%s\n"""' % (data,), severity)
+
+        if self._i18nlevel != 0:
+            self._i18nlevel -= 1
+
+
+    def log(self, msg, severity):
+        Handler.log(self, msg, severity)
+
+        print >> self._out, \
+              '%s:%s:%s:\n-%s- - %s' % (self._filename,
+                                        self._parser.getLineNumber(),
+                                        self._parser.getColumnNumber(),
+                                        severity,
+                                        msg)
+        print >> self._out
+
+    def endDocument(self):
+        pass

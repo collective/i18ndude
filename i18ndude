@@ -28,14 +28,15 @@ i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
 Unless the -h, or --help option is given one of the commands below must be
 present:
 
-   find-untranslated [-s] [file1 [file2 ...]]
+   find-untranslated [-s|-n] [file1 [file2 ...]]
           Provide a list of ZPT filenames and I will output a report of places
           where I suspect untranslated messages, i.e. tags for which
           "i18n:translate" or "i18n:attributes" are missing.
 
           If you provide the -s option, the report will only contain a summary
           of errors and warnings for each file (or no output if there are no
-          errors or warnings).
+          errors or warnings). If you provide the -n option, the report will
+          contain only the errors for each file.
 
    rebuild-pot --pot <filename> [--create <domain> [--merge <filename>
    [--merge2 <filename>]] -s] file1 [file2 ...] | directory
@@ -118,7 +119,7 @@ import xml.sax
 
 try:
     import common, untranslated, catalog, visualisation
-except:
+except ImportError:
     from i18ndude import common, untranslated, catalog, visualisation
 
 def usage(code, msg=''):
@@ -147,7 +148,7 @@ def filter_isfile(files):
 
 def find_untranslated():
     try:
-        opts, files = getopt.getopt(sys.argv[2:], 's', ('silent',))
+        opts, files = getopt.getopt(sys.argv[2:], 'sn', ('silent','nosummary',))
     except getopt.GetoptError, e:
         usage(1)
 
@@ -157,6 +158,8 @@ def find_untranslated():
     for opt, arg in opts:
         if opt in ('-s', '--silent'):
             handler = untranslated.SilentHandler(parser, sys.stdout)
+        elif opt in ('-n', '--nosummary'):
+            handler = untranslated.NoSummaryVerboseHandler(parser, sys.stdout)
         elif opt in ('-h', '--help'):
             usage(0)
 
