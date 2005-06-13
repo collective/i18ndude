@@ -1,3 +1,7 @@
+2005-06-14 Jodok Batlogg <batlogg at solution2u dot net>
+
+	* tagging 0.5
+
 2005-06-13 Hanno Schlichting <schlichting at bakb dot org>
 
 	* as html-entities in msgstr's are bad, don't provide them in the original
