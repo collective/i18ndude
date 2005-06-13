@@ -435,6 +435,10 @@ class POWriter:
 
         # used in pot methods
         if msgstrToComment and msgstr:
+            # no html markup in the original comments as these are not
+            # allowed in msgstr's either
+            msgstr = msgstr.replace('&quot;','\\\"')
+            msgstr = msgstr.replace('&amp;','&')
             print >> f, '# %s"%s"' % (ORIGINAL_COMMENT, msgstr)
             msgstr = ''
 

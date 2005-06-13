@@ -1,3 +1,8 @@
+2005-06-13 Hanno Schlichting <schlichting at bakb dot org>
+
+	* as html-entities in msgstr's are bad, don't provide them in the original
+	comments. this has confused translators.
+
 2005-06-11 Hanno Schlichting <schlichting at bakb dot org>
 
 	* untranslated.py: Added a new handler available through a command line
