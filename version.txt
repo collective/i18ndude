@@ -1,1 +1,1 @@
-0.5 (SVN/UNRELEASED)
+0.5
