@@ -1,3 +1,9 @@
+2005-06-24 Hanno Schlichting <schlichting at bakb dot org>
+
+	* pystring: add 'addPortalMessage' to the list of python functions whose
+	argument should be translated. This allows to catch the new-style portal-
+	messages in Plone 2.1 to be automagically extracted
+
 2005-06-14 Jodok Batlogg <batlogg at solution2u dot net>
 
 	* tagging 0.5
