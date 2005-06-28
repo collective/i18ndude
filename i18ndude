@@ -189,6 +189,7 @@ def rebuild_pot():
 
     pot_fn = None
     merge_fn = None
+    merge2_fn = None
     silent = False
     create_domain = None
     for opt, arg in opts:
