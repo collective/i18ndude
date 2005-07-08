@@ -69,13 +69,13 @@ def attr_validator(tag, attrs, logfct):
 
     # 1)
     if not _valid_i18ned_attr('title', attrs):
-        logfct('title attribute of <%s> lacks i18n:attribute' % tag,
+        logfct('title attribute of <%s> lacks i18n:attributes' % tag,
                'ERROR')
 
     # 2)
     if tag == 'img':
         if not _valid_i18ned_attr('alt', attrs):
-            logfct('alt attribute of <img> lacks i18n:attribute',
+            logfct('alt attribute of <img> lacks i18n:attributes',
                    'ERROR')
 
     # 3)
