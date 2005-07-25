@@ -376,7 +376,7 @@ def merge():
             print >> file, '# %s' % line
         if merge2_fn:
             print >> file
-            print >> file, '#- Added msgids by merging file %s:' % merge_fn2
+            print >> file, '#- Added msgids by merging file %s:' % merge2_fn
             lines = common.make_lines(added_by_merge2)
             for line in lines:
                 print >> file, '# %s' % line
