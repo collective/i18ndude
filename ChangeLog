@@ -1,3 +1,7 @@
+2005-08-03 Hanno Schlichting <schlichting at bakb dot org>
+
+	* added test infrastructure and first basic tests
+
 2005-07-04 Jodok Batlogg <batlogg at solution2u dot net>
 
 	* tagged and released 0.6
