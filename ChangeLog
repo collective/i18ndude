@@ -1,3 +1,7 @@
+2005-08-10 Hanno Schlichting <schlichting at bakb dot org>
+
+	* added tests for po file parsing
+
 2005-08-03 Hanno Schlichting <schlichting at bakb dot org>
 
 	* added test infrastructure and first basic tests
