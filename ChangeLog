@@ -1,5 +1,8 @@
 2005-08-10 Hanno Schlichting <schlichting at bakb dot org>
 
+	* added test for po file writing and allowed filenames without excerpt
+	 (lines starting with #: without corresponding #. lines)
+
 	* added tests for po file parsing
 
 2005-08-03 Hanno Schlichting <schlichting at bakb dot org>

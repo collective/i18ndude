@@ -17,7 +17,32 @@ msgstr ""
 "Domain: testing\n"
 "X-Is-Fallback-For: en-au en-bz en-ca en-ie en-jm en-nz en-ph en-za en-tt en-gb en-us en-zw\n"
 
+msgid "msgid for text with german umlaut"
+msgstr "äöüß text"
 
+
+msgid "msgid for text with html-entity"
+msgstr "&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;"
+
+
+msgid "msgid for unicode text"
+msgstr "unicode msgstr ···"
+
+
+#: ./folder/file_unicode
+#. unicode ··· excerpt
+# Original: [···]
+msgid "msgid for unicode text with comment"
+msgstr "unicode msgstr ···"
+
+
+msgid "msgid has spaces"
+msgstr "msgstr has spaces"
+
+
+#: file2
+#. excerpt2
+#. excerpt3
 #: file1
 #. excerpt1
 # comment1
@@ -52,10 +77,6 @@ msgid "msgid6"
 msgstr "msgstr6"
 
 
-msgid "msgid has spaces"
-msgstr "msgstr has spaces"
-
-
 msgid "msgid_has_underlines"
 msgstr "msgstr_has_underlines"
 
@@ -63,21 +84,3 @@ msgstr "msgstr_has_underlines"
 msgid "msgid_has_underlines and spaces"
 msgstr "msgstr_has_underlines and spaces"
 
-
-msgid "msgid for unicode text"
-msgstr "unicode msgstr ···"
-
-
-#: ./folder/file_unicode
-#. unicode ··· excerpt
-# Original: [···]
-msgid "msgid for unicode text with comment"
-msgstr "unicode msgstr ···"
-
-
-msgid "msgid for text with german umlaut"
-msgstr "äöüß text"
-
-
-msgid "msgid for text with html-entity"
-msgstr "&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;"

@@ -29,6 +29,7 @@ class TestGlobal(ZopeTestCase.ZopeTestCase):
 class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
 
     def afterSetUp(self):
+        self.mc = catalog.MessageCatalog
         self.file = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.emptyfile = os.path.join(PACKAGE_HOME, 'input', 'empty-en.po')
 
@@ -41,10 +42,10 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                            'POT-Creation-Date': '2005-08-01 12:00+0000', 'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
                           }
 
-        self.nocomments = {'msgid1' : ('msgstr1', [('file1', ['excerpt1'])], ['comment1', 'Original: "msgstr1"']),
+        self.nocomments = {'msgid1' : ('msgstr1', [('file2', ['excerpt2', 'excerpt3']), ('file1', ['excerpt1'])], ['comment1', 'Original: "msgstr1"']),
                            'msgid2' : ('msgstr2', [('file2', ['excerpt2'])], []),
-                           'msgid3' : ('msgstr3', [], ['comment3']),
-                           'msgid4' : ('msgstr4', [], []),
+                           'msgid3' : ('msgstr3', [('file3', [])], ['comment3']),
+                           'msgid4' : ('msgstr4', [('file4', [])], []),
                            'msgid5' : ('msgstr5', [], ['comment5']),
                            'msgid6' : ('msgstr6', [], []),
                            'msgid has spaces' : ('msgstr has spaces', [], []),
@@ -56,10 +57,10 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                            'msgid for text with html-entity' : ('&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;', [], [])
                           }
 
-        self.allcomments = {'msgid1' : ('msgstr1', [('file1', ['excerpt1'])], ['comment1', 'Original: "msgstr1"']),
+        self.allcomments = {'msgid1' : ('msgstr1', [('file2', ['excerpt2', 'excerpt3']), ('file1', ['excerpt1'])], ['comment1', 'Original: "msgstr1"']),
                             'msgid2' : ('msgstr2', [('file2', ['excerpt2'])], []),
-                            'msgid3' : ('msgstr3', [], ['comment3']),
-                            'msgid4' : ('msgstr4', [], []),
+                            'msgid3' : ('msgstr3', [('file3', [])], ['comment3']),
+                            'msgid4' : ('msgstr4', [('file4', [])], []),
                             'msgid5' : ('msgstr5', [], ['comment5']),
                             'msgid6' : ('msgstr6', [], []),
                             'msgid has spaces' : ('msgstr has spaces', [], []),
@@ -80,9 +81,8 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
         self.failUnless(failing, 'Init without parameters should not be allowed.')
 
     def test_initWithDomain(self):
-        mc = catalog.MessageCatalog
         domain = 'testing'
-        test = mc(domain=domain)
+        test = self.mc(domain=domain)
         mime = catalog.DEFAULT_PO_MIME
         for key,value in mime:
             if key != 'Domain':
@@ -93,38 +93,38 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
         self.assertEquals(len(test), 0, 'Non-empty catalog')
 
     def test_initWithEmptyFile(self):
-        mc = catalog.MessageCatalog
-        test = mc(filename=self.emptyfile)
+        test = self.mc(filename=self.emptyfile)
         mime = catalog.DEFAULT_PO_MIME
         for key,value in mime:
             self.assertEquals(value, test.mime_header[key], 'header mismatch on %s' % key)
 
     def test_initWithEmptyFileAndDomain(self):
-        mc = catalog.MessageCatalog
         failing = False
         try:
-            test = mc(domain='testing', filename=self.emptyfile)
+            test = self.mc(domain='testing', filename=self.emptyfile)
         except AssertionError:
             failing = True
         self.failUnless(failing, 'Init with filename and domain parameters is not allowed.')
 
     def test_initWithFile(self):
-        mc = catalog.MessageCatalog
-        test = mc(filename=self.file)
+        test = self.mc(filename=self.file)
         for key in test.mime_header:
             self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing')
         for value in test.commentary_header:
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
-        self.assertEquals(test, self.nocomments, 'error in po parsing')
+        if not test == self.nocomments:
+            for key in test:
+                self.assertEquals(test[key], self.nocomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.nocomments[key]))
 
     def test_initWithFileAllComments(self):
-        mc = catalog.MessageCatalog
-        test = mc(filename=self.file, allcomments=True)
+        test = self.mc(filename=self.file, allcomments=True)
         for key in test.mime_header:
             self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing')
         for value in test.commentary_header:
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
-        self.assertEquals(test, self.allcomments, 'error in po parsing')
+        if not test == self.allcomments:
+            for key in test:
+                self.assertEquals(test[key], self.allcomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.allcomments[key]))
 
 class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
 
@@ -190,12 +190,46 @@ class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
         self.assertEquals(self.mc.get_original_comment(self.msgid), self.orig_comment, 'wrong original comment line')
         self.assertEquals(self.mc.get_original(self.msgid), self.orig_text, 'wrong original comment text')
 
+class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
+
+    def afterSetUp(self):
+        mc = catalog.MessageCatalog
+        self.input = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
+        self.output = os.path.join(PACKAGE_HOME, 'output', 'test-en.po')
+        self.catalog = mc(filename=self.input)
+
+    def test_write(self):
+        fd = open(self.output, 'wb')
+        pow = catalog.POWriter(fd, self.catalog)
+        pow.write(sort=True)
+        fd.close()
+
+        input = open(self.input, 'r')
+        output = open(self.output, 'r')
+
+        # compare line by line
+        inlines = input.readlines()
+        outlines = enumerate(output.readlines())
+
+        input.close()
+        output.close()
+
+        for i, result in outlines:
+            orig = inlines[i]
+            self.failUnlessEqual(orig, result, 'difference in line %s, \'%s\' != \'%s\'' % (i, orig, result))
+
+    def tearDown(self):
+        if os.path.exists(self.output):
+
+            os.remove(self.output)
+
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
     suite.addTest(makeSuite(TestGlobal))
     suite.addTest(makeSuite(TestMessageCatalogInit))
     suite.addTest(makeSuite(TestMessageCatalog))
+    suite.addTest(makeSuite(TestMessagePoWriter))
     return suite
 
 if __name__ == '__main__':

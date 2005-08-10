@@ -333,9 +333,7 @@ class POParser:
         line = state['line']
         if self._is_new_msg(line): # one element was collected
             state['stateid'] = 1 # change state
-            occurrences = [(fn, ctxt)
-                           for (fn, ctxt) in state['occurrence'].items()
-                           if ctxt]
+            occurrences = [(fn, ctxt) for (fn, ctxt) in state['occurrence'].items()]
             entry = (state['msgstr'], occurrences, state['comment'])
             self.msgdict[state['msgid']] = entry
 
