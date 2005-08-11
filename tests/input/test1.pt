@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="testing">
+
+<head>
+</head>
+
+<body>
+
+<img src=""
+     alt="Some alt"
+     title="Some title"
+     i18n:attributes="alt some_alt; title title_some_alt" />
+
+
+<p i18n:translate="">Buzz</p>
+
+<p i18n:translate="text_buzz">Buzz</p>
+
+<p metal:use-macro="somemacro">Dummy</p>
+
+<p tal:replace="something">Dumbo</p>
+
+<form>
+<input type="submit" value="Dig this" i18n:attributes="value dig_this"/>
+</form>
+
+</body>
+</html>

@@ -36,6 +36,7 @@ msgid "msgid for unicode text with comment"
 msgstr "unicode msgstr ···"
 
 
+## I am a dead comment
 msgid "msgid has spaces"
 msgstr "msgstr has spaces"
 
@@ -47,6 +48,7 @@ msgstr "msgstr has spaces"
 #. excerpt1
 # comment1
 # Original: "msgstr1"
+## 1 more: file_more
 msgid "msgid1"
 msgstr "msgstr1"
 
@@ -75,6 +77,16 @@ msgstr "msgstr5"
 
 msgid "msgid6"
 msgstr "msgstr6"
+
+
+#, fuzzy
+msgid "msgid7"
+msgstr "msgstr7"
+
+
+#, fuzzy
+msgid "msgid8"
+msgstr ""
 
 
 msgid "msgid_has_underlines"

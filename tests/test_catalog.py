@@ -48,6 +48,8 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                            'msgid4' : ('msgstr4', [('file4', [])], []),
                            'msgid5' : ('msgstr5', [], ['comment5']),
                            'msgid6' : ('msgstr6', [], []),
+                           'msgid7' : ('msgstr7', [], [', fuzzy']),
+                           'msgid8' : ('', [], [', fuzzy']),
                            'msgid has spaces' : ('msgstr has spaces', [], []),
                            'msgid_has_underlines' : ('msgstr_has_underlines', [], []),
                            'msgid_has_underlines and spaces' : ('msgstr_has_underlines and spaces', [], []),
@@ -57,13 +59,15 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                            'msgid for text with html-entity' : ('&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;', [], [])
                           }
 
-        self.allcomments = {'msgid1' : ('msgstr1', [('file2', ['excerpt2', 'excerpt3']), ('file1', ['excerpt1'])], ['comment1', 'Original: "msgstr1"']),
+        self.allcomments = {'msgid1' : ('msgstr1', [('file2', ['excerpt2', 'excerpt3']), ('file1', ['excerpt1'])], ['comment1', 'Original: "msgstr1"', '# 1 more: file_more']),
                             'msgid2' : ('msgstr2', [('file2', ['excerpt2'])], []),
                             'msgid3' : ('msgstr3', [('file3', [])], ['comment3']),
                             'msgid4' : ('msgstr4', [('file4', [])], []),
                             'msgid5' : ('msgstr5', [], ['comment5']),
                             'msgid6' : ('msgstr6', [], []),
-                            'msgid has spaces' : ('msgstr has spaces', [], []),
+                            'msgid7' : ('msgstr7', [], [', fuzzy']),
+                            'msgid8' : ('', [], [', fuzzy']),
+                            'msgid has spaces' : ('msgstr has spaces', [], ['# I am a dead comment']),
                             'msgid_has_underlines' : ('msgstr_has_underlines', [], []),
                             'msgid_has_underlines and spaces' : ('msgstr_has_underlines and spaces', [], []),
                             'msgid for unicode text' : ('unicode msgstr \xb7\xb7\xb7', [], []),
@@ -196,7 +200,7 @@ class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
         mc = catalog.MessageCatalog
         self.input = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.output = os.path.join(PACKAGE_HOME, 'output', 'test-en.po')
-        self.catalog = mc(filename=self.input)
+        self.catalog = mc(filename=self.input, allcomments=True)
 
     def test_write(self):
         fd = open(self.output, 'wb')
@@ -220,8 +224,26 @@ class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
 
     def tearDown(self):
         if os.path.exists(self.output):
-
             os.remove(self.output)
+
+class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
+
+    def afterSetUp(self):
+        mc = catalog.MessageCatalog
+        self.input1 = [os.path.join(PACKAGE_HOME, 'input', 'test1.pt')]
+        self.output1 =  {u'Dig this': (u'Dig this', [('D:\\zope2\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>'])], []),
+                         u'text_buzz': (u'Buzz', [('D:\\zope2\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>'])], []),
+                         u'some_alt': (u'Some alt', [('D:\\zope2\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], []),
+                         u'title_some_alt': (u'Some title', [('D:\\zope2\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], [])}
+
+    def test_read(self):
+        ptr = catalog.PTReader(self.input1)
+        ptr.read()
+
+        out = ptr.catalogs['testing']
+        for key in out:
+            self.assertEquals(out[key], self.output1[key], 'Failure in pt parsing. Got:%s\nExpected:%s' % (out[key], self.output1[key]))
+
 
 def test_suite():
     from unittest import TestSuite, makeSuite
@@ -230,6 +252,7 @@ def test_suite():
     suite.addTest(makeSuite(TestMessageCatalogInit))
     suite.addTest(makeSuite(TestMessageCatalog))
     suite.addTest(makeSuite(TestMessagePoWriter))
+    suite.addTest(makeSuite(TestMessagePTReader))
     return suite
 
 if __name__ == '__main__':

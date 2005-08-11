@@ -1,5 +1,8 @@
 2005-08-10 Hanno Schlichting <schlichting at bakb dot org>
 
+	* Preserve special ## comments, added tests for special comments
+	Started PageTemplate parsing tests
+
 	* added test for po file writing and allowed filenames without excerpt
 	 (lines starting with #: without corresponding #. lines)
 

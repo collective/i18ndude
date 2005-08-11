@@ -451,8 +451,11 @@ class POWriter:
                 comments.remove(original_comments[0])
 
         for comment in comments:
-            if not comment.startswith('English trans') and not comment.startswith(', fuzzy') and not comment.startswith(' , fuzzy'):
-                print >> f, '# %s' % comment
+            if not comment.startswith(', fuzzy') and not comment.startswith(' , fuzzy'):
+                if comment.startswith('#'):
+                    print >> f, '#%s' % comment
+                else:
+                    print >> f, '# %s' % comment
 
         fuzzy = len([c for c in comments if c.startswith(', fuzzy') or c.startswith(' , fuzzy')])
         if msg_changed or fuzzy>0:
