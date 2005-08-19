@@ -19,12 +19,12 @@ DEFAULT_PO_MIME = (('Project-Id-Version', 'PACKAGE VERSION'),
                    ('Last-Translator', 'FULL NAME <EMAIL@ADDRESS>'),
                    ('Language-Team', 'LANGUAGE <LL@li.org>'),
                    ('MIME-Version', '1.0'),
-                   ('Content-Type', 'text/plain; charset=CHARSET'),
+                   ('Content-Type', 'text/plain; charset=utf-8'),
                    ('Content-Transfer-Encoding', '8bit'),
                    ('Plural-Forms', 'nplurals=1; plural=0'),
                    ('Language-Code', 'en'),
                    ('Language-Name', 'English'),
-                   ('Preferred-Encodings', 'latin1 utf-8'),
+                   ('Preferred-Encodings', 'utf-8 latin1'),
                    ('Domain', 'DOMAIN'))
 
 MAX_OCCUR = 3 # maximum number of occurrences listed
@@ -362,11 +362,40 @@ class POWriter:
         self._file = file
         self._msgctl = catalog
 
-    def write(self, sort=True, msgstrToComment=False, sync=False, noMoreComments=False):
+    def _encode(self, line, input_encoding=None, output_encoding=None):
+        # encode a give unicode type or string type to string type in encoding output_encoding
+
+        content_type = self._msgctl.mime_header.get('Content-Type', 'text/plain; charset=utf-8')
+        charset = content_type.split('=')
+        encoding = charset[-1]
+
+        # check if input is not type unicode
+        if not isinstance(line, unicode):
+            if input_encoding is None:
+                # get input encoding from message catalog
+                input_encoding = encoding
+
+            line = unicode(line, input_encoding)
+        
+        if output_encoding is None:
+            # get output encoding from message catalog
+            output_encoding = encoding
+        
+        return line.encode(output_encoding)
+
+
+    def _printToFile(self, file, string):
+        """ Print wrapper which allows to specifiy an output encoding"""
+        if not string:
+            print >> file
+        else:
+            print >> file, self._encode(string)
+
+    def write(self, sort=True, msgstrToComment=False, sync=False):
         """Start writing to file."""
 
         self._write_header()
-        self._write_messages(sort=sort, msgstrToComment=msgstrToComment, sync=sync, noMoreComments=noMoreComments)
+        self._write_messages(sort=sort, msgstrToComment=msgstrToComment, sync=sync)
 
     def _write_header(self):
         """Writes out commentary and mime headers."""
@@ -376,20 +405,20 @@ class POWriter:
 
         # header
         for line in ctl.commentary_header:
-            print >> f, '# %s' % line
+            self._printToFile(f, '# %s' % line)
 
         if not ctl.mime_header: # mime-header n/a
-            print >> f
+            self._printToFile(f, False)
             return
 
         #write out mime:
-        print >> f, 'msgid ""'
-        print >> f, 'msgstr ""'
+        self._printToFile(f, 'msgid ""')
+        self._printToFile(f, 'msgstr ""')
 
         for key in ctl.mime_header.keys():
-            print >> f, '"%s: %s\\n"' % (key, ctl.mime_header[key])
+            self._printToFile(f, '"%s: %s\\n"' % (key, ctl.mime_header[key]))
 
-    def _write_messages(self, sort, msgstrToComment, sync, noMoreComments):
+    def _write_messages(self, sort, msgstrToComment, sync):
         """Writes the messages out."""
 
         f = self._file
@@ -398,11 +427,11 @@ class POWriter:
 
         for id in ids:
             entry = self._msgctl[id]
-            self._print_entry(f, id, entry, msgstrToComment=msgstrToComment, sync=sync, noMoreComments=noMoreComments)
+            self._print_entry(f, id, entry, msgstrToComment=msgstrToComment, sync=sync)
 
-    def _print_entry(self, f, id, entry, msgstrToComment, sync, noMoreComments):
+    def _print_entry(self, f, id, entry, msgstrToComment, sync):
 
-        print >> f
+        self._printToFile(f,False)
 
         msgstr = entry[0]
         occurrences = entry[1]
@@ -416,20 +445,14 @@ class POWriter:
             if known_key in known_ctxts:  # skip those with the same excerpt
                 continue
 
-            print >> f, '#: %s' % filename
+            self._printToFile(f, '#: %s' % filename)
             for line in context:
-                print >> f, '#. %s' % line.rstrip()
+                self._printToFile(f, '#. %s' % line.rstrip())
 
             known_ctxts[known_key] = True
 
             no += 1
             if no >= MAX_OCCUR: break
-
-
-        if not noMoreComments and no < len(occurrences):
-            filenames = [occ[0] for occ in occurrences[no:]]
-            print >> f, '## %s more: %s' % (len(occurrences) - no,
-                                            ', '.join(filenames))
 
         # used in pot methods
         if msgstrToComment and msgstr:
@@ -437,7 +460,8 @@ class POWriter:
             # allowed in msgstr's either
             msgstr = msgstr.replace('&quot;','\\\"')
             msgstr = msgstr.replace('&amp;','&')
-            print >> f, '# %s"%s"' % (ORIGINAL_COMMENT, msgstr)
+            msgstr = msgstr.replace('&hellip;','...')
+            self._printToFile(f, '# %s"%s"' % (ORIGINAL_COMMENT, msgstr))
             msgstr = ''
 
         msg_changed = False
@@ -453,18 +477,18 @@ class POWriter:
         for comment in comments:
             if not comment.startswith(', fuzzy') and not comment.startswith(' , fuzzy'):
                 if comment.startswith('#'):
-                    print >> f, '#%s' % comment
+                    self._printToFile(f, '#%s' % comment)
                 else:
-                    print >> f, '# %s' % comment
+                    self._printToFile(f, '# %s' % comment)
 
         fuzzy = len([c for c in comments if c.startswith(', fuzzy') or c.startswith(' , fuzzy')])
         if msg_changed or fuzzy>0:
-            print >> f, '#, fuzzy'
+            self._printToFile(f, '#, fuzzy')
 
-        print >> f, 'msgid "%s"' % id
-        print >> f, 'msgstr "%s"' % msgstr
+        self._printToFile(f, 'msgid "%s"' % id)
+        self._printToFile(f, 'msgstr "%s"' % msgstr)
 
-        print >> f
+        self._printToFile(f, False)
 
 
 class PTReader:

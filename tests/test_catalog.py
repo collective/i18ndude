@@ -38,7 +38,7 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
         self.mimeheader = {'Language-Code': 'en', 'Domain': 'testing', 'PO-Revision-Date': '2005-08-10 21:15+0000', 'Content-Transfer-Encoding': '8bit',
                            'Language-Name': 'English', 'X-Is-Fallback-For': 'en-au en-bz en-ca en-ie en-jm en-nz en-ph en-za en-tt en-gb en-us en-zw',
                            'Plural-Forms': 'nplurals=1; plural=0;', 'Project-Id-Version': 'i18ndude', 'Preferred-Encodings': 'utf-8 latin1',
-                           'Last-Translator': 'Unic\xf6d\xe9 Guy', 'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
+                           'Last-Translator': 'Unicödé Guy', 'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
                            'POT-Creation-Date': '2005-08-01 12:00+0000', 'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
                           }
 
@@ -53,9 +53,9 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                            'msgid has spaces' : ('msgstr has spaces', [], []),
                            'msgid_has_underlines' : ('msgstr_has_underlines', [], []),
                            'msgid_has_underlines and spaces' : ('msgstr_has_underlines and spaces', [], []),
-                           'msgid for unicode text' : ('unicode msgstr \xb7\xb7\xb7', [], []),
-                           'msgid for unicode text with comment' : ('unicode msgstr \xb7\xb7\xb7', [('./folder/file_unicode', ['unicode \xb7\xb7\xb7 excerpt'])], ['Original: [\xb7\xb7\xb7]']),
-                           'msgid for text with german umlaut' : ('\xe4\xf6\xfc\xdf text', [], []),
+                           'msgid for unicode text' : ('unicode msgstr ···', [], []),
+                           'msgid for unicode text with comment' : ('unicode msgstr ···', [('./folder/file_unicode', ['unicode ··· excerpt'])], ['Original: [···]']),
+                           'msgid for text with german umlaut' : ('äöüß text', [], []),
                            'msgid for text with html-entity' : ('&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;', [], [])
                           }
 
@@ -70,9 +70,9 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                             'msgid has spaces' : ('msgstr has spaces', [], ['# I am a dead comment']),
                             'msgid_has_underlines' : ('msgstr_has_underlines', [], []),
                             'msgid_has_underlines and spaces' : ('msgstr_has_underlines and spaces', [], []),
-                            'msgid for unicode text' : ('unicode msgstr \xb7\xb7\xb7', [], []),
-                            'msgid for unicode text with comment' : ('unicode msgstr \xb7\xb7\xb7', [('./folder/file_unicode', ['unicode \xb7\xb7\xb7 excerpt'])], ['Original: [\xb7\xb7\xb7]']),
-                            'msgid for text with german umlaut' : ('\xe4\xf6\xfc\xdf text', [], []),
+                            'msgid for unicode text' : ('unicode msgstr ···', [], []),
+                            'msgid for unicode text with comment' : ('unicode msgstr ···', [('./folder/file_unicode', ['unicode ··· excerpt'])], ['Original: [···]']),
+                            'msgid for text with german umlaut' : ('äöüß text', [], []),
                             'msgid for text with html-entity' : ('&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;', [], [])
                            }
 
@@ -113,7 +113,7 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
     def test_initWithFile(self):
         test = self.mc(filename=self.file)
         for key in test.mime_header:
-            self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing')
+            self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
         for value in test.commentary_header:
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
         if not test == self.nocomments:
@@ -123,7 +123,7 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
     def test_initWithFileAllComments(self):
         test = self.mc(filename=self.file, allcomments=True)
         for key in test.mime_header:
-            self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing')
+            self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
         for value in test.commentary_header:
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
         if not test == self.allcomments:
@@ -201,6 +201,8 @@ class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
         self.input = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.output = os.path.join(PACKAGE_HOME, 'output', 'test-en.po')
         self.catalog = mc(filename=self.input, allcomments=True)
+        if os.path.exists(self.output):
+            os.remove(self.output)
 
     def test_write(self):
         fd = open(self.output, 'wb')
@@ -231,10 +233,10 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
     def afterSetUp(self):
         mc = catalog.MessageCatalog
         self.input1 = [os.path.join(PACKAGE_HOME, 'input', 'test1.pt')]
-        self.output1 =  {u'Dig this': (u'Dig this', [('D:\\zope2\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>'])], []),
-                         u'text_buzz': (u'Buzz', [('D:\\zope2\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>'])], []),
-                         u'some_alt': (u'Some alt', [('D:\\zope2\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], []),
-                         u'title_some_alt': (u'Some title', [('D:\\zope2\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], [])}
+        self.output1 =  {u'Dig this': (u'Dig this', [('D:\\zope28\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>'])], []),
+                         u'text_buzz': (u'Buzz', [('D:\\zope28\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>'])], []),
+                         u'some_alt': (u'Some alt', [('D:\\zope28\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], []),
+                         u'title_some_alt': (u'Some title', [('D:\\zope28\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], [])}
 
     def test_read(self):
         ptr = catalog.PTReader(self.input1)

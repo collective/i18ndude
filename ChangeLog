@@ -1,3 +1,10 @@
+2005-08-19 Hanno Schlichting <schlichting at bakb dot org>
+
+	* Removed ## X more comments
+
+	* Changed POWriter to actually honor the encoding of a message catalog
+	and respect it when writing to a file
+
 2005-08-10 Hanno Schlichting <schlichting at bakb dot org>
 
 	* Preserve special ## comments, added tests for special comments
