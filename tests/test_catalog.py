@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os, sys
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
@@ -33,13 +34,13 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
         self.file = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.emptyfile = os.path.join(PACKAGE_HOME, 'input', 'empty-en.po')
 
-        self.commentary_header = ['Translation of test.pot to English', 'Hanno Schlichting <schlichting@bakb.net>, 2005']
+        self.commentary_header = [u'Translation of test.pot to English', u'Hanno Schlichting <schlichting@bakb.net>, 2005']
 
-        self.mimeheader = {'Language-Code': 'en', 'Domain': 'testing', 'PO-Revision-Date': '2005-08-10 21:15+0000', 'Content-Transfer-Encoding': '8bit',
-                           'Language-Name': 'English', 'X-Is-Fallback-For': 'en-au en-bz en-ca en-ie en-jm en-nz en-ph en-za en-tt en-gb en-us en-zw',
-                           'Plural-Forms': 'nplurals=1; plural=0;', 'Project-Id-Version': 'i18ndude', 'Preferred-Encodings': 'utf-8 latin1',
-                           'Last-Translator': 'Unicödé Guy', 'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
-                           'POT-Creation-Date': '2005-08-01 12:00+0000', 'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
+        self.mimeheader = {'Language-Code': u'en', 'Domain': u'testing', 'PO-Revision-Date': u'2005-08-10 21:15+0000', 'Content-Transfer-Encoding': u'8bit',
+                           'Language-Name': u'English', 'X-Is-Fallback-For': u'en-au en-bz en-ca en-ie en-jm en-nz en-ph en-za en-tt en-gb en-us en-zw',
+                           'Plural-Forms': u'nplurals=1; plural=0;', 'Project-Id-Version': u'i18ndude', 'Preferred-Encodings': u'utf-8 latin1',
+                           'Last-Translator': u'Unicödé Guy', 'Language-Team': u'Plone i18n <plone-i18n@lists.sourceforge.net>',
+                           'POT-Creation-Date': u'2005-08-01 12:00+0000', 'Content-Type': u'text/plain; charset=utf-8', 'MIME-Version': u'1.0'
                           }
 
         self.nocomments = {'msgid1' : ('msgstr1', [('file2', ['excerpt2', 'excerpt3']), ('file1', ['excerpt1'])], ['comment1', 'Original: "msgstr1"']),
@@ -53,9 +54,9 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                            'msgid has spaces' : ('msgstr has spaces', [], []),
                            'msgid_has_underlines' : ('msgstr_has_underlines', [], []),
                            'msgid_has_underlines and spaces' : ('msgstr_has_underlines and spaces', [], []),
-                           'msgid for unicode text' : ('unicode msgstr ···', [], []),
-                           'msgid for unicode text with comment' : ('unicode msgstr ···', [('./folder/file_unicode', ['unicode ··· excerpt'])], ['Original: [···]']),
-                           'msgid for text with german umlaut' : ('äöüß text', [], []),
+                           'msgid for unicode text' : (u'unicode msgstr ···', [], []),
+                           'msgid for unicode text with comment' : (u'unicode msgstr ···', [('./folder/file_unicode', [u'unicode ··· excerpt'])], [u'Original: [···]']),
+                           'msgid for text with german umlaut' : (u'äöüß text', [], []),
                            'msgid for text with html-entity' : ('&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;', [], [])
                           }
 
@@ -70,9 +71,9 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                             'msgid has spaces' : ('msgstr has spaces', [], ['# I am a dead comment']),
                             'msgid_has_underlines' : ('msgstr_has_underlines', [], []),
                             'msgid_has_underlines and spaces' : ('msgstr_has_underlines and spaces', [], []),
-                            'msgid for unicode text' : ('unicode msgstr ···', [], []),
-                            'msgid for unicode text with comment' : ('unicode msgstr ···', [('./folder/file_unicode', ['unicode ··· excerpt'])], ['Original: [···]']),
-                            'msgid for text with german umlaut' : ('äöüß text', [], []),
+                            'msgid for unicode text' : (u'unicode msgstr ···', [], []),
+                            'msgid for unicode text with comment' : (u'unicode msgstr ···', [('./folder/file_unicode', [u'unicode ··· excerpt'])], [u'Original: [···]']),
+                            'msgid for text with german umlaut' : (u'äöüß text', [], []),
                             'msgid for text with html-entity' : ('&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;', [], [])
                            }
 
@@ -116,9 +117,8 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
             self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
         for value in test.commentary_header:
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
-        if not test == self.nocomments:
-            for key in test:
-                self.assertEquals(test[key], self.nocomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.nocomments[key]))
+        for key in test:
+            self.assertEquals(test[key], self.nocomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.nocomments[key]))
 
     def test_initWithFileAllComments(self):
         test = self.mc(filename=self.file, allcomments=True)
@@ -126,9 +126,8 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
             self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
         for value in test.commentary_header:
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
-        if not test == self.allcomments:
-            for key in test:
-                self.assertEquals(test[key], self.allcomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.allcomments[key]))
+        for key in test:
+            self.assertEquals(test[key], self.allcomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.allcomments[key]))
 
 class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
 

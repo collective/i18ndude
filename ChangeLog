@@ -1,5 +1,7 @@
 2005-08-19 Hanno Schlichting <schlichting at bakb dot org>
 
+	* Add encoding recognition to POParser and use unicode internally
+
 	* Removed ## X more comments
 
 	* Changed POWriter to actually honor the encoding of a message catalog

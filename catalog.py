@@ -9,27 +9,27 @@ from odict import odict
 
 
 DEFAULT_PO_HEADER = [
-    '--- PLEASE EDIT THE LINES BELOW CORRECTLY ---',
-    'SOME DESCRIPTIVE TITLE.',
-    'FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.']
+    u'--- PLEASE EDIT THE LINES BELOW CORRECTLY ---',
+    u'SOME DESCRIPTIVE TITLE.',
+    u'FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.']
 
-DEFAULT_PO_MIME = (('Project-Id-Version', 'PACKAGE VERSION'),
-                   ('POT-Creation-Date', 'YEAR-MO-DA HO:MI +ZONE'),
-                   ('PO-Revision-Date', 'YEAR-MO-DA HO:MI +ZONE'),
-                   ('Last-Translator', 'FULL NAME <EMAIL@ADDRESS>'),
-                   ('Language-Team', 'LANGUAGE <LL@li.org>'),
-                   ('MIME-Version', '1.0'),
-                   ('Content-Type', 'text/plain; charset=utf-8'),
-                   ('Content-Transfer-Encoding', '8bit'),
-                   ('Plural-Forms', 'nplurals=1; plural=0'),
-                   ('Language-Code', 'en'),
-                   ('Language-Name', 'English'),
-                   ('Preferred-Encodings', 'utf-8 latin1'),
-                   ('Domain', 'DOMAIN'))
+DEFAULT_PO_MIME = (('Project-Id-Version', u'PACKAGE VERSION'),
+                   ('POT-Creation-Date', u'YEAR-MO-DA HO:MI +ZONE'),
+                   ('PO-Revision-Date', u'YEAR-MO-DA HO:MI +ZONE'),
+                   ('Last-Translator', u'FULL NAME <EMAIL@ADDRESS>'),
+                   ('Language-Team', u'LANGUAGE <LL@li.org>'),
+                   ('MIME-Version', u'1.0'),
+                   ('Content-Type', u'text/plain; charset=utf-8'),
+                   ('Content-Transfer-Encoding', u'8bit'),
+                   ('Plural-Forms', u'nplurals=1; plural=0'),
+                   ('Language-Code', u'en'),
+                   ('Language-Name', u'English'),
+                   ('Preferred-Encodings', u'utf-8 latin1'),
+                   ('Domain', u'DOMAIN'))
 
 MAX_OCCUR = 3 # maximum number of occurrences listed
 
-ORIGINAL_COMMENT = 'Original: '
+ORIGINAL_COMMENT = u'Original: '
 
 def now():
     fmt = '%Y-%m-%d %H:%M+0000'
@@ -135,7 +135,7 @@ class MessageCatalog(odict):
         orig_comment = self.get_original_comment(msgid)
         if orig_comment is not None:
             orig = orig_comment.replace(ORIGINAL_COMMENT+'\"','')
-            return orig[:-1]
+            return unicode(orig[:-1])
         return None
 
     def add_missing(self, msgctl, defaultmsgstr='', mergewarn=None):
@@ -238,11 +238,26 @@ class POParser:
         self._in_paren = re.compile(r'"(.*)"')
         self.msgdict = odict() # see MessageCatalog for structure
 
-    def read(self, allcomments=False):
+    def read(self, allcomments=False, encoding=None):
         """Start reading from file.
 
         After the call to read() has finished, you may access the structure
         that I read in through the ``msgdict`` attribute."""
+
+        if encoding == None:
+            for line in self._file.readlines():
+                if line.startswith('\"Content-Type:'):
+                    line = line.replace('\n','')
+                    line = line.replace('\\n','')
+                    line = line.replace('\"','')
+                    line = line.split('=')
+                    encoding = line[-1]
+                    break
+
+        if encoding == None:
+            encoding = 'utf-8'
+
+        self._file.seek(0)
 
         state = {'stateid': 1,
                  'msgid': '',
@@ -254,7 +269,11 @@ class POParser:
                  'lineno': 0}
 
         for no, line in enumerate(self._file):
-            state['line'] = line
+            try:
+                state['line'] = unicode(line, encoding)
+            except UnicodeDecodeError:
+                state['line'] = unicode(line, 'latin1')
+                print 'Error: ', line, self._file
             state['lineno'] = no + 1
 
             oldstate = state['stateid']
