@@ -561,18 +561,26 @@ class PTReader:
         excerpt = self._make_excerpt(element)
         msgid = element.getAttribute('i18n:translate')
 
+        if msgid == '':
+            if element.hasAttribute('tal:content') or \
+               element.hasAttribute('tal:replace') or \
+               element.hasAttribute('content') or \
+               element.hasAttribute('replace'):
+                print >> sys.stderr, 'Assuming rendered msgid in %s, not included:\n  %s\n' % \
+                      (self._curr_fn, element.toprettyxml('  ', '\n  '))
+            else:
+                # tuttle@bbs.cvut.cz, XXX: XML quoting persists here, but
+                # even \" is untranslatable here either. Better go with
+                # non-literals in that case.
+                msgid = self._make_msgstr(element)
+
+                print >> sys.stderr, 'Warning: Literal msgids should be avoided in %s, still adding:\n  %s\n' % \
+                      (self._curr_fn, element.toprettyxml('  ', '\n  '))
+
         if msgid:
             msgstr = self._make_msgstr(element)
             self._add_msg(msgid, msgstr, filename, excerpt, domain)
 
-        else: # we can't process these, so we'll warn:
-            if element.hasAttribute('tal:content') or \
-               element.hasAttribute('tal:replace'):
-                print >> sys.stderr, 'Assuming rendered msgid in %s:\n%s\n' % \
-                      (self._curr_fn, element.toprettyxml('  '))
-            else:
-                print >> sys.stderr, 'Unneeded literal msgid in %s:\n%s\n' % \
-                      (self._curr_fn, element.toprettyxml('  '))
 
     def _do_attributes(self, element, domain):
         rendered = []
@@ -605,7 +613,7 @@ class PTReader:
 
         for attrname, msgid, msgstr in attrs:
             if attrname in rendered:
-                print >> sys.stderr, 'Assuming rendered msgid in %s:\n%s\n' % \
+                print >> sys.stderr, 'Assuming rendered msgid in %s, not included:\n%s\n' % \
                       (self._curr_fn, element.toprettyxml('  '))
                 continue
             if msgid:
@@ -637,8 +645,9 @@ class PTReader:
             chunk = child.toxml()
             # XXX Do we need to escape anything else?
             chunk = chunk.replace('"', '\\"')
-            chunk = ' '.join(chunk.split())
-            msgstr += chunk + ' '
+            chunk = ' '.join(chunk.split()) + ' '
+            if chunk != ' ':
+                msgstr += chunk
 
         return msgstr.strip()
 

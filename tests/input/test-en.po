@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: i18ndude\n"
 "POT-Creation-Date: 2005-08-01 12:00+0000\n"
 "PO-Revision-Date: 2005-08-10 21:15+0000\n"
-"Last-Translator: Unicödé Guy\n"
+"Last-Translator: UnicÃ¶dÃ© Guy\n"
 "Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Is-Fallback-For: en-au en-bz en-ca en-ie en-jm en-nz en-ph en-za en-tt en-gb en-us en-zw\n"
 
 msgid "msgid for text with german umlaut"
-msgstr "äöüß text"
+msgstr "Ã¤Ã¶Ã¼ÃŸ text"
 
 
 msgid "msgid for text with html-entity"
@@ -26,14 +26,14 @@ msgstr "&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;"
 
 
 msgid "msgid for unicode text"
-msgstr "unicode msgstr ···"
+msgstr "unicode msgstr Â·Â·Â·"
 
 
 #: ./folder/file_unicode
-#. unicode ··· excerpt
-# Original: [···]
+#. unicode Â·Â·Â· excerpt
+# Original: [Â·Â·Â·]
 msgid "msgid for unicode text with comment"
-msgstr "unicode msgstr ···"
+msgstr "unicode msgstr Â·Â·Â·"
 
 
 ## I am a dead comment

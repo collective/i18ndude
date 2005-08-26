@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
+
 import os, sys
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
@@ -117,8 +118,9 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
             self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
         for value in test.commentary_header:
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
-        for key in test:
-            self.assertEquals(test[key], self.nocomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.nocomments[key]))
+        if not test == self.nocomments:
+            for key in test:
+                self.assertEquals(test[key], self.nocomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.nocomments[key]))
 
     def test_initWithFileAllComments(self):
         test = self.mc(filename=self.file, allcomments=True)
@@ -126,8 +128,10 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
             self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
         for value in test.commentary_header:
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
-        for key in test:
-            self.assertEquals(test[key], self.allcomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.allcomments[key]))
+        if not test == self.allcomments:
+            for key in test:
+                self.assertEquals(test[key], self.allcomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.allcomments[key]))
+
 
 class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
 
@@ -176,7 +180,7 @@ class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
         filename = self.filename
         excerpt = self.excerpt
         excerpt2 = self.excerpt2
-        
+
         self.mc.add(msgid, msgstr=msgstr, filename=filename, excerpt=excerpt)
         self.mc.add(msgid, msgstr=msgstr, filename=filename, excerpt=excerpt)
         self.failUnless(len(self.mc)==1, 'duplicate msgid')
@@ -192,6 +196,7 @@ class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
         self.assertEquals(self.mc.get_comment(self.msgid), self.comment, 'wrong comment')
         self.assertEquals(self.mc.get_original_comment(self.msgid), self.orig_comment, 'wrong original comment line')
         self.assertEquals(self.mc.get_original(self.msgid), self.orig_text, 'wrong original comment text')
+
 
 class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
 
@@ -227,23 +232,56 @@ class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
         if os.path.exists(self.output):
             os.remove(self.output)
 
+
 class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
 
     def afterSetUp(self):
         mc = catalog.MessageCatalog
-        self.input1 = [os.path.join(PACKAGE_HOME, 'input', 'test1.pt')]
-        self.output1 =  {u'Dig this': (u'Dig this', [('D:\\zope28\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>'])], []),
-                         u'text_buzz': (u'Buzz', [('D:\\zope28\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>'])], []),
-                         u'some_alt': (u'Some alt', [('D:\\zope28\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], []),
-                         u'title_some_alt': (u'Some title', [('D:\\zope28\\Data\\Products\\i18ndude\\tests\\utils\\..\\input\\test1.pt', [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], [])}
+        filepath = os.path.join(PACKAGE_HOME, 'input', 'test1.pt')
+        self.input = [filepath]
+        self.output = {u'Buzz': (u'Buzz', [(filepath, [u'<p i18n:translate="">', u' Buzz', u'</p>'])], []),
+                       u'${foo} ${bar}': (u'${foo} ${bar}', [(filepath, [u'<p i18n:translate="">', u' ${foo}', u' ${bar}', u'</p>'])], []),
+                       u'Dig this': (u'Dig this', [(filepath, [u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>'])], []),
+                       u'text_buzz': (u'Buzz', [(filepath, [u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>'])], []),
+                       u'some_alt': (u'Some alt', [(filepath, [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], []),
+                       u'title_some_alt': (u'Some title', [(filepath, [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], [])}
 
     def test_read(self):
-        ptr = catalog.PTReader(self.input1)
+        ptr = catalog.PTReader(self.input)
         ptr.read()
-
         out = ptr.catalogs['testing']
         for key in out:
-            self.assertEquals(out[key], self.output1[key], 'Failure in pt parsing. Got:%s\nExpected:%s' % (out[key], self.output1[key]))
+            self.failUnless(key in self.output,
+                            'Failure in pt parsing.\nUnexpected msgid: %s' % key)
+        for key in self.output:
+            self.assertEquals(out[key], self.output.get(key),
+                              'Failure in pt parsing.\nGot:%s\nExpected:%s' %
+                              (out[key], self.output[key]))
+        self.assertEqual(len(out), len(self.output))
+
+
+class TestMessagePYReader(ZopeTestCase.ZopeTestCase):
+
+    def afterSetUp(self):
+        mc = catalog.MessageCatalog
+        dirpath = os.path.join(PACKAGE_HOME, 'input')
+        filepath = os.path.join(dirpath, 'test2.py')
+        self.input = dirpath
+        self.output = {u'Zero': (u'Zero', [(filepath, [u'Zero'])], []),
+                       u'One': (u'One', [(filepath, [u'One'])], []),
+                       u'Two': (u'Two', [(filepath, [u'Two'])], []),
+                       u'msgid_three': (u'Three', [(filepath, [u'Three'])], []),
+                       u'msgid_four': (u'Four ${map}', [(filepath, [u'Four ${map}'])], [])}
+
+    def test_read(self):
+        pyr = catalog.PYReader(self.input, 'testing')
+        pyr.read()
+        out = pyr.catalogs['testing']
+        for key in self.output:
+            self.assertEquals(out.get(key), self.output.get(key),
+                              'Failure in py parsing.\nGot:%s\nExpected:%s' %
+                              (out.get(key), self.output.get(key)))
+        self.assertEqual(len(out), len(self.output))
 
 
 def test_suite():
@@ -254,6 +292,7 @@ def test_suite():
     suite.addTest(makeSuite(TestMessageCatalog))
     suite.addTest(makeSuite(TestMessagePoWriter))
     suite.addTest(makeSuite(TestMessagePTReader))
+    suite.addTest(makeSuite(TestMessagePYReader))
     return suite
 
 if __name__ == '__main__':
