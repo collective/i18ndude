@@ -17,6 +17,12 @@
 
 <p i18n:translate="">Buzz</p>
 
+<p i18n:translate="">
+    <div i18n:name="foo"></div>
+
+    <div i18n:name="bar"></div>
+</p>
+
 <p i18n:translate="text_buzz">Buzz</p>
 
 <p metal:use-macro="somemacro">Dummy</p>

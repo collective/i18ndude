@@ -239,7 +239,9 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
         mc = catalog.MessageCatalog
         filepath = os.path.join(PACKAGE_HOME, 'input', 'test1.pt')
         self.input = [filepath]
-        self.output = {u'Dig this': (u'Dig this', [(filepath, [u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>'])], []),
+        self.output = {u'Buzz': (u'Buzz', [(filepath, [u'<p i18n:translate="">', u' Buzz', u'</p>'])], []),
+                       u'${foo} ${bar}': (u'${foo} ${bar}', [(filepath, [u'<p i18n:translate="">', u' ${foo}', u' ${bar}', u'</p>'])], []),
+                       u'Dig this': (u'Dig this', [(filepath, [u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>'])], []),
                        u'text_buzz': (u'Buzz', [(filepath, [u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>'])], []),
                        u'some_alt': (u'Some alt', [(filepath, [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], []),
                        u'title_some_alt': (u'Some title', [(filepath, [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], [])}
@@ -248,6 +250,9 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
         ptr = catalog.PTReader(self.input)
         ptr.read()
         out = ptr.catalogs['testing']
+        for key in out:
+            self.failUnless(key in self.output,
+                            'Failure in pt parsing.\nUnexpected msgid: %s' % key)
         for key in self.output:
             self.assertEquals(out[key], self.output.get(key),
                               'Failure in pt parsing.\nGot:%s\nExpected:%s' %

@@ -542,23 +542,24 @@ class PTReader:
         excerpt = self._make_excerpt(element)
         msgid = element.getAttribute('i18n:translate')
 
-        if not msgid:
+        if msgid == '':
             if element.hasAttribute('tal:content') or \
-               element.hasAttribute('tal:replace'):
+               element.hasAttribute('tal:replace') or \
+               element.hasAttribute('content') or \
+               element.hasAttribute('replace'):
                 print >> sys.stderr, 'Assuming rendered msgid in %s, not included:\n  %s\n' % \
                       (self._curr_fn, element.toprettyxml('  ', '\n  '))
             else:
-
                 # tuttle@bbs.cvut.cz, XXX: XML quoting persists here, but
                 # even \" is untranslatable here either. Better go with
                 # non-literals in that case.
-                msgid = self._make_msgstr(element, shrink = False)
+                msgid = self._make_msgstr(element)
 
                 print >> sys.stderr, 'Warning: Literal msgids should be avoided in %s, still adding:\n  %s\n' % \
                       (self._curr_fn, element.toprettyxml('  ', '\n  '))
 
-        else:
-            msgstr = self._make_msgstr(element, shrink = True)
+        if msgid:
+            msgstr = self._make_msgstr(element)
             self._add_msg(msgid, msgstr, filename, excerpt, domain)
 
 
@@ -617,7 +618,7 @@ class PTReader:
                 else:
                     self._make_pretty(child)
 
-    def _make_msgstr(self, element, shrink = True):
+    def _make_msgstr(self, element):
         node = copy.deepcopy(element)
         self._make_pretty(node)
         msgstr = ''
@@ -625,10 +626,9 @@ class PTReader:
             chunk = child.toxml()
             # XXX Do we need to escape anything else?
             chunk = chunk.replace('"', '\\"')
-            if shrink:
-                chunk = ' '.join(chunk.split()) + ' '
-
-            msgstr += chunk
+            chunk = ' '.join(chunk.split()) + ' '
+            if chunk != ' ':
+                msgstr += chunk
 
         return msgstr.strip()
 
