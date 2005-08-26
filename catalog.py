@@ -537,23 +537,40 @@ class PTReader:
             if child.nodeType == ELEMENT_NODE:
                 self._do_element(child, domain)
 
+    def _element_content(self, element):
+        """ Distill the textual content recursively.
+            Added since I do not know how to use the lib for this. (Tuttle)
+        """
+
+        out = ""
+        for child in element.childNodes:
+            if child.nodeType == ELEMENT_NODE:
+                out += self._element_content(child)
+            elif child.nodeType == xml.dom.minidom.Node.TEXT_NODE:
+                out += child.data
+
+        return out
+
     def _do_translate(self, element, domain):
         filename = self._curr_fn
         excerpt = self._make_excerpt(element)
         msgid = element.getAttribute('i18n:translate')
 
+        if not msgid:
+            if element.hasAttribute('tal:content') or \
+               element.hasAttribute('tal:replace'):
+                print >> sys.stderr, 'Assuming rendered msgid in %s, not included:\n%s\n' % \
+                      (self._curr_fn, element.toprettyxml('  '))
+            else:
+                msgid = self._element_content(element)
+
+                print >> sys.stderr, 'Warning: Literal msgids should be avoided in %s, still adding:\n%s\n' % \
+                      (self._curr_fn, element.toprettyxml('  '))
+
         if msgid:
             msgstr = self._make_msgstr(element)
             self._add_msg(msgid, msgstr, filename, excerpt, domain)
 
-        else: # we can't process these, so we'll warn:
-            if element.hasAttribute('tal:content') or \
-               element.hasAttribute('tal:replace'):
-                print >> sys.stderr, 'Assuming rendered msgid in %s:\n%s\n' % \
-                      (self._curr_fn, element.toprettyxml('  '))
-            else:
-                print >> sys.stderr, 'Unneeded literal msgid in %s:\n%s\n' % \
-                      (self._curr_fn, element.toprettyxml('  '))
 
     def _do_attributes(self, element, domain):
         rendered = []
