@@ -550,14 +550,14 @@ class PTReader:
             else:
 
                 # tuttle@bbs.cvut.cz, XXX: XML quoting persists here, but
-                # even \" is untraslatable here either. Better go with
+                # even \" is untranslatable here either. Better go with
                 # non-literals in that case.
                 msgid = self._make_msgstr(element, shrink = False)
 
                 print >> sys.stderr, 'Warning: Literal msgids should be avoided in %s, still adding:\n  %s\n' % \
                       (self._curr_fn, element.toprettyxml('  ', '\n  '))
 
-        if msgid:
+        else:
             msgstr = self._make_msgstr(element, shrink = True)
             self._add_msg(msgid, msgstr, filename, excerpt, domain)
 
