@@ -537,20 +537,6 @@ class PTReader:
             if child.nodeType == ELEMENT_NODE:
                 self._do_element(child, domain)
 
-    def _element_content(self, element):
-        """ Distill the textual content recursively.
-            Added since I do not know how to use the lib for this. (Tuttle)
-        """
-
-        out = ""
-        for child in element.childNodes:
-            if child.nodeType == ELEMENT_NODE:
-                out += self._element_content(child)
-            elif child.nodeType == xml.dom.minidom.Node.TEXT_NODE:
-                out += child.data
-
-        return out
-
     def _do_translate(self, element, domain):
         filename = self._curr_fn
         excerpt = self._make_excerpt(element)
@@ -559,16 +545,20 @@ class PTReader:
         if not msgid:
             if element.hasAttribute('tal:content') or \
                element.hasAttribute('tal:replace'):
-                print >> sys.stderr, 'Assuming rendered msgid in %s, not included:\n%s\n' % \
-                      (self._curr_fn, element.toprettyxml('  '))
+                print >> sys.stderr, 'Assuming rendered msgid in %s, not included:\n  %s\n' % \
+                      (self._curr_fn, element.toprettyxml('  ', '\n  '))
             else:
-                msgid = self._element_content(element)
 
-                print >> sys.stderr, 'Warning: Literal msgids should be avoided in %s, still adding:\n%s\n' % \
-                      (self._curr_fn, element.toprettyxml('  '))
+                # tuttle@bbs.cvut.cz, XXX: XML quoting persists here, but
+                # even \" is untraslatable here either. Better go with
+                # non-literals in that case.
+                msgid = self._make_msgstr(element, shrink = False)
+
+                print >> sys.stderr, 'Warning: Literal msgids should be avoided in %s, still adding:\n  %s\n' % \
+                      (self._curr_fn, element.toprettyxml('  ', '\n  '))
 
         if msgid:
-            msgstr = self._make_msgstr(element)
+            msgstr = self._make_msgstr(element, shrink = True)
             self._add_msg(msgid, msgstr, filename, excerpt, domain)
 
 
@@ -603,7 +593,7 @@ class PTReader:
 
         for attrname, msgid, msgstr in attrs:
             if attrname in rendered:
-                print >> sys.stderr, 'Assuming rendered msgid in %s:\n%s\n' % \
+                print >> sys.stderr, 'Assuming rendered msgid in %s, not included:\n%s\n' % \
                       (self._curr_fn, element.toprettyxml('  '))
                 continue
             if msgid:
@@ -627,7 +617,7 @@ class PTReader:
                 else:
                     self._make_pretty(child)
 
-    def _make_msgstr(self, element):
+    def _make_msgstr(self, element, shrink = True):
         node = copy.deepcopy(element)
         self._make_pretty(node)
         msgstr = ''
@@ -635,8 +625,10 @@ class PTReader:
             chunk = child.toxml()
             # XXX Do we need to escape anything else?
             chunk = chunk.replace('"', '\\"')
-            chunk = ' '.join(chunk.split())
-            msgstr += chunk + ' '
+            if shrink:
+                chunk = ' '.join(chunk.split()) + ' '
+
+            msgstr += chunk
 
         return msgstr.strip()
 
