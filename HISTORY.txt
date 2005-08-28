@@ -1,0 +1,115 @@
+Changelog for i18ndude
+
+    (name of developer listed in brackets)
+
+i18ndude 0.7 - unreleased
+
+    - Added a new MessageEntry class to base the MessageCatalog on, added new
+      default_comment constant, reformated the Changelog as HISTORY.txt
+      [hannosch]
+
+    - Fixed path handling in tests and wrote tests for PYParser
+      [deo]
+
+    - Adjusted tests to pass on new behaviour of 'unneeded literal msgids'
+      now getting added and warning shown
+      [hannosch]
+
+    - Instead of only showing a warning about 'unneeded literal msgids'
+      these get added now
+      [tuttle]
+
+    - move the utils.py from PloneTranslations here, Removed ## X more comments
+      [hannosch]
+
+    - Preserve special ## comments, added tests for special comments,
+      started PageTemplate parsing tests
+      [hannosch]
+
+    - added test for po file writing and allowed filenames without excerpt
+      (lines starting with #: without corresponding #. lines)
+      [hannosch]
+
+    - added test infrastructure and tests for po file parsing
+      [hannosch]
+
+i18ndude 0.6 - released July 4, 2005
+
+    - tagged and released 0.6
+      [batlogg]
+
+    - pystring: add 'addPortalMessage' to the list of python functions whose
+      argument should be translated. This allows to catch the new-style portal-
+      messages in Plone 2.1 to be automagically extracted
+      [hannosch]
+
+i18ndude 0.5 - released June 14, 2005
+
+    - tagged and released 0.5
+      [batlogg]
+
+    - as html-entities in msgstr's are bad, don't provide them in the original
+      comments. this has confused translators.
+      [hannosch]
+
+    - untranslated.py: Added a new handler available through a command line
+      switch, generally ignore text in script and style tags
+      [hannosch]
+
+    - Fixed whitespace error in generation of #, fuzzy comments
+      [hannosch]
+
+    - i18ndude now takes a second pot to merge in the merge and rebuild-pot
+      commands, this is useful if you have both a manual.pot and a generated.pot
+      [hannosch]
+
+    - catalog.py (MessageCatalog) added a new method addToSameFileName() which
+      adds in a msgid but adds the excerpt to an existing filename occurrence
+      This is used in i18ngenerator.py of PloneTranslations to add in actions
+      like "Edit" as msgids and adds all types these are definied to the same
+      occurrence rather than generating a new one for each type
+      [hannosch]
+
+    - catalog.py (POWriter.write) takes a new argument noMoreComments that
+      supresses the "## xx More..." comments
+      [hannosch]
+
+    - Also fill in the Original comments when parsing i18n:attributes
+      This allows for efficient handling of named i18n:attributes
+      [hannosch]
+
+    - Refactored the English Translation stuff and renamed it to Original
+      [hannosch]
+
+    - When syncing po-files the old and new original comments are compared and
+      the msgid is set to fuzzy if these aren't the same, meaning the msgid has
+      changed and needs some verification
+      [hannosch]
+
+    - Added optional allcomments argument and get_original() method
+      These are used in the latest PloneTranslations tests to compare
+      the original value of a msgid with the msgstr
+      [hannosch]
+
+    - Set chart width to 1000px. Plone has too many translations ;)
+      [hannosch]
+
+    - Included a new option to scan python scripts for messages.
+      Currently it looks for the _(), translate() and uranslate()
+      functions. It is based on pygettext.py from Python and some
+      ideas taken from Zope's extract.py.
+      [hannosch]
+
+    - catalog.py (POWriter._print_entry): Added a second # to "English
+      translation" lines so that those lines don't get written out twice.
+      Which happens because we try to preserve comments.
+      [dn]
+
+i18ndude 0.4 - released May 08, 2005
+
+    - moved from cvs.sf.net to svn.plone.org. history was NOT migrated
+      check http://cvs.sf.net/viewcvs.py/plone-i18n/i18ndude for older 
+      revisions
+      [batlogg]
+
+    - Older entries can be found in the ChangeLog.

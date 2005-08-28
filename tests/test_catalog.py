@@ -26,6 +26,55 @@ class TestGlobal(ZopeTestCase.ZopeTestCase):
 
     def test_originalComment(self):
         self.assertEquals(catalog.ORIGINAL_COMMENT, 'Original: ', 'Wrong original comment constant')
+        
+    def test_defaultComment(self):
+        self.assertEquals(catalog.DEFAULT_COMMENT, 'Default: ', 'Wrong default comment constant')
+
+
+class TestMessageEntry(ZopeTestCase.ZopeTestCase):
+
+    def afterSetUp(self):
+        self.me = catalog.MessageEntry
+        self.msgid = 'test msgid'
+        self.msgstr = 'test text'
+        self.references = ['test1.pt', 'test2.pt']
+        self.default_text = 'test default'
+        self.default_comment = '%s"%s"' % (catalog.DEFAULT_COMMENT, self.default_text)
+        self.automatic_comments = ['first line', 'second line', self.default_comment]
+        self.orig_text = 'test original'
+        self.orig_comment = '%s"%s"' % (catalog.ORIGINAL_COMMENT, self.orig_text)
+        self.comments = ['A comment', self.orig_comment]
+
+    def test_init(self):
+        me = self.me
+        me1 = me(self.msgid)
+        self.assertEquals(me1.msgid, self.msgid, 'msgid not set correctly')
+        me1 = me(self.msgid, msgstr=self.msgstr)
+        self.assertEquals(me1.msgid, self.msgid, 'msgid not set correctly')
+        self.assertEquals(me1.msgstr, self.msgstr, 'msgstr not set correctly')
+
+        me1 = me(self.msgid, msgstr=self.msgstr, references=self.references)
+        self.assertEquals(me1.msgid, self.msgid, 'msgid not set correctly')
+        self.assertEquals(me1.msgstr, self.msgstr, 'msgstr not set correctly')
+        self.assertEquals(me1.references, self.references, 'references not set correctly')
+
+        me1 = me(self.msgid, msgstr=self.msgstr, comments=self.comments)
+        self.assertEquals(me1.msgid, self.msgid, 'msgid not set correctly')
+        self.assertEquals(me1.msgstr, self.msgstr, 'msgstr not set correctly')
+        self.assertEquals(me1.comments, self.comments, 'comments not set correctly')
+        self.assertEquals(me1.getOriginalComment(), self.orig_comment, \
+                          'Original comment not set correctly')
+        self.assertEquals(me1.getOriginal(), self.orig_text, \
+                          'Original text not set correctly')
+
+        me2 = me(self.msgid, msgstr=self.msgstr, automatic_comments=self.automatic_comments)
+        self.assertEquals(me2.msgid, self.msgid, 'msgid not set correctly')
+        self.assertEquals(me2.msgstr, self.msgstr, 'msgstr not set correctly')
+        self.assertEquals(me2.automatic_comments, self.automatic_comments, 'comments not set correctly')
+        self.assertEquals(me2.getDefaultComment(), self.default_comment, \
+                          'Default comment not set correctly')
+        self.assertEquals(me2.getDefault(), self.default_text, \
+                          'Default text not set correctly')
 
 
 class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
@@ -288,6 +337,7 @@ def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
     suite.addTest(makeSuite(TestGlobal))
+    suite.addTest(makeSuite(TestMessageEntry))
     suite.addTest(makeSuite(TestMessageCatalogInit))
     suite.addTest(makeSuite(TestMessageCatalog))
     suite.addTest(makeSuite(TestMessagePoWriter))

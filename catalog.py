@@ -30,6 +30,7 @@ DEFAULT_PO_MIME = (('Project-Id-Version', 'PACKAGE VERSION'),
 MAX_OCCUR = 3 # maximum number of occurrences listed
 
 ORIGINAL_COMMENT = 'Original: '
+DEFAULT_COMMENT = 'Default: '
 
 def now():
     fmt = '%Y-%m-%d %H:%M+0000'
@@ -38,6 +39,50 @@ def now():
 def is_literal_id(msgid):
     if '_' in msgid and not ' ' in msgid: return False
     else: return True
+
+class MessageEntry:
+    """ MessageEntry is class representing one msgid with its accompanying
+    msgstr and optional positional information and comments.
+    """
+    
+    def __init__(self, msgid, msgstr='', references=[], automatic_comments=[], comments=[]):
+        """ Build a MessageEntry"""
+        self.msgid = msgid
+        self.msgstr = msgstr
+        self.references = references
+        self.automatic_comments = automatic_comments
+        self.comments = comments
+
+    def getDefaultComment(self):
+        """Returns the automatic comment starting with Default: """
+        for c in self.automatic_comments:
+            if c.startswith(DEFAULT_COMMENT):
+                return c
+        return None
+
+    def getDefault(self):
+        """Returns the text of the default comment"""
+        comment = self.getDefaultComment()
+        if comment is not None:
+            default = comment.replace(DEFAULT_COMMENT+'\"','')
+            return default[:-1]
+        return None
+
+    def getOriginalComment(self):
+        """Returns the comment line starting with Original: """
+        for c in self.comments:
+            if c.startswith(ORIGINAL_COMMENT):
+                return c
+        return None
+
+    def getOriginal(self):
+        """Returns the text of the original comment"""
+        comment = self.getOriginalComment()
+        if comment is not None:
+            orig = comment.replace(ORIGINAL_COMMENT+'\"','')
+            return orig[:-1]
+        return None
+
 
 class MessageCatalog(odict):
     """MessageCatalog is a collection of msgids, their msgstrs and optional
