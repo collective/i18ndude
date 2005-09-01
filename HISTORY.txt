@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 0.7 - unreleased
 
+    - untranslated.py: fixed handling of new i18n:attributes with trailing
+      semicolon as introduced by myself ;) thx to xaNz for pointing me to it
+      [hannosch]
+
     - Added a new MessageEntry class to base the MessageCatalog on, added new
       default_comment constant, reformated the Changelog as HISTORY.txt
       [hannosch]

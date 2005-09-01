@@ -46,8 +46,7 @@ def _valid_i18ned_attr(attr, attrs):
                              attrs['i18n:attributes'].split()]
             else:                                        # new syntax
                 i18nattrs = [i18nattr.strip().split()[0] for i18nattr in \
-                             attrs['i18n:attributes'].split(';')]
-            
+                             attrs['i18n:attributes'].split(';') if i18nattr]
             if not (attr in i18nattrs):
                 return 0
             else:
