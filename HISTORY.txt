@@ -2,7 +2,7 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
-i18ndude 0.7 - unreleased
+i18ndude 1.0 - released September 2, 2005
 
     - This is the last release with old-stlye output formatting and command line
       options. The next release will be incompatible in many ways, so update
