@@ -4,6 +4,14 @@ Changelog for i18ndude
 
 i18ndude 0.7 - unreleased
 
+    - This is the last release with old-stlye output formatting and command line
+      options. The next release will be incompatible in many ways, so update
+      with care.
+      [hannosch]
+
+    - Cleaned up docs and removed some stale files
+      [hannosch]
+
     - untranslated.py: fixed handling of new i18n:attributes with trailing
       semicolon as introduced by myself ;) thx to xaNz for pointing me to it
       [hannosch]
@@ -35,6 +43,9 @@ i18ndude 0.7 - unreleased
       [hannosch]
 
     - added test infrastructure and tests for po file parsing
+      [hannosch]
+
+    - Fix an issue in merge option when trying to merge to files
       [hannosch]
 
 i18ndude 0.6 - released July 4, 2005

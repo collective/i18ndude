@@ -53,6 +53,26 @@ class MessageEntry:
         self.automatic_comments = automatic_comments
         self.comments = comments
 
+    def __repr__(self):
+        """ Textual representation of a MessageEntry"""
+        return '' + self.msgid + self.msgstr + repr(self.references) + repr(self.automatic_comments) + repr(self.comments)
+
+    def __eq__(self, other):
+        """ Compare a MessageEntry to another one"""
+        assert isinstance(other, MessageEntry)
+        if self.msgid == other.msgid and self.msgstr == other.msgstr and \
+           self.references == other.references and self.automatic_comments == \
+           other.automatic_comments and self.comments == other.comments:
+           return True
+        return False
+
+    def __ne__(self, other):
+        """ Compare a MessageEntry to another one"""
+        assert isinstance(other, MessageEntry)
+        if self.__eq__(other):
+           return False
+        return True
+
     def getDefaultComment(self):
         """Returns the automatic comment starting with Default: """
         for c in self.automatic_comments:
