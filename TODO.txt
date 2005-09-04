@@ -1,5 +1,11 @@
 ** TODO **
 
+- PyParser should deal correctly with translate() calls with options.
+
+- Tests needs to be written for more than catalog.py
+
+- Main i18ndude script needs to be refactored and fewer options.
+
 - Assume a domain called "default" if the i18n:domain attribute is not present.
 
 - PTReader should provide line and column numbers when printing messages.

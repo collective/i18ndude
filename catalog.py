@@ -55,7 +55,7 @@ class MessageEntry:
 
     def __repr__(self):
         """ Textual representation of a MessageEntry"""
-        return '' + self.msgid + self.msgstr + repr(self.references) + repr(self.automatic_comments) + repr(self.comments)
+        return ', '.join([self.msgid, self.msgstr, repr(self.references), repr(self.automatic_comments), repr(self.comments)])
 
     def __eq__(self, other):
         """ Compare a MessageEntry to another one"""
@@ -105,23 +105,17 @@ class MessageEntry:
 
 
 class MessageCatalog(odict):
-    """MessageCatalog is a collection of msgids, their msgstrs and optional
-    positional information.
+    """MessageCatalog is a collection of MessageEntries
 
     If we're reading in from a .po-file, MessageCatalog also contains an
     individual MIME-Header and a domain. While a default MIME-Header is
     available, a domain must always be supplied.
 
     MessageCatalog's dictionary maps msgids to information that is available
-    for those. The values in this dictionary are in the form
-    (msgstr, [occurrence, ...], [comment, ...]).
+    for those. The values in this dictionary are of the type MessageEntry.
+    """
 
-    An occurrence has the form (filename, context), where context is a list of
-    strings that give the translator a contextual hint on how the msgid is used
-    in the page templates. A comment is a string."""
-
-
-    def __init__(self, filename=None, domain=None, allcomments=False):
+    def __init__(self, filename=None, domain=None):
         """Build a MessageCatalog, either by reading from a .po-file or
         specifying a domain."""
 
@@ -140,68 +134,48 @@ class MessageCatalog(odict):
         self.domain = domain
 
         if filename:
-            self._initialize_with(filename, allcomments=allcomments)
+            self._initialize_with(filename)
         elif domain:
             self.mime_header['Domain'] = domain
 
-    def add(self, msgid, msgstr='', filename='', excerpt=[]):
+    def getComments(self, msgid):
+        """Returns the commentary lines that I have for a msgid."""
+        assert msgid in self
+        return self[msgid].comments
+
+    def getOriginalComment(self, msgid):
+        """Returns the original comment for a msgid."""
+        assert msgid in self
+        return self[msgid].getOriginalComment()
+
+    def getOriginal(self, msgid):
+        """Returns the original text for a msgid."""
+        assert msgid in self
+        return self[msgid].getOriginal()
+
+    def getDefaultComment(self, msgid):
+        """Returns the original comment for a msgid."""
+        assert msgid in self
+        return self[msgid].getDefaultComment()
+
+    def getDefault(self, msgid):
+        """Returns the original text for a msgid."""
+        assert msgid in self
+        return self[msgid].getDefault()
+
+    def add(self, msgid, msgstr='', references=[], automatic_comments=[]):
         """Add a entry into the catalogue.
 
         If the msgid already exists in my catalog, I will only add filename
         and excerpt to the entry."""
 
         if not self.has_key(msgid):
-            self[msgid] = (msgstr, [(filename, excerpt)], [])
+            self[msgid] = MessageEntry(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
         else:
-            if filename and excerpt:
-                occurrences = self[msgid][1]
-                occurrences.append((filename, excerpt))
-
-    def addToSameFileName(self, msgid, msgstr='', filename='', excerpt=[]):
-        """Add a entry into the catalogue to an existing filename.
-
-        I will only add excerpt to the entry.
-        """
-        assert filename
-
-        if not self.has_key(msgid):
-            self[msgid] = (msgstr, [(filename, excerpt)], [])
-        else:
-            if filename and excerpt:
-                occurrences = self[msgid][1]
-                for occur in occurrences:
-                    if filename == occur[0]:
-                        if not excerpt[0] in occur[1]:
-                            occurrences = (filename, occur[1].extend(excerpt))
-
-    def get_comment(self, msgid):
-        """Returns the commentary lines that I have for msgid."""
-
-        assert msgid in self
-        return self[msgid][2][:]
-
-    def get_original_comment(self, msgid):
-        """Returns the commentary line starting with Original: that
-        I have for msgid."""
-
-        orig_comment = None
-        assert msgid in self
-        for comment in self[msgid][2][:]:
-            if comment.startswith(ORIGINAL_COMMENT):
-                orig_comment = comment
-
-        return orig_comment
-
-    def get_original(self, msgid):
-        """Returns the original text for a msgid as found in the comment starting
-        with Original: ."""
-
-        assert msgid in self
-        orig_comment = self.get_original_comment(msgid)
-        if orig_comment is not None:
-            orig = orig_comment.replace(ORIGINAL_COMMENT+'\"','')
-            return orig[:-1]
-        return None
+            if references:
+                self[msgid].references.extend(references)
+            if automatic_comments:
+                self[msgid].automatic_comments.extend(automatic_comments)
 
     def add_missing(self, msgctl, defaultmsgstr='', mergewarn=None):
         """Each msgid that I miss and ``msgctl`` contains will be included in
@@ -220,7 +194,7 @@ class MessageCatalog(odict):
         for key in msgctl.keys():
             if not self.has_key(key):
                 entry = msgctl[key]
-                self[key] = (defaultmsgstr, entry[1][:], entry[2][:])
+                self.add(key, msgstr=defaultmsgstr, references=entry.references, automatic_comments=entry.automatic_comments)
                 ids.append(key)
             elif mergewarn:
                 print >> sys.stderr, \
@@ -235,51 +209,41 @@ class MessageCatalog(odict):
 
         for key in msgctl.keys():
             if self.has_key(key):
-                for comment in msgctl[key][2]:
-                    if comment not in self[key][2]:
-                        self[key][2].append(comment)
-
-                self[key] = (self[key][0], msgctl[key][1], self[key][2])
+                for ref in msgctl[key].references:
+                    if ref not in self[key].references:
+                        self[key].references.append(ref)
 
     def accept_ids(self, ids):
         """Remove all messages from the catalog where the id is not in argument
-        ``ids`` (a list).
-
-        Values are not touched.
-
-        Returns the ids that were deleted."""
-
+        'ids' (a list). Values are not touched. Returns the ids that were deleted.
+        """
         removed_ids = []
         for key in self.keys():
             if key not in ids:
                 del self[key]
                 removed_ids.append(key)
-
         return removed_ids
 
     def accept_fct(self, fct):
         """Remove all messages from the catalog where fct return False for
-        fct(msgid, msgstr).
-
-        Returns the ids that were deleted."""
-
+        fct(msgid, msgstr). Returns the ids that were deleted.
+        """
         removed_ids = []
         for key in self.keys():
-            if not fct(key, self[key][0]):
+            if not fct(key, self[key].msgstr):
                 del self[key]
                 removed_ids.append(key)
-
         return removed_ids
 
-    def _initialize_with(self, filename, allcomments=False):
+    def _initialize_with(self, filename):
         file = open(filename)
         parser = POParser(file)
-        parser.read(allcomments=allcomments)
+        parser.read()
         file.close()
         self.update(parser.msgdict)
         try:
-            self.commentary_header = self[''][2]
-            self._parse_mime_header(self[''][0])
+            self.commentary_header = self[''].comments
+            self._parse_mime_header(self[''].msgstr)
             del self['']
         except KeyError, e:
             print >> sys.stderr, "%s lacks MIME header." % filename
@@ -293,143 +257,94 @@ class MessageCatalog(odict):
 
 class POParser:
     """Parses an existing po- file and builds a dictionary according to
-    MessageCatalog.
-
-    POParser is the deserializer, POWriter the serializer.
+    MessageCatalog. POParser is the deserializer, POWriter the serializer.
     """
 
     def __init__(self, file):
         self._file = file
         self._in_paren = re.compile(r'"(.*)"')
         self.msgdict = odict() # see MessageCatalog for structure
+        self.line = ''
+        self.sameMessageEntry = True
+        self.msgid = ''
+        self.msgstr = ''
+        self.references = []
+        self.automatic_comments = []
+        self.comments = []
 
-    def read(self, allcomments=False):
+    def read(self):
         """Start reading from file.
 
         After the call to read() has finished, you may access the structure
         that I read in through the ``msgdict`` attribute."""
 
-        state = {'stateid': 1,
-                 'msgid': '',
-                 'msgstr': '',
-                 'occurrence': {}, # (filename, context)
-                 'comment': [], # lines
-                 'currfile': '',
-                 'line': '',
-                 'lineno': 0}
-
         for no, line in enumerate(self._file):
-            state['line'] = line
-            state['lineno'] = no + 1
+            self.line = line
 
-            oldstate = state['stateid']
-            fun = self._get_statefun(oldstate)
-            fun(state, allcomments=allcomments)
-            newstate = state['stateid']
-            if oldstate != newstate:
+            oldstatus = self.sameMessageEntry
+            if oldstatus:
+                self._readSameMessage()
+            else:
+                self._readNewMessage()
+            
+            newstatus = self.sameMessageEntry
+            if oldstatus != newstatus:
                 # function changed stateid: call new function with same line
-                fun = self._get_statefun(newstate)
-                fun(state, allcomments=allcomments)
+                if newstatus:
+                    self._readSameMessage()
+                else:
+                    self._readNewMessage()
 
         # last msg
-        if not self.msgdict.has_key(state['msgid']):
-            state['line'] = '#:' # _is_new_msg returns True for this
-            self._do_state2(state)
+        if not self.msgdict.has_key(self.msgid):
+            self.line = '#:'
+            self._readNewMessage()
 
-    def _is_new_msg(self, line):
-        sw = line.startswith
-        if sw('#') or sw('msgid'): # a comment starts a new msg
-            return True
-        else:
-            return False
-
-    def _get_statefun(self, id):
-        fun = getattr(self, '_do_state%s' % id, None)
-        assert fun
-        return fun
-
-    def _do_state1(self, state, allcomments=False):
-        """We're reading special comments (#: and #.) and msgid."""
-
-        line = state['line']
+    def _readSameMessage(self):
+        """We're reading a comment or msgid."""
+        line = self.line
         if line.startswith('msgstr'):
-            state['stateid'] = 2 # change state
-
-        elif line.startswith('#:'): # context: filename
-            line = line.strip()
-            currfile = line.split()[-1]
-            state['currfile'] = currfile
-            if currfile in state['occurrence']: return
-            state['occurrence'][currfile] = []
-
-        elif line.startswith('#.'): # context: excerpt
-            occurrence, currfile = state['occurrence'], state['currfile']
-            if not occurrence.has_key(currfile) or not currfile:
-                pass
-##                 print >> sys.stderr, \
-##                       "Skipping contextual information at L%s in %s." % \
-##                       (state['lineno'], self._file.name)
-
-            else:
-                if len(line) > 2 and line[2] == ' ': col = 3
-                else: col = 2
-                occurrence[currfile].append(line[col:].rstrip())
-
+            self.sameMessageEntry = False
+        elif line.startswith('#:'):
+            self.references.append(line[2:].strip())
+        elif line.startswith('#.'):
+            self.automatic_comments.append(line[2:].strip())
         elif line.startswith('#'):
-            # this one isnt the solution, but better than having generated
-            # lines "## 2 more: file1, file2, file3" generated several times.
-            # Ignore those lines!
-            if not line.startswith('##') or allcomments:
-                state['comment'].append(line[1:].strip())
-
+            self.comments.append(line[1:].strip())
         else:
             search = self._in_paren.search(line)
             if search:
-                state['msgid'] += search.groups()[0]
-            else:
-                pass
-##                 print >> sys.stderr, \
-##                       "Expected quotation marks at L%s in %s." % \
-##                       (state['lineno'], self._file.name)
+                self.msgid += search.groups()[0]
 
-    def _do_state2(self, state, allcomments=False):
+    def _readNewMessage(self):
         """We're reading msgstr."""
-
-        line = state['line']
-        if self._is_new_msg(line): # one element was collected
-            state['stateid'] = 1 # change state
-            occurrences = [(fn, ctxt) for (fn, ctxt) in state['occurrence'].items()]
-            entry = (state['msgstr'], occurrences, state['comment'])
-            self.msgdict[state['msgid']] = entry
-
-            # reset state variables
-            state['msgid'] = state['msgstr'] = state['currfile'] = ''
-            state['occurrence'].clear()
-            state['comment'] = []
-
-        elif line.startswith('#'):
-            state['comment'].append(line[1:].strip())
-
+        sw = self.line.startswith
+        if sw('#') or sw('msgid'):
+            self.sameMessageEntry = True
+            self.msgdict[self.msgid] = MessageEntry(self.msgid,\
+                                               msgstr=self.msgstr,\
+                                               references=self.references,\
+                                               automatic_comments=self.automatic_comments,\
+                                               comments=self.comments)
+            # reset variables
+            self.msgid = self.msgstr = ''
+            self.references = []
+            self.automatic_comments = []
+            self.comments = []
         else:
-            search = self._in_paren.search(line)
+            search = self._in_paren.search(self.line)
             if search:
-                state['msgstr'] += search.groups()[0]
-
+                self.msgstr += search.groups()[0]
 
 class POWriter:
 
     def __init__(self, file, catalog):
-        """Initialize a POWriter.
-
-        ``file`` is the filelike object that I am to write to.
-        """
-
+        """Initialize a POWriter with a filelike object that I am to write to."""
         self._file = file
         self._msgctl = catalog
 
     def _encode(self, line, input_encoding=None, output_encoding=None):
-        # encode a give unicode type or string type to string type in encoding output_encoding
-
+        """encode a given unicode type or string type to string type in encoding output_encoding"""
         content_type = self._msgctl.mime_header.get('Content-Type', 'text/plain; charset=utf-8')
         charset = content_type.split('=')
         encoding = charset[-1]
@@ -439,7 +354,6 @@ class POWriter:
             if input_encoding is None:
                 # get input encoding from message catalog
                 input_encoding = encoding
-
             line = unicode(line, input_encoding)
         
         if output_encoding is None:
@@ -447,7 +361,6 @@ class POWriter:
             output_encoding = encoding
         
         return line.encode(output_encoding)
-
 
     def _printToFile(self, file, string):
         """ Print wrapper which allows to specifiy an output encoding"""
@@ -458,13 +371,11 @@ class POWriter:
 
     def write(self, sort=True, msgstrToComment=False, sync=False):
         """Start writing to file."""
-
         self._write_header()
         self._write_messages(sort=sort, msgstrToComment=msgstrToComment, sync=sync)
 
     def _write_header(self):
         """Writes out commentary and mime headers."""
-
         ctl = self._msgctl
         f = self._file
 
@@ -485,7 +396,6 @@ class POWriter:
 
     def _write_messages(self, sort, msgstrToComment, sync):
         """Writes the messages out."""
-
         f = self._file
         ids = self._msgctl.keys()
         ids.sort()
@@ -495,29 +405,14 @@ class POWriter:
             self._print_entry(f, id, entry, msgstrToComment=msgstrToComment, sync=sync)
 
     def _print_entry(self, f, id, entry, msgstrToComment, sync):
-
+        """Writes a MessageEntry to file."""
         self._printToFile(f,False)
 
-        msgstr = entry[0]
-        occurrences = entry[1]
-        comments = entry[2]
+        msgstr = entry.msgstr
+        comments = entry.comments
 
-        no = 0
-        known_ctxts = {}
-
-        for filename, context in occurrences:
-            known_key = ''.join([line.strip() for line in context])
-            if known_key in known_ctxts:  # skip those with the same excerpt
-                continue
-
-            self._printToFile(f, '#: %s' % filename)
-            for line in context:
-                self._printToFile(f, '#. %s' % line.rstrip())
-
-            known_ctxts[known_key] = True
-
-            no += 1
-            if no >= MAX_OCCUR: break
+        msg_changed = False
+        fuzzy = False
 
         # used in pot methods
         if msgstrToComment and msgstr:
@@ -529,7 +424,14 @@ class POWriter:
             self._printToFile(f, '# %s"%s"' % (ORIGINAL_COMMENT, msgstr))
             msgstr = ''
 
-        msg_changed = False
+        for comment in comments:
+            if not comment.startswith(', fuzzy') and not comment.startswith(' , fuzzy'):
+                if comment.startswith('#'):
+                    self._printToFile(f, '#%s' % comment)
+                else:
+                    self._printToFile(f, '# %s' % comment)
+            else:
+                fuzzy = True
 
         # used in sync to filter duplicate Original comments
         if sync:
@@ -539,21 +441,20 @@ class POWriter:
                 # the first element is the old comment, the second the new one
                 comments.remove(original_comments[0])
 
-        for comment in comments:
-            if not comment.startswith(', fuzzy') and not comment.startswith(' , fuzzy'):
-                if comment.startswith('#'):
-                    self._printToFile(f, '#%s' % comment)
-                else:
-                    self._printToFile(f, '# %s' % comment)
+        for ac in entry.automatic_comments:
+            self._printToFile(f, '#. %s' % ac)
 
-        fuzzy = len([c for c in comments if c.startswith(', fuzzy') or c.startswith(' , fuzzy')])
-        if msg_changed or fuzzy>0:
+        no = 0
+        for ref in entry.references:
+            self._printToFile(f, '#: %s' % ref)
+            no += 1
+            if no >= MAX_OCCUR: break
+
+        if msg_changed or fuzzy:
             self._printToFile(f, '#, fuzzy')
 
         self._printToFile(f, 'msgid "%s"' % id)
         self._printToFile(f, 'msgstr "%s"' % msgstr)
-
-        self._printToFile(f, False)
 
 
 class PTReader:
@@ -565,8 +466,7 @@ class PTReader:
         self._curr_doc = None
 
     def read(self):
-        """Reads in from all given ZPTs and builds up MessageCatalogs
-        accordingly.
+        """Reads in from all given ZPTs and builds up MessageCatalogs accordingly.
 
         The MessageCatalogs can after this call be accessed through attribute
         ``catalogs``, which indexes the MessageCatalogs by their domain.
@@ -575,7 +475,6 @@ class PTReader:
         is the name of the file that could not be read and errormsg a human
         readable error message.
         """
-
         troubles = []
         for fn in self._filenames:
             try:
@@ -626,7 +525,6 @@ class PTReader:
         if msgid:
             msgstr = self._make_msgstr(element)
             self._add_msg(msgid, msgstr, filename, excerpt, domain)
-
 
     def _do_attributes(self, element, domain):
         rendered = []
@@ -706,8 +604,7 @@ class PTReader:
         if not self.catalogs.has_key(domain):
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        self.catalogs[domain].add(msgid, msgstr=msgstr,
-                                  filename=filename, excerpt=excerpt)
+        self.catalogs[domain].add(msgid, msgstr=msgstr, references=[filename], automatic_comments=excerpt)
 
 class PYReader:
     """Reads in a list of python scripts"""
@@ -736,19 +633,18 @@ class PYReader:
         py = py_strings(self.path, self.domain)
 
         for msgid in py:
-            self._add_msg(msgid, '', py[msgid][0][0], [], self.domain)
+            self._add_msg(msgid, '', [py[msgid][0][0]], [], self.domain)
 
         return []
 
-    def _add_msg(self, msgid, msgstr, filename, excerpt, domain):
+    def _add_msg(self, msgid, msgstr, references, automatic_comments, domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
-                  (msgid, filename)
+                  (msgid, references)
             return
 
         if not self.catalogs.has_key(domain):
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        self.catalogs[domain].add(msgid, msgstr=msgstr,
-                                  filename=filename, excerpt=excerpt)
+        self.catalogs[domain].add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
 

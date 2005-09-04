@@ -81,6 +81,7 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
 
     def afterSetUp(self):
         self.mc = catalog.MessageCatalog
+        self.me = catalog.MessageEntry
         self.file = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.emptyfile = os.path.join(PACKAGE_HOME, 'input', 'empty-en.po')
 
@@ -93,39 +94,22 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                            'POT-Creation-Date': '2005-08-01 12:00+0000', 'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
                           }
 
-        self.nocomments = {'msgid1' : ('msgstr1', [('file2', ['excerpt2', 'excerpt3']), ('file1', ['excerpt1'])], ['comment1', 'Original: "msgstr1"']),
-                           'msgid2' : ('msgstr2', [('file2', ['excerpt2'])], []),
-                           'msgid3' : ('msgstr3', [('file3', [])], ['comment3']),
-                           'msgid4' : ('msgstr4', [('file4', [])], []),
-                           'msgid5' : ('msgstr5', [], ['comment5']),
-                           'msgid6' : ('msgstr6', [], []),
-                           'msgid7' : ('msgstr7', [], [', fuzzy']),
-                           'msgid8' : ('', [], [', fuzzy']),
-                           'msgid has spaces' : ('msgstr has spaces', [], []),
-                           'msgid_has_underlines' : ('msgstr_has_underlines', [], []),
-                           'msgid_has_underlines and spaces' : ('msgstr_has_underlines and spaces', [], []),
-                           'msgid for unicode text' : ('unicode msgstr ···', [], []),
-                           'msgid for unicode text with comment' : ('unicode msgstr ···', [('./folder/file_unicode', ['unicode ··· excerpt'])], ['Original: [···]']),
-                           'msgid for text with german umlaut' : ('äöüß text', [], []),
-                           'msgid for text with html-entity' : ('&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;', [], [])
-                          }
-
-        self.allcomments = {'msgid1' : ('msgstr1', [('file2', ['excerpt2', 'excerpt3']), ('file1', ['excerpt1'])], ['comment1', 'Original: "msgstr1"', '# 1 more: file_more']),
-                            'msgid2' : ('msgstr2', [('file2', ['excerpt2'])], []),
-                            'msgid3' : ('msgstr3', [('file3', [])], ['comment3']),
-                            'msgid4' : ('msgstr4', [('file4', [])], []),
-                            'msgid5' : ('msgstr5', [], ['comment5']),
-                            'msgid6' : ('msgstr6', [], []),
-                            'msgid7' : ('msgstr7', [], [', fuzzy']),
-                            'msgid8' : ('', [], [', fuzzy']),
-                            'msgid has spaces' : ('msgstr has spaces', [], ['# I am a dead comment']),
-                            'msgid_has_underlines' : ('msgstr_has_underlines', [], []),
-                            'msgid_has_underlines and spaces' : ('msgstr_has_underlines and spaces', [], []),
-                            'msgid for unicode text' : ('unicode msgstr ···', [], []),
-                            'msgid for unicode text with comment' : ('unicode msgstr ···', [('./folder/file_unicode', ['unicode ··· excerpt'])], ['Original: [···]']),
-                            'msgid for text with german umlaut' : ('äöüß text', [], []),
-                            'msgid for text with html-entity' : ('&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;', [], [])
-                           }
+        self.msgids = {'msgid1' : self.me('msgid1', msgstr='msgstr1', references=['file1','file2'], automatic_comments=['excerpt1','excerpt2','excerpt3'], comments=['comment1', 'Original: "msgstr1"']),
+                       'msgid2' : self.me('msgid2', msgstr='msgstr2', references=['file2'], automatic_comments=['excerpt2']),
+                       'msgid3' : self.me('msgid3', msgstr='msgstr3', references=['file3'], comments=['comment3']),
+                       'msgid4' : self.me('msgid4', msgstr='msgstr4', references=['file4']),
+                       'msgid5' : self.me('msgid5', msgstr='msgstr5', comments=['comment5']),
+                       'msgid6' : self.me('msgid6', msgstr='msgstr6'),
+                       'msgid7' : self.me('msgid7', msgstr='msgstr7', comments=[', fuzzy']),
+                       'msgid8' : self.me('msgid8', comments=[', fuzzy']),
+                       'msgid has spaces' : self.me('msgid has spaces', msgstr='msgstr has spaces', comments=['# I am a dead comment']),
+                       'msgid_has_underlines' : self.me('msgid_has_underlines', msgstr='msgstr_has_underlines'),
+                       'msgid_has_underlines and spaces' : self.me('msgid_has_underlines and spaces', msgstr='msgstr_has_underlines and spaces'),
+                       'msgid for unicode text' : self.me('msgid for unicode text', msgstr='unicode msgstr ···'),
+                       'msgid for unicode text with comment' : self.me('msgid for unicode text with comment', msgstr='unicode msgstr ···', references=['./folder/file_unicode'], automatic_comments=['unicode ··· excerpt'], comments=['Original: [···]']),
+                       'msgid for text with german umlaut' : self.me('msgid for text with german umlaut', msgstr='äöüß text'),
+                       'msgid for text with html-entity' : self.me('msgid for text with html-entity', msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;')
+                      }
 
     def test_init(self):
         failing = False
@@ -167,20 +151,9 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
             self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
         for value in test.commentary_header:
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
-        if not test == self.nocomments:
+        if not test == self.msgids:
             for key in test:
-                self.assertEquals(test[key], self.nocomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.nocomments[key]))
-
-    def test_initWithFileAllComments(self):
-        test = self.mc(filename=self.file, allcomments=True)
-        for key in test.mime_header:
-            self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
-        for value in test.commentary_header:
-            self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
-        if not test == self.allcomments:
-            for key in test:
-                self.assertEquals(test[key], self.allcomments[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.allcomments[key]))
-
+                self.failUnless(test[key] == self.msgids[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.msgids[key]))
 
 class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
 
@@ -189,18 +162,19 @@ class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
         self.mc = catalog.MessageCatalog(domain=self.domain)
         self.msgid = 'test msgid'
         self.msgstr = 'test text'
-        self.filename = 'test.pt'
-        self.excerpt = ['first line', 'second line']
-        self.excerpt2 = ['first line2', 'second line2']
+        self.references = ['test1.pt', 'test2.pt']
+        self.default_text = 'test default'
+        self.default_comment = '%s"%s"' % (catalog.DEFAULT_COMMENT, self.default_text)
+        self.automatic_comments = ['first line', 'second line', self.default_comment]
         self.orig_text = 'test original'
         self.orig_comment = '%s"%s"' % (catalog.ORIGINAL_COMMENT, self.orig_text)
-        self.comment = ['A comment', self.orig_comment]
+        self.comments = ['A comment', self.orig_comment]
 
     def test_add(self):
         msgid = self.msgid
         msgstr = self.msgstr
-        filename = self.filename
-        excerpt = self.excerpt
+        references = self.references
+        automatic_comments = self.automatic_comments
 
         # add with msgid
         self.mc.add(msgid)
@@ -209,42 +183,39 @@ class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
         self.failIf(msgid in self.mc, 'msgid found in catalog')
         # add with msgid and msgstr
         self.mc.add(msgid, msgstr=msgstr)
-        self.assertEquals(self.mc[msgid][0], msgstr, 'msgstr not found in catalog.')
+        self.assertEquals(self.mc[msgid].msgstr, msgstr, 'msgstr not found in catalog.')
         del self.mc[msgid]
         self.failIf(msgid in self.mc, 'msgid found in catalog')
         # add with msgid, msgstr and filename
-        self.mc.add(msgid, msgstr=msgstr, filename=filename)
-        self.assertEquals(self.mc[msgid][1][0][0], filename, 'filename not found in catalog.')
+        self.mc.add(msgid, msgstr=msgstr, references=references)
+        self.assertEquals(self.mc[msgid].references, references, 'references not found in catalog.')
         del self.mc[msgid]
         self.failIf(msgid in self.mc, 'msgid found in catalog')
         # add with msgid, msgstr, filename and excerpt
-        self.mc.add(msgid, msgstr=msgstr, filename=filename, excerpt=excerpt)
-        self.assertEquals(self.mc[msgid][1][0][1], excerpt, 'excerpt not found in catalog.')
+        self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
+        self.assertEquals(self.mc[msgid].automatic_comments, automatic_comments, 'automatic_comments not found in catalog.')
         del self.mc[msgid]
         self.failIf(msgid in self.mc, 'msgid found in catalog')
 
     def test_multipleAdd(self):
         msgid = self.msgid
         msgstr = self.msgstr
-        filename = self.filename
-        excerpt = self.excerpt
-        excerpt2 = self.excerpt2
+        references = self.references
+        automatic_comments = self.automatic_comments
 
-        self.mc.add(msgid, msgstr=msgstr, filename=filename, excerpt=excerpt)
-        self.mc.add(msgid, msgstr=msgstr, filename=filename, excerpt=excerpt)
+        self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
+        self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
         self.failUnless(len(self.mc)==1, 'duplicate msgid')
-        self.failUnless(len(self.mc[msgid][1])==2, 'second occurrence missing')
-        self.mc.addToSameFileName(msgid, msgstr=msgstr, filename=filename, excerpt=excerpt)
-        self.failUnless(len(self.mc[msgid][1][1][1])==2, 'duplicate occurrence')
-        self.mc.addToSameFileName(msgid, msgstr=msgstr, filename=filename, excerpt=excerpt2)
-        self.failUnless(len(self.mc[msgid][1][1][1])==4, 'new occurrence missing')
+        self.failUnless(len(self.mc[msgid].references)==4, 'references missing')
 
     def test_originalComment(self):
-        self.mc.add(self.msgid, msgstr=self.msgstr, filename=self.filename, excerpt=self.excerpt)
-        self.mc[self.msgid][2].extend(self.comment)
-        self.assertEquals(self.mc.get_comment(self.msgid), self.comment, 'wrong comment')
-        self.assertEquals(self.mc.get_original_comment(self.msgid), self.orig_comment, 'wrong original comment line')
-        self.assertEquals(self.mc.get_original(self.msgid), self.orig_text, 'wrong original comment text')
+        self.mc.add(self.msgid, msgstr=self.msgstr, references=self.references, automatic_comments=self.automatic_comments)
+        self.mc[self.msgid].comments.extend(self.comments)
+        self.assertEquals(self.mc.getComments(self.msgid), self.comments, 'wrong comments')
+        self.assertEquals(self.mc.getOriginalComment(self.msgid), self.orig_comment, 'wrong original comment line')
+        self.assertEquals(self.mc.getOriginal(self.msgid), self.orig_text, 'wrong original comment text')
+        self.assertEquals(self.mc.getDefaultComment(self.msgid), self.default_comment, 'wrong default comment line')
+        self.assertEquals(self.mc.getDefault(self.msgid), self.default_text, 'wrong default comment text')
 
 
 class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
@@ -253,7 +224,7 @@ class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
         mc = catalog.MessageCatalog
         self.input = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.output = os.path.join(PACKAGE_HOME, 'output', 'test-en.po')
-        self.catalog = mc(filename=self.input, allcomments=True)
+        self.catalog = mc(filename=self.input)
         if os.path.exists(self.output):
             os.remove(self.output)
 
@@ -285,15 +256,16 @@ class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
 class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
 
     def afterSetUp(self):
-        mc = catalog.MessageCatalog
+        self.me = catalog.MessageEntry
         filepath = os.path.join(PACKAGE_HOME, 'input', 'test1.pt')
         self.input = [filepath]
-        self.output = {u'Buzz': (u'Buzz', [(filepath, [u'<p i18n:translate="">', u' Buzz', u'</p>'])], []),
-                       u'${foo} ${bar}': (u'${foo} ${bar}', [(filepath, [u'<p i18n:translate="">', u' ${foo}', u' ${bar}', u'</p>'])], []),
-                       u'Dig this': (u'Dig this', [(filepath, [u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>'])], []),
-                       u'text_buzz': (u'Buzz', [(filepath, [u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>'])], []),
-                       u'some_alt': (u'Some alt', [(filepath, [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], []),
-                       u'title_some_alt': (u'Some title', [(filepath, [u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])], [])}
+        self.output = {u'Buzz': self.me(u'Buzz', msgstr=u'Buzz', references=self.input, automatic_comments=[u'<p i18n:translate="">', u' Buzz', u'</p>']),
+                       u'${foo} ${bar}': self.me(u'${foo} ${bar}', msgstr=u'${foo} ${bar}', references=self.input, automatic_comments=[u'<p i18n:translate="">', u' ${foo}', u' ${bar}', u'</p>']),
+                       u'Dig this': self.me(u'Dig this', msgstr=u'Dig this', references=self.input, automatic_comments=[u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>']),
+                       u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=self.input, automatic_comments=[u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>']),
+                       u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=self.input, automatic_comments=[u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>']),
+                       u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=self.input, automatic_comments=[u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])
+                      }
 
     def test_read(self):
         ptr = catalog.PTReader(self.input)
@@ -312,24 +284,27 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
 class TestMessagePYReader(ZopeTestCase.ZopeTestCase):
 
     def afterSetUp(self):
-        mc = catalog.MessageCatalog
+        self.me = catalog.MessageEntry
         dirpath = os.path.join(PACKAGE_HOME, 'input')
         filepath = os.path.join(dirpath, 'test2.py')
         self.input = dirpath
-        self.output = {u'Zero': (u'Zero', [(filepath, [u'Zero'])], []),
-                       u'One': (u'One', [(filepath, [u'One'])], []),
-                       u'Two': (u'Two', [(filepath, [u'Two'])], []),
-                       u'msgid_three': (u'Three', [(filepath, [u'Three'])], []),
-                       u'msgid_four': (u'Four ${map}', [(filepath, [u'Four ${map}'])], [])}
+        self.output = {u'Zero': self.me(u'Zero', references=[filepath]),
+                       u'One': self.me(u'One', references=[filepath]),
+                       u'Two': self.me(u'Two', references=[filepath]),
+                       u'msgid_three': self.me(u'msgid_three', references=[filepath]),
+                       u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath])
+                      }
 
     def test_read(self):
         pyr = catalog.PYReader(self.input, 'testing')
         pyr.read()
         out = pyr.catalogs['testing']
         for key in self.output:
-            self.assertEquals(out.get(key), self.output.get(key),
-                              'Failure in py parsing.\nGot:%s\nExpected:%s' %
-                              (out.get(key), self.output.get(key)))
+            self.failUnless(out.get(key, False),
+                            'Failure in py parsing.\nMissing:%s' % self.output.get(key))
+            self.failUnless(out.get(key) == self.output.get(key),
+                            'Failure in py parsing.\nGot:%s\nExpected:%s' %
+                            (out.get(key), self.output.get(key)))
         self.assertEqual(len(out), len(self.output))
 
 

@@ -4,7 +4,11 @@ Changelog for i18ndude
 
 i18ndude 2.0 - unreleased
 
-    
+    - *** This is a development pre-alpha-version***
+
+    - Based all of catalog.py on the new MessageEntry class.
+      Rewrote POWriter to use new gettext standard conform output.
+      [hannosch]
 
 i18ndude 1.0 - released September 2, 2005
 
@@ -49,7 +53,7 @@ i18ndude 1.0 - released September 2, 2005
     - added test infrastructure and tests for po file parsing
       [hannosch]
 
-    - Fix an issue in merge option when trying to merge to files
+    - Fix an issue in merge option when trying to merge two files
       [hannosch]
 
 i18ndude 0.6 - released July 4, 2005
