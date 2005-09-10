@@ -163,18 +163,23 @@ class MessageCatalog(odict):
         assert msgid in self
         return self[msgid].getDefault()
 
-    def add(self, msgid, msgstr='', references=[], automatic_comments=[]):
+    def add(self, msgid, msgstr='', comments=[], references=[], automatic_comments=[]):
         """Add a entry into the catalogue.
 
-        If the msgid already exists in my catalog, I will only add filename
-        and excerpt to the entry."""
+        If the msgid already exists in my catalog, I will only add comment,
+        reference and automatic comments to the entry if these doesn't exist yet"""
 
         if not self.has_key(msgid):
-            self[msgid] = MessageEntry(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
+            self[msgid] = MessageEntry(msgid, msgstr=msgstr, comments=comments, references=references, automatic_comments=automatic_comments)
         else:
+            if comments:
+                comments = [c for c in comments if c not in self[msgid].comments]
+                self[msgid].comments.extend(comments)
             if references:
+                references = [ref for ref in references if ref not in self[msgid].references]
                 self[msgid].references.extend(references)
             if automatic_comments:
+                automatic_comments = [ac for ac in automatic_comments if ac not in self[msgid].automatic_comments]
                 self[msgid].automatic_comments.extend(automatic_comments)
 
     def add_missing(self, msgctl, defaultmsgstr='', mergewarn=None):
@@ -194,7 +199,7 @@ class MessageCatalog(odict):
         for key in msgctl.keys():
             if not self.has_key(key):
                 entry = msgctl[key]
-                self.add(key, msgstr=defaultmsgstr, references=entry.references, automatic_comments=entry.automatic_comments)
+                self.add(key, msgstr=defaultmsgstr, references=entry.references, comments=entry.comments, automatic_comments=entry.automatic_comments)
                 ids.append(key)
             elif mergewarn:
                 print >> sys.stderr, \
@@ -209,9 +214,8 @@ class MessageCatalog(odict):
 
         for key in msgctl.keys():
             if self.has_key(key):
-                for ref in msgctl[key].references:
-                    if ref not in self[key].references:
-                        self[key].references.append(ref)
+                self[key].references = msgctl[key].references
+                self[key].automatic_comments = msgctl[key].automatic_comments
 
     def accept_ids(self, ids):
         """Remove all messages from the catalog where the id is not in argument
@@ -404,6 +408,9 @@ class POWriter:
             entry = self._msgctl[id]
             self._print_entry(f, id, entry, msgstrToComment=msgstrToComment, sync=sync)
 
+        # File should end with a blank line
+        self._printToFile(f,False)
+
     def _print_entry(self, f, id, entry, msgstrToComment, sync):
         """Writes a MessageEntry to file."""
         self._printToFile(f,False)
@@ -524,7 +531,7 @@ class PTReader:
 
         if msgid:
             msgstr = self._make_msgstr(element)
-            self._add_msg(msgid, msgstr, filename, excerpt, domain)
+            self._add_msg(msgid, msgstr, [], filename, excerpt, domain)
 
     def _do_attributes(self, element, domain):
         rendered = []
@@ -561,7 +568,7 @@ class PTReader:
                       (self._curr_fn, element.toprettyxml('  '))
                 continue
             if msgid:
-                self._add_msg(msgid, msgstr, filename, excerpt, domain)
+                self._add_msg(msgid, msgstr, [], filename, excerpt, domain)
 
     def _make_excerpt(self, element):
         prettynode = copy.deepcopy(element)
@@ -589,13 +596,21 @@ class PTReader:
             chunk = child.toxml()
             # XXX Do we need to escape anything else?
             chunk = chunk.replace('"', '\\"')
-            chunk = ' '.join(chunk.split()) + ' '
+            chunk = ' '.join(chunk.split())
+            if chunk.startswith('${'):
+                chunk = ' ' + chunk + ' '
+            # A message variable ${foo} should be prepended and followed by a
+            # blank but not prepended if a second ${bar} or a punctuation
+            # follows directly
+            cs = chunk.startswith
+            if msgstr.endswith('} ') and (cs('.') or cs(',') or cs(' ${')):
+                msgstr = msgstr.rstrip()
             if chunk != ' ':
                 msgstr += chunk
 
         return msgstr.strip()
 
-    def _add_msg(self, msgid, msgstr, filename, excerpt, domain):
+    def _add_msg(self, msgid, msgstr, comments, filename, excerpt, domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
                   (msgid, filename)
@@ -604,7 +619,7 @@ class PTReader:
         if not self.catalogs.has_key(domain):
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        self.catalogs[domain].add(msgid, msgstr=msgstr, references=[filename], automatic_comments=excerpt)
+        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=[filename], automatic_comments=excerpt)
 
 class PYReader:
     """Reads in a list of python scripts"""
@@ -633,11 +648,11 @@ class PYReader:
         py = py_strings(self.path, self.domain)
 
         for msgid in py:
-            self._add_msg(msgid, '', [py[msgid][0][0]], [], self.domain)
+            self._add_msg(msgid, '', [], [py[msgid][0][0]+':'+str(py[msgid][0][1])], [], self.domain)
 
         return []
 
-    def _add_msg(self, msgid, msgstr, references, automatic_comments, domain):
+    def _add_msg(self, msgid, msgstr, comments, references, automatic_comments, domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
                   (msgid, references)
@@ -646,5 +661,5 @@ class PYReader:
         if not self.catalogs.has_key(domain):
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        self.catalogs[domain].add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
+        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=references, automatic_comments=automatic_comments)
 

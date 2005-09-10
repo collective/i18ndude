@@ -6,6 +6,32 @@ i18ndude 2.0 - unreleased
 
     - *** This is a development pre-alpha-version***
 
+    - Removed the silent option on rebuilt, merge and sync completly. The
+      addition of the added- and removed-sections lead to an incorrect format.
+      Use a normal diff tool if you are really interessted in this information.
+      [hannosch]
+
+    - PYReader now extracts the line numbers of messages and writes these at
+      the end of the reference seperated with a ':'
+      [hannosch]
+
+    - The catalog's add method doesn't adds duplicate references or automatic
+      comments anymore. Test were updated to reflect new behaviour.
+      [hannosch]
+
+    - Fixed handling of normal comments in PT- and PYReader.
+      [hannosch]
+
+    - Always add a blank line as the last line on po's, as poEdit does it
+      [hannosch]
+
+    - Adjusted Python parsing tests to cover the current behaviour. Added XXX
+      comments where it is wrong
+      [hannosch]
+
+    - Fixed an issue with an unnecessary whitespace and provided test for it
+      [hannosch, Tuttle]
+
     - Based all of catalog.py on the new MessageEntry class.
       Rewrote POWriter to use new gettext standard conform output.
       [hannosch]

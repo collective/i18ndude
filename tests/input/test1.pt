@@ -29,6 +29,11 @@
 
 <p tal:replace="something">Dumbo</p>
 
+<tal:block i18n:translate="">Job started at <span i18n:name="datetime"
+tal:replace="now">Now</span> by user <span i18n:name="userid"
+tal:replace="options
+/userid">Userid</span>.</tal:block>
+
 <form>
 <input type="submit" value="Dig this" i18n:attributes="value dig_this"/>
 </form>

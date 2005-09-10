@@ -60,7 +60,7 @@ class TokenEater(object):
                 else:
                     msgid = ''.join(self.__data)
                     default = None
-                self.__addentry(msgid, default)
+                self.__addentry(msgid, lineno, default=default)
             self.__state = self.__waiting
         elif ttype == tokenize.OP and tstring == ',':
             self.__msgid = ''.join(self.__data)
@@ -78,12 +78,12 @@ class TokenEater(object):
             print >> sys.stderr, '* %(file)s:%(lineno)s: Seen unexpected token "%(typ)s %(token)s"' % {'token': tstring, 'typ': ttype, 'file': self.__curfile, 'lineno': self.__lineno}
             self.__state = self.__waiting
 
-    def __addentry(self, msg, lineno=None, isdocstring=0):
+    def __addentry(self, msg, lineno=None, isdocstring=0, default=''):
         if lineno is None:
             lineno = self.__lineno
 
         entry = (self.__curfile, lineno)
-        self.__messages.setdefault(msg, {})[entry] = isdocstring
+        self.__messages.setdefault(msg, {})[entry] = default
 
     def set_filename(self, filename):
         self.__curfile = filename
@@ -104,12 +104,9 @@ class TokenEater(object):
             for msgid, locations in rentries:
                 catalog[msgid] = []
                 
-                locations = locations.keys()
-                locations.sort()
-
-                for filename, lineno in locations:
-                    catalog[msgid].append((filename, lineno))
-
+                for key in locations:
+                    filename, lineno = key
+                    catalog[msgid].append((filename, lineno, locations[key]))
         return catalog
 
 def find_files(dir, pattern, exclude=()):

@@ -182,21 +182,18 @@ def find_untranslated():
 
 def rebuild_pot():
     try:
-        opts, files = getopt.getopt(sys.argv[2:], 'smp:c:',
-                                   ('silent', 'pot=', 'create=', 'merge=', 'merge2='))
+        opts, files = getopt.getopt(sys.argv[2:], 'mp:c:',
+                                   ('pot=', 'create=', 'merge=', 'merge2='))
     except:
         usage(1)
 
     pot_fn = None
     merge_fn = None
     merge2_fn = None
-    silent = False
     create_domain = None
     for opt, arg in opts:
         if opt in ('-p', '--pot'):
             pot_fn = arg
-        if opt in ('-s', '--silent'):
-            silent = True
         if opt in ('-c', '--create'):
             create_domain = arg
         if opt in ('-m', '--merge'):
@@ -254,7 +251,7 @@ def rebuild_pot():
     for key in orig_ctl.keys():
         if key in ptctl:
             # preserve comments
-            comments = ptctl[key][2] + orig_ctl.get_comment(key)
+            comments = ptctl[key][2] + orig_ctl.getComments(key)
             ptctl[key] = (ptctl[key][0], ptctl[key][1], comments)
 
     if pyreader and pyreader.catalogs.has_key(domain):
@@ -263,7 +260,7 @@ def rebuild_pot():
         for key in orig_ctl.keys():
             if key in pyctl:
                 # preserve comments
-                comments = pyctl[key][2] + orig_ctl.get_comment(key)
+                comments = pyctl[key][2] + orig_ctl.getComments(key)
                 pyctl[key] = (pyctl[key][0], pyctl[key][1], comments)
 
     # keep 'literal' ids only
@@ -297,51 +294,19 @@ def rebuild_pot():
     writer = catalog.POWriter(file, ctl)
     writer.write(msgstrToComment=True)
 
-    if not silent:
-        oldmsgids = [common.quote(id) for id in orig_msgids
-                    if id not in ctl.keys()]
-        newmsgids = [common.quote(id) for id in ctl.keys()
-                    if id not in orig_msgids]
-        print >> file, '#- Removed msgids:'
-        lines = common.make_lines(oldmsgids)
-        for line in lines:
-            print >> file, '# %s' % line
-
-        print >> file
-        print >> file, '#- Added msgids:'
-        lines = common.make_lines(newmsgids)
-        for line in lines:
-            print >> file, '# %s' % line
-
-        print >> file
-        print >> file, '#- Added msgids by merging file %s:' % merge_fn
-        lines = common.make_lines(added_by_merge)
-        for line in lines:
-            print >> file, '# %s' % line
-
-        if merge2_fn:
-            print >> file
-            print >> file, '#- Added msgids by merging file %s:' % merge2_fn
-            lines = common.make_lines(added_by_merge2)
-            for line in lines:
-                print >> file, '# %s' % line
-
 def merge():
     try:
         opts, files = getopt.getopt(sys.argv[2:], 'sm:p:',
-                                   ('silent', 'pot=', 'merge=', 'merge2='))
+                                   ('pot=', 'merge=', 'merge2='))
     except:
         usage(1)
 
     pot_fn = None
     merge_fn = None
-    silent = False
     create_domain = None
     for opt, arg in opts:
         if opt in ('-p', '--pot'):
             pot_fn = arg
-        if opt in ('-s', '--silent'):
-            silent = True
         if opt in ('-m', '--merge'):
             merge_fn = arg
         if opt in ('--merge2'):
@@ -368,32 +333,16 @@ def merge():
     writer = catalog.POWriter(file, orig_ctl)
     writer.write(msgstrToComment=True)
 
-    if not silent:
-        print >> file
-        print >> file, '#- Added msgids by merging file %s:' % merge_fn
-        lines = common.make_lines(added_by_merge)
-        for line in lines:
-            print >> file, '# %s' % line
-        if merge2_fn:
-            print >> file
-            print >> file, '#- Added msgids by merging file %s:' % merge2_fn
-            lines = common.make_lines(added_by_merge2)
-            for line in lines:
-                print >> file, '# %s' % line
-
 def sync():
     try:
-        opts, files = getopt.getopt(sys.argv[2:], 'sp:', ('silent', 'pot='))
+        opts, files = getopt.getopt(sys.argv[2:], 'p:', ('pot='))
     except getopt.GetoptError, e:
         usage(1)
 
     pot_fn = None
-    silent = False
     for opt, arg in opts:
         if opt in ('-p', '--pot'):
             pot_fn = arg
-        if opt in ('-s', '--silent'):
-            silent = True
 
     if not pot_fn:
         usage(1)
@@ -421,19 +370,6 @@ def sync():
         file = open(po.filename, 'w')
         writer = catalog.POWriter(file, po)
         writer.write(msgstrToComment=False, sync=True)
-
-        if not silent:
-            print >> file, '#- Removed msgids:'
-            lines = common.make_lines(removed_msgids)
-            for line in lines:
-                print >> file, '# %s' % line
-
-
-            print >> file
-            print >> file, '#- Added msgids:'
-            lines = common.make_lines(added_msgids)
-            for line in lines:
-                print >> file, '# %s' % line
 
         print '%s: %s added, %s removed' % (po.filename,
                                             len(added_msgids),

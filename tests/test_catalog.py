@@ -206,7 +206,7 @@ class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
         self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
         self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
         self.failUnless(len(self.mc)==1, 'duplicate msgid')
-        self.failUnless(len(self.mc[msgid].references)==4, 'references missing')
+        self.failUnless(len(self.mc[msgid].references)==2, 'references missing')
 
     def test_originalComment(self):
         self.mc.add(self.msgid, msgstr=self.msgstr, references=self.references, automatic_comments=self.automatic_comments)
@@ -264,7 +264,8 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
                        u'Dig this': self.me(u'Dig this', msgstr=u'Dig this', references=self.input, automatic_comments=[u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>']),
                        u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=self.input, automatic_comments=[u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>']),
                        u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=self.input, automatic_comments=[u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>']),
-                       u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=self.input, automatic_comments=[u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>'])
+                       u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=self.input, automatic_comments=[u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>']),
+                       u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', msgstr=u'Job started at ${datetime} by user ${userid}.', references=self.input, automatic_comments=[u'<tal:block i18n:translate="">', u' Job started at ', u' ${datetime}', u'  by user ', u' ${userid}', u' .', u'</tal:block>'])
                       }
 
     def test_read(self):
@@ -275,7 +276,7 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
             self.failUnless(key in self.output,
                             'Failure in pt parsing.\nUnexpected msgid: %s' % key)
         for key in self.output:
-            self.assertEquals(out[key], self.output.get(key),
+            self.failUnless(out[key] == self.output[key],
                               'Failure in pt parsing.\nGot:%s\nExpected:%s' %
                               (out[key], self.output[key]))
         self.assertEqual(len(out), len(self.output))
@@ -288,17 +289,24 @@ class TestMessagePYReader(ZopeTestCase.ZopeTestCase):
         dirpath = os.path.join(PACKAGE_HOME, 'input')
         filepath = os.path.join(dirpath, 'test2.py')
         self.input = dirpath
-        self.output = {u'Zero': self.me(u'Zero', references=[filepath]),
-                       u'One': self.me(u'One', references=[filepath]),
-                       u'Two': self.me(u'Two', references=[filepath]),
-                       u'msgid_three': self.me(u'msgid_three', references=[filepath]),
-                       u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath])
+        self.output = {u'Zero': self.me(u'Zero', references=[filepath+':5']),
+                       u'One': self.me(u'One', references=[filepath+':6']),
+                       u'Two': self.me(u'Two', references=[filepath+':7']),
+                       u'msgid_three': self.me(u'msgid_three', references=[filepath+':14']),
+                       # XXX Disabled for now: u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath])
+                       # non-literal msgids are not recognized
+                       u'Four ${map}': self.me(u'Four ${map}', references=[filepath+':18']),
+                       # XXX This should not be found as it's in a different domain
+                       u'Out1': self.me(u'Out1', references=[filepath+':9'])
                       }
 
     def test_read(self):
         pyr = catalog.PYReader(self.input, 'testing')
         pyr.read()
         out = pyr.catalogs['testing']
+        for key in out:
+            self.failUnless(key in self.output,
+                            'Failure in py parsing.\nUnexpected msgid: %s' % key)
         for key in self.output:
             self.failUnless(out.get(key, False),
                             'Failure in py parsing.\nMissing:%s' % self.output.get(key))
