@@ -87,15 +87,22 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
 
         self.commentary_header = ['Translation of test.pot to English', 'Hanno Schlichting <schlichting@bakb.net>, 2005']
 
-        self.mimeheader = {'Language-Code': 'en', 'Domain': 'testing', 'PO-Revision-Date': '2005-08-10 21:15+0000', 'Content-Transfer-Encoding': '8bit',
-                           'Language-Name': 'English', 'X-Is-Fallback-For': 'en-au en-bz en-ca en-ie en-jm en-nz en-ph en-za en-tt en-gb en-us en-zw',
-                           'Plural-Forms': 'nplurals=1; plural=0;', 'Project-Id-Version': 'i18ndude', 'Preferred-Encodings': 'utf-8 latin1',
-                           'Last-Translator': 'Unicödé Guy', 'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
-                           'POT-Creation-Date': '2005-08-01 12:00+0000', 'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
+        self.mimeheader = {'Language-Code': 'en',
+                           'Domain': 'testing',
+                           'PO-Revision-Date': '2005-08-10 21:15+0000',
+                           'Content-Transfer-Encoding': '8bit',
+                           'Language-Name': 'English',
+                           'Plural-Forms': 'nplurals=1; plural=0;',
+                           'Project-Id-Version': 'i18ndude',
+                           'Preferred-Encodings': 'utf-8 latin1',
+                           'Last-Translator': 'Unicödé Guy',
+                           'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
+                           'POT-Creation-Date': '2005-08-01 12:00+0000',
+                           'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
                           }
 
-        self.msgids = {'msgid1' : self.me('msgid1', msgstr='msgstr1', references=['file1','file2'], automatic_comments=['excerpt1','excerpt2','excerpt3'], comments=['comment1', 'Original: "msgstr1"']),
-                       'msgid2' : self.me('msgid2', msgstr='msgstr2', references=['file2'], automatic_comments=['excerpt2']),
+        self.msgids = {'msgid1' : self.me('msgid1', msgstr='msgstr1', references=['file1','file2'], automatic_comments=['Default: "msgstr1"'], comments=['comment1']),
+                       'msgid2' : self.me('msgid2', msgstr='msgstr2', references=['file2']),
                        'msgid3' : self.me('msgid3', msgstr='msgstr3', references=['file3'], comments=['comment3']),
                        'msgid4' : self.me('msgid4', msgstr='msgstr4', references=['file4']),
                        'msgid5' : self.me('msgid5', msgstr='msgstr5', comments=['comment5']),
@@ -106,7 +113,7 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                        'msgid_has_underlines' : self.me('msgid_has_underlines', msgstr='msgstr_has_underlines'),
                        'msgid_has_underlines and spaces' : self.me('msgid_has_underlines and spaces', msgstr='msgstr_has_underlines and spaces'),
                        'msgid for unicode text' : self.me('msgid for unicode text', msgstr='unicode msgstr ···'),
-                       'msgid for unicode text with comment' : self.me('msgid for unicode text with comment', msgstr='unicode msgstr ···', references=['./folder/file_unicode'], automatic_comments=['unicode ··· excerpt'], comments=['Original: [···]']),
+                       'msgid for unicode text with comment' : self.me('msgid for unicode text with comment', msgstr='unicode msgstr ···', references=['./folder/file_unicode'], automatic_comments=['Default: [···]']),
                        'msgid for text with german umlaut' : self.me('msgid for text with german umlaut', msgstr='äöüß text'),
                        'msgid for text with html-entity' : self.me('msgid for text with html-entity', msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;')
                       }
@@ -224,9 +231,15 @@ class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
         mc = catalog.MessageCatalog
         self.input = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.output = os.path.join(PACKAGE_HOME, 'output', 'test-en.po')
+        self.input2 = os.path.join(PACKAGE_HOME, 'input', 'test2-en.po')
+        self.expectedOutput2 = os.path.join(PACKAGE_HOME, 'input', 'test2_expected-en.po')
+        self.output2 = os.path.join(PACKAGE_HOME, 'output', 'test2-en.po')
         self.catalog = mc(filename=self.input)
+        self.catalog2 = mc(filename=self.input2)
         if os.path.exists(self.output):
             os.remove(self.output)
+        if os.path.exists(self.output2):
+            os.remove(self.output2)
 
     def test_write(self):
         fd = open(self.output, 'wb')
@@ -248,9 +261,31 @@ class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
             orig = inlines[i]
             self.failUnlessEqual(orig, result, 'difference in line %s, \'%s\' != \'%s\'' % (i, orig, result))
 
+    def test_writeSpecialComments(self):
+        fd = open(self.output2, 'wb')
+        pow = catalog.POWriter(fd, self.catalog2)
+        pow.write(sort=True)
+        fd.close()
+
+        output = open(self.output2, 'r')
+        expected = open(self.expectedOutput2, 'r')
+
+        # compare line by line
+        outlines = output.readlines()
+        explines = enumerate(expected.readlines())
+
+        output.close()
+        expected.close()
+
+        for i, result in explines:
+            orig = outlines[i]
+            self.failUnlessEqual(orig, result, 'difference in line %s, Got: \'%s\' != Expected: \'%s\'' % (i, orig, result))
+
     def tearDown(self):
         if os.path.exists(self.output):
             os.remove(self.output)
+        if os.path.exists(self.output2):
+            os.remove(self.output2)
 
 
 class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
@@ -259,13 +294,13 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
         self.me = catalog.MessageEntry
         filepath = os.path.join(PACKAGE_HOME, 'input', 'test1.pt')
         self.input = [filepath]
-        self.output = {u'Buzz': self.me(u'Buzz', msgstr=u'Buzz', references=self.input, automatic_comments=[u'<p i18n:translate="">', u' Buzz', u'</p>']),
-                       u'${foo} ${bar}': self.me(u'${foo} ${bar}', msgstr=u'${foo} ${bar}', references=self.input, automatic_comments=[u'<p i18n:translate="">', u' ${foo}', u' ${bar}', u'</p>']),
-                       u'Dig this': self.me(u'Dig this', msgstr=u'Dig this', references=self.input, automatic_comments=[u'<input i18n:attributes="value dig_this" type="submit" value="Dig this"/>']),
-                       u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=self.input, automatic_comments=[u'<p i18n:translate="text_buzz">', u' Buzz', u'</p>']),
-                       u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=self.input, automatic_comments=[u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>']),
-                       u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=self.input, automatic_comments=[u'<img alt="Some alt" i18n:attributes="alt some_alt; title title_some_alt" src="" title="Some title"/>']),
-                       u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', msgstr=u'Job started at ${datetime} by user ${userid}.', references=self.input, automatic_comments=[u'<tal:block i18n:translate="">', u' Job started at ', u' ${datetime}', u'  by user ', u' ${userid}', u' .', u'</tal:block>'])
+        self.output = {u'Buzz': self.me(u'Buzz', msgstr=u'Buzz', references=self.input),
+                       u'${foo} ${bar}': self.me(u'${foo} ${bar}', msgstr=u'${foo} ${bar}', references=self.input),
+                       u'Dig this': self.me(u'Dig this', msgstr=u'Dig this', references=self.input),
+                       u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=self.input),
+                       u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=self.input),
+                       u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=self.input),
+                       u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', msgstr=u'Job started at ${datetime} by user ${userid}.', references=self.input)
                       }
 
     def test_read(self):

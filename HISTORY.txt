@@ -4,7 +4,15 @@ Changelog for i18ndude
 
 i18ndude 2.0 - unreleased
 
-    - *** This is a development pre-alpha-version***
+    - *** This is a development beta-version***
+
+    - POWriter generates new default comments instead of the old original
+      comments. POParser automatically converts existing original comments
+      (# Original: "") or Zope3-style default comments (# Default: "") at the
+      reading step to new default comments (#. Default: "").
+
+    - PTReader now doesn't extracts any excerpts anymore.
+      [hannosch]
 
     - Removed the silent option on rebuilt, merge and sync completly. The
       addition of the added- and removed-sections lead to an incorrect format.

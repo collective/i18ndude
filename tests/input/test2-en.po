@@ -16,62 +16,29 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: testing\n"
 
-msgid "msgid for text with german umlaut"
-msgstr "äöüß text"
-
-msgid "msgid for text with html-entity"
-msgstr "&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;"
-
-msgid "msgid for unicode text"
-msgstr "unicode msgstr ···"
-
-#. Default: [···]
-#: ./folder/file_unicode
-msgid "msgid for unicode text with comment"
-msgstr "unicode msgstr ···"
-
-## I am a dead comment
-msgid "msgid has spaces"
-msgstr "msgstr has spaces"
-
 # comment1
-#. Default: "msgstr1"
+# Original: "default1"
 #: file1
-#: file2
 msgid "msgid1"
 msgstr "msgstr1"
 
+# comment2
+#. Original: "default2"
 #: file2
 msgid "msgid2"
 msgstr "msgstr2"
 
-# comment3
+# Default: "default3"
 #: file3
 msgid "msgid3"
 msgstr "msgstr3"
 
-#: file4
+# Original: "default4"
+#. Default: "default4"
 msgid "msgid4"
 msgstr "msgstr4"
 
 # comment5
 msgid "msgid5"
 msgstr "msgstr5"
-
-msgid "msgid6"
-msgstr "msgstr6"
-
-#, fuzzy
-msgid "msgid7"
-msgstr "msgstr7"
-
-#, fuzzy
-msgid "msgid8"
-msgstr ""
-
-msgid "msgid_has_underlines"
-msgstr "msgstr_has_underlines"
-
-msgid "msgid_has_underlines and spaces"
-msgstr "msgstr_has_underlines and spaces"
 

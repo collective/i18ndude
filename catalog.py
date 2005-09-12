@@ -312,9 +312,21 @@ class POParser:
         elif line.startswith('#:'):
             self.references.append(line[2:].strip())
         elif line.startswith('#.'):
-            self.automatic_comments.append(line[2:].strip())
+            line = line[2:].strip()
+            ls = line.startswith
+            if ls(ORIGINAL_COMMENT):
+                line = line.replace(ORIGINAL_COMMENT, DEFAULT_COMMENT)
+            if not line in self.automatic_comments:
+                self.automatic_comments.append(line)
         elif line.startswith('#'):
-            self.comments.append(line[1:].strip())
+            line = line[1:].strip()
+            ls = line.startswith
+            if ls(ORIGINAL_COMMENT) or ls(DEFAULT_COMMENT):
+                line = line.replace(ORIGINAL_COMMENT, DEFAULT_COMMENT)
+                if not line in self.automatic_comments:
+                    self.automatic_comments.append(line)
+            else:
+                self.comments.append(line)
         else:
             search = self._in_paren.search(line)
             if search:
@@ -417,19 +429,10 @@ class POWriter:
 
         msgstr = entry.msgstr
         comments = entry.comments
+        automatic_comments = entry.automatic_comments
 
         msg_changed = False
         fuzzy = False
-
-        # used in pot methods
-        if msgstrToComment and msgstr:
-            # no html markup in the original comments as these are not
-            # allowed in msgstr's either
-            msgstr = msgstr.replace('&quot;','\\\"')
-            msgstr = msgstr.replace('&amp;','&')
-            msgstr = msgstr.replace('&hellip;','...')
-            self._printToFile(f, '# %s"%s"' % (ORIGINAL_COMMENT, msgstr))
-            msgstr = ''
 
         for comment in comments:
             if not comment.startswith(', fuzzy') and not comment.startswith(' , fuzzy'):
@@ -440,15 +443,25 @@ class POWriter:
             else:
                 fuzzy = True
 
-        # used in sync to filter duplicate Original comments
+        # used in pot methods
+        if msgstrToComment and msgstr:
+            # no html markup in the default comments as these are not
+            # allowed in msgstr's either
+            msgstr = msgstr.replace('&quot;','\\\"')
+            msgstr = msgstr.replace('&amp;','&')
+            msgstr = msgstr.replace('&hellip;','...')
+            self._printToFile(f, '#. %s"%s"' % (DEFAULT_COMMENT, msgstr))
+            msgstr = ''
+
+        # used in sync to filter duplicate default comments
         if sync:
-            original_comments = [o for o in comments if o.startswith(ORIGINAL_COMMENT)]
-            if len(original_comments) > 1:
+            default_comments = [o for o in automatic_comments if o.startswith(DEFAULT_COMMENT)]
+            if len(default_comments) > 1:
                 msg_changed = True
                 # the first element is the old comment, the second the new one
-                comments.remove(original_comments[0])
+                automatic_comments.remove(default_comments[0])
 
-        for ac in entry.automatic_comments:
+        for ac in automatic_comments:
             self._printToFile(f, '#. %s' % ac)
 
         no = 0
@@ -510,7 +523,6 @@ class PTReader:
 
     def _do_translate(self, element, domain):
         filename = self._curr_fn
-        excerpt = self._make_excerpt(element)
         msgid = element.getAttribute('i18n:translate')
 
         if msgid == '':
@@ -531,7 +543,7 @@ class PTReader:
 
         if msgid:
             msgstr = self._make_msgstr(element)
-            self._add_msg(msgid, msgstr, [], filename, excerpt, domain)
+            self._add_msg(msgid, msgstr, [], filename, [], domain)
 
     def _do_attributes(self, element, domain):
         rendered = []
@@ -541,12 +553,6 @@ class PTReader:
             rendered = [attr.split()[0] for attr in attrs]
 
         filename = self._curr_fn
-        excerpt = self._make_excerpt(element)
-        excerpt = '\n'.join(excerpt)
-        # XXX A reasonable way to find the end of the tag is needed here:
-        gt = excerpt.find('>') + 1
-        excerpt = excerpt[:gt].split('\n')
-        
         i18nattrs = element.getAttribute('i18n:attributes');
         
         # construct list of (attrname, msgid) pairs
@@ -568,14 +574,7 @@ class PTReader:
                       (self._curr_fn, element.toprettyxml('  '))
                 continue
             if msgid:
-                self._add_msg(msgid, msgstr, [], filename, excerpt, domain)
-
-    def _make_excerpt(self, element):
-        prettynode = copy.deepcopy(element)
-        self._make_pretty(prettynode)
-        lines = prettynode.toprettyxml(' ').split('\n')
-        lines = filter(lambda line: line.strip(), lines)
-        return lines
+                self._add_msg(msgid, msgstr, [], filename, [], domain)
 
     def _make_pretty(self, node):
         """Replace named subelements with ${name}."""
@@ -610,7 +609,7 @@ class PTReader:
 
         return msgstr.strip()
 
-    def _add_msg(self, msgid, msgstr, comments, filename, excerpt, domain):
+    def _add_msg(self, msgid, msgstr, comments, filename, automatic_comments, domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
                   (msgid, filename)
@@ -619,7 +618,7 @@ class PTReader:
         if not self.catalogs.has_key(domain):
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=[filename], automatic_comments=excerpt)
+        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=[filename], automatic_comments=automatic_comments)
 
 class PYReader:
     """Reads in a list of python scripts"""
