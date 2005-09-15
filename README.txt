@@ -9,7 +9,6 @@ Usage Examples
 
     $ ./i18ndude find-untranslated `find skins/ -iregex '.*\..?pt$'`
 
-
 -   If you wanted to synchronize your master pot-file (say 'plone.pot') with a
     language-specific version (say 'plone-eo.po'), you could go about it like
     this:
