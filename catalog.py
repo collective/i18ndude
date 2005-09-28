@@ -7,7 +7,6 @@ ELEMENT_NODE = xml.dom.Node.ELEMENT_NODE
 import common
 from odict import odict
 
-
 DEFAULT_PO_HEADER = [
     '--- PLEASE EDIT THE LINES BELOW CORRECTLY ---',
     'SOME DESCRIPTIVE TITLE.',
@@ -614,7 +613,18 @@ class PTReader:
         if not self.catalogs.has_key(domain):
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=[filename], automatic_comments=automatic_comments)
+        # check if the msgid is already in the catalog with a different text
+        catalog = self.catalogs[domain]
+        adding = True
+        if catalog.has_key(msgid):
+            cat_msgstr = catalog[msgid].msgstr
+            if msgstr != cat_msgstr:
+                print >> sys.stderr, 'Error: msgid "%s" in %s already exists with a different msgstr (bad: %s, should be: %s)\n' % \
+                         (msgid, filename, msgstr, cat_msgstr)
+                adding = False
+
+        if adding:
+            self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=[filename], automatic_comments=automatic_comments)
 
 class PYReader:
     """Reads in a list of python scripts"""

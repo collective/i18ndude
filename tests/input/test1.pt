@@ -25,6 +25,8 @@
 
 <p i18n:translate="text_buzz">Buzz</p>
 
+<p i18n:translate="text_buzz">Buzzer</p>
+
 <p metal:use-macro="somemacro">Dummy</p>
 
 <p tal:replace="something">Dumbo</p>

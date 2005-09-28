@@ -6,6 +6,10 @@ i18ndude 2.0 - unreleased
 
     - *** This is a development beta-version***
 
+    - Added new feature to PTReader. For msgid's which are already in the
+      catalog, check if the msgstr matches or provide an error message.
+      [hannosch]
+
     - Fixed another issue regarding missing whitespace and provided test for it
       [hannosch, Tuttle]
 
