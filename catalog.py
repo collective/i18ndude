@@ -596,17 +596,13 @@ class PTReader:
             # XXX Do we need to escape anything else?
             chunk = chunk.replace('"', '\\"')
             chunk = ' '.join(chunk.split())
-            if chunk.startswith('${'):
-                chunk = ' ' + chunk + ' '
-            # A message variable ${foo} should be prepended and followed by a
-            # blank but not prepended if a second ${bar} or a punctuation
-            # follows directly
             cs = chunk.startswith
-            if msgstr.endswith('} ') and (cs('.') or cs(',') or cs(' ${')):
-                msgstr = msgstr.rstrip()
-            if chunk != ' ':
-                msgstr += chunk
-
+            if (cs('${') or cs('<') ):
+                chunk = ' ' + chunk + ' '
+            msgstr += chunk
+        msgstr = msgstr.replace('  ', ' ')
+        msgstr = msgstr.replace(' .', '.')
+        msgstr = msgstr.replace(' ,', ',')
         return msgstr.strip()
 
     def _add_msg(self, msgid, msgstr, comments, filename, automatic_comments, domain):

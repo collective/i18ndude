@@ -300,7 +300,8 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
                        u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=self.input),
                        u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=self.input),
                        u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=self.input),
-                       u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', msgstr=u'Job started at ${datetime} by user ${userid}.', references=self.input)
+                       u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', msgstr=u'Job started at ${datetime} by user ${userid}.', references=self.input),
+                       u'spacing': self.me(u'spacing', msgstr=u'Space <br/> before and after.', references=self.input)
                       }
 
     def test_read(self):
