@@ -33,6 +33,10 @@
     Space <br /> before and after.
 </p>
 
+<li i18n:translate="spacing_strong">
+    Please press your browser's <strong>Back</strong> button to try again.
+</li>
+
 <tal:block i18n:translate="">Job started at <span i18n:name="datetime"
 tal:replace="now">Now</span> by user <span i18n:name="userid"
 tal:replace="options/userid">Userid</span>.</tal:block>
