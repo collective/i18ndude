@@ -4,7 +4,7 @@ try:
 except ImportError:
     gdchart = None
 
-def make_chart(pot, pos, out, size=None, **kwargs):
+def make_chart(pot, pos, out, size=None, title=None, **kwargs):
     if not gdchart:
         raise ImportError, 'No module named gdchart'
 
@@ -52,7 +52,7 @@ def make_chart(pot, pos, out, size=None, **kwargs):
     options = {'bg_color': 0xffffff,
                'border': gdchart.GDC_BORDER_ALL,
                'xaxis_font': gdchart.GDC_SMALL,
-               'title': pot.mime_header['Project-Id-Version'],
+               'title': title or pot.mime_header['Project-Id-Version'],
                'ext_color' : colors,
                }
     options.update(kwargs)

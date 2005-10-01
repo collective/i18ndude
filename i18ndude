@@ -105,10 +105,9 @@ present:
           This will create a chart that displays how much of the pot-file the
           po-files translate.
 
-   combinedchart -o <imagefile> --products <product1> [<product2> ...]
+   combinedchart -o <imagefile> --title <title> --products <product1> [<product2> ...]
           This will create a chart that displays how much of the combined
           products pot's is translated for each language.
-
 """
 
 import os, sys
@@ -444,15 +443,18 @@ def chart():
 
 def combinedchart():
     try:
-        opts, files = getopt.getopt(sys.argv[2:], 'o:p:', ('out=', 'products='))
+        opts, files = getopt.getopt(sys.argv[2:], 'o:t:p:', ('out=', 'title=', 'products='))
     except:
         usage(1)
 
     products = []
     out = None
+    title = None
     for opt, arg in opts:
         if opt in ('-o', '--out'):
             out = arg
+        elif opt in ('-t', '--title'):
+            title = arg
         elif opt in ('-p', '--products'):
             products.append(arg)
 
@@ -504,7 +506,7 @@ def combinedchart():
     # flatten to list
     po_ctls = po_ctls.values()
 
-    visualisation.make_chart(pot_ctl, po_ctls, out)
+    visualisation.make_chart(pot_ctl, po_ctls, out, title=title)
 
 
 def main():

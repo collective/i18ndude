@@ -6,6 +6,9 @@ i18ndude 2.0 - unreleased
 
     - *** This is a development beta-version***
 
+    - Added option to specify title of chart explicitly
+      [hannosch]
+
     - Added combinedchart option, which is used to build the overview charts
       on plone.org for a comprehensive view on the status of translations.
       [hannosch]
