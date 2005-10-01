@@ -20,8 +20,8 @@ def make_chart(pot, pos, out, size=(1000, 500), **kwargs):
 
         value = 0
         for msgid in msgids:
-            if msgid in po and po[msgid][0]: # translated
-                if not [1 for fuzzy in po[msgid][2] if 'fuzzy' in fuzzy]:
+            if msgid in po and po[msgid].msgstr: # translated
+                if not [1 for fuzzy in po[msgid].comments if 'fuzzy' in fuzzy]:
                     value += 1
 
         names.append(name)
@@ -59,3 +59,12 @@ def make_chart(pot, pos, out, size=(1000, 500), **kwargs):
                   out,
                   names,
                   values)
+
+    status = {}
+    i = 0
+    while i < len(names):
+        status[names[i]] = values[i]
+        i += 1
+
+    return status
+
