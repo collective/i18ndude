@@ -206,6 +206,15 @@ class MessageCatalog(odict):
 
         return ids
 
+    def merge(self, msgctl):
+        """Each msgid that I miss and ``msgctl`` contains will be included in
+        my catalog."""
+
+        for key in msgctl.keys():
+            if not self.has_key(key):
+                entry = msgctl[key]
+                self.add(key, msgstr=entry.msgstr, references=entry.references, comments=entry.comments, automatic_comments=entry.automatic_comments)
+
     def overwrite_context(self, msgctl):
         """For each message in the given message catalog that I know of,
         I will overwrite my contextual information with the given catalog's

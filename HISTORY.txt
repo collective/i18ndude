@@ -6,6 +6,13 @@ i18ndude 2.0 - unreleased
 
     - *** This is a development beta-version***
 
+    - Added combinedchart option, which is used to build the overview charts
+      on plone.org for a comprehensive view on the status of translations.
+      [hannosch]
+
+    - Removed the extract literals feature. If anybody needs it, please speak up.
+      [hannosch]
+
     - Updated visualisation.py to handle new internal catalog format.
       Provided basic test for it.
       [hannosch]

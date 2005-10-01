@@ -4,13 +4,12 @@ def getPoFiles(product, all=False):
     """ Returns all product*.po files in the current folder """
     files = os.listdir(os.curdir)
     if all:
-        files = [file for file in files if file.startswith(product) and file.endswith('.po')]
+        files = [file for file in files if file.startswith('%s-' % product) and file.endswith('.po')]
     else:
-        files = [file for file in files if file.startswith(product) and file.endswith('.po') and file != '%s-en.po' % product]
+        files = [file for file in files if file.startswith('%s-' % product) and file.endswith('.po') and file != '%s-en.po' % product]
     return files
 
-
-def getPotFiles(all=False):
+def getPotFiles(product=None, all=False):
     """ Returns all pot files in the current folder
         Normally it doesn't return manual.pots and generated.pots
     """
@@ -19,8 +18,9 @@ def getPotFiles(all=False):
         files = [f for f in files if f.endswith('.pot')]
     else:
         files = [f for f in files if f.endswith('.pot') and not f[:-4].endswith('manual') and not f[:-4].endswith('generated')]
+    if product is not None:
+        files = [f for f in files if f.startswith('%s.pot' % product)]
     return files
-
 
 def getPoFilesAsCmdLine(product):
     files = getPoFiles(product)
@@ -29,13 +29,11 @@ def getPoFilesAsCmdLine(product):
         filestring += file + ' '
     return filestring.rstrip()
 
-
 def getPoFilesByLanguageCode(lang):
     """ Returns all po files which ends with given language code."""
     files = os.listdir(os.curdir)
     files = [file for file in files if file.endswith('.po') and file[:-3].endswith(lang)]
     return files
-
 
 def getLanguage(product, file):
     """ Returns the language part of a po-file """
@@ -44,7 +42,6 @@ def getLanguage(product, file):
         if file.startswith(product):
             lang = '-'.join(file.split('-')[1:])[:-3]
     return lang
-
 
 def getProduct(file):
     """ Returns the product part of a file. We assume files to be something like domain-language.po.
