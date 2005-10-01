@@ -4,7 +4,7 @@ try:
 except ImportError:
     gdchart = None
 
-def make_chart(pot, pos, out, size=(1000, 500), **kwargs):
+def make_chart(pot, pos, out, size=None, **kwargs):
     if not gdchart:
         raise ImportError, 'No module named gdchart'
 
@@ -13,6 +13,10 @@ def make_chart(pot, pos, out, size=(1000, 500), **kwargs):
     names = [pot.mime_header['Language-Code']]
     values = [total]
     colors = [0x00ff00] # green
+
+    if size is None:
+        width = len(pos) * 20
+        size = (width, width / 2)
 
     print "languages: %s, msgid's: %s" % (len(pos), len(msgids))
     for po in [p for p in pos if p.mime_header['Language-Code'] != 'en']:
