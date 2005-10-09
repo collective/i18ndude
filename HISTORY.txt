@@ -2,9 +2,35 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
-i18ndude 2.0 - unreleased
+i18ndude 2.0 - released October 9, 2005
 
-    - *** This is a development beta-version***
+    - Removed two unsupported scripts, if you have used them please tell me
+      [hannosch]
+
+    - Refactored sync option into function of catalog.py and wrote test for it.
+      Fixing a bug along the way and did some code cleanup.
+      [hannosch]
+
+    - Added option to specify title of chart explicitly
+      [hannosch]
+
+    - Added combinedchart option, which is used to build the overview charts
+      on plone.org for a comprehensive view on the status of translations.
+      [hannosch]
+
+    - Removed the extract literals feature. If anybody needs it, please speak up.
+      [hannosch]
+
+    - Updated visualisation.py to handle new internal catalog format.
+      Provided basic test for it.
+      [hannosch]
+
+    - Added new feature to PTReader. For msgid's which are already in the
+      catalog, check if the msgstr matches or provide an error message.
+      [hannosch]
+
+    - Fixed another issue regarding missing whitespace and provided test for it
+      [hannosch, Tuttle]
 
     - POWriter generates new default comments instead of the old original
       comments. POParser automatically converts existing original comments

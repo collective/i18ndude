@@ -4,7 +4,7 @@ try:
 except ImportError:
     gdchart = None
 
-def make_chart(pot, pos, out, size=(1000, 500), **kwargs):
+def make_chart(pot, pos, out, size=None, title=None, **kwargs):
     if not gdchart:
         raise ImportError, 'No module named gdchart'
 
@@ -14,14 +14,18 @@ def make_chart(pot, pos, out, size=(1000, 500), **kwargs):
     values = [total]
     colors = [0x00ff00] # green
 
+    if size is None:
+        width = len(pos) * 20
+        size = (width, width / 2)
+
     print "languages: %s, msgid's: %s" % (len(pos), len(msgids))
     for po in [p for p in pos if p.mime_header['Language-Code'] != 'en']:
         name = '%s' % po.mime_header['Language-Code']
 
         value = 0
         for msgid in msgids:
-            if msgid in po and po[msgid][0]: # translated
-                if not [1 for fuzzy in po[msgid][2] if 'fuzzy' in fuzzy]:
+            if msgid in po and po[msgid].msgstr: # translated
+                if not [1 for fuzzy in po[msgid].comments if 'fuzzy' in fuzzy]:
                     value += 1
 
         names.append(name)
@@ -48,7 +52,7 @@ def make_chart(pot, pos, out, size=(1000, 500), **kwargs):
     options = {'bg_color': 0xffffff,
                'border': gdchart.GDC_BORDER_ALL,
                'xaxis_font': gdchart.GDC_SMALL,
-               'title': pot.mime_header['Project-Id-Version'],
+               'title': title or pot.mime_header['Project-Id-Version'],
                'ext_color' : colors,
                }
     options.update(kwargs)
@@ -59,3 +63,12 @@ def make_chart(pot, pos, out, size=(1000, 500), **kwargs):
                   out,
                   names,
                   values)
+
+    status = {}
+    i = 0
+    while i < len(names):
+        status[names[i]] = values[i]
+        i += 1
+
+    return status
+

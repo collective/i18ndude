@@ -1,0 +1,42 @@
+# Hanno Schlichting <schlichting@bakb.net>, 2005
+msgid ""
+msgstr ""
+"Project-Id-Version: i18ndude\n"
+"POT-Creation-Date: 2005-08-01 12:00+0000\n"
+"PO-Revision-Date: 2005-08-10 21:15+0000\n"
+"Last-Translator: Unicode Guy\n"
+"Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: testing\n"
+
+# comment1
+#. Default: "default1"
+#: file1
+msgid "msgid1"
+msgstr ""
+
+# comment2
+#. Default: "default2"
+#: file2
+msgid "msgid2"
+msgstr ""
+
+#. Default: "default3"
+#: file3
+msgid "msgid3"
+msgstr ""
+
+#. Default: "default4"
+msgid "msgid4"
+msgstr ""
+
+# comment5
+msgid "msgid5"
+msgstr ""
+

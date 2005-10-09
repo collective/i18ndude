@@ -88,12 +88,6 @@ present:
           one list of msgids that I added and one of msgids that I removed.
           Supply the -s option to suppress that.
 
-   extract-literals --pot <filename>
-          Given a pot-file with the --pot option I will write to stdout a
-          POT-file that contains only messages with literal ids. (I
-          assume that all ids that don't look like 'this_one'
-          (underscore, no spaces) are literal.)
-
    filter <file1> <file2>
           Given two pot-files I will write a copy of file1 to stdout with all
           messages removed that are also in file2, i.e. where msgids match.
@@ -111,6 +105,9 @@ present:
           This will create a chart that displays how much of the pot-file the
           po-files translate.
 
+   combinedchart -o <imagefile> --title <title> --products <product1> [<product2> ...]
+          This will create a chart that displays how much of the combined
+          products pot's is translated for each language.
 """
 
 import os, sys
@@ -118,9 +115,9 @@ import getopt
 import xml.sax
 
 try:
-    import common, untranslated, catalog, visualisation
+    import common, untranslated, catalog, visualisation, utils
 except ImportError:
-    from i18ndude import common, untranslated, catalog, visualisation
+    from i18ndude import common, untranslated, catalog, visualisation, utils
 
 def usage(code, msg=''):
     print >> sys.stderr, __doc__
@@ -357,15 +354,7 @@ def sync():
         usage(1)
 
     for po in po_ctls:
-        removed_msgids = [common.quote(msgid)
-                          for msgid in po.accept_ids(pot_ctl.keys())]
-
-        po.overwrite_context(pot_ctl)
-        added_msgids = [common.quote(msgid)
-                        for msgid in po.add_missing(pot_ctl)]
-
-        md = po.mime_header
-        md['POT-Creation-Date'] = pot_ctl.mime_header['POT-Creation-Date']
+        added_msgids, removed_msgids = po.sync(pot_ctl)
 
         file = open(po.filename, 'w')
         writer = catalog.POWriter(file, po)
@@ -374,36 +363,7 @@ def sync():
         print '%s: %s added, %s removed' % (po.filename,
                                             len(added_msgids),
                                             len(removed_msgids))
-
         file.close()
-
-def extract_literals():
-    try:
-        opts, nouse = getopt.getopt(sys.argv[2:], 'p:', ('pot=',))
-    except getopt.GetoptError, e:
-        usage(1)
-
-    pot_fn = None
-    for opt, arg in opts:
-        if opt in ('-p', '--pot'):
-            pot_fn = arg
-
-    if not pot_fn or nouse:
-        usage(1)
-
-    try:
-        pot_ctl = catalog.MessageCatalog(filename=pot_fn)
-    except IOError, e:
-        print >> sys.stderr, 'I/O Error: %s' % e
-        usage(1)
-
-    for msgid in pot_ctl.keys():
-        if not catalog.is_literal_id(msgid):
-            del pot_ctl[msgid]
-
-    pot_ctl.mime_header['POT-Creation-Date'] = catalog.now()
-    writer = catalog.POWriter(sys.stdout, pot_ctl)
-    writer.write(sort=False)
 
 def filter():
     if len(sys.argv[2:]) != 2:
@@ -469,9 +429,76 @@ def chart():
         po_ctls = [catalog.MessageCatalog(filename=fn) for fn in files]
     except IOError, e:
         print >> sys.stderr, 'I/O Error: %s' % e
-        usage(1)
 
     visualisation.make_chart(pot_ctl, po_ctls, out)
+
+def combinedchart():
+    try:
+        opts, files = getopt.getopt(sys.argv[2:], 'o:t:p:', ('out=', 'title=', 'products='))
+    except:
+        usage(1)
+
+    products = []
+    out = None
+    title = None
+    for opt, arg in opts:
+        if opt in ('-o', '--out'):
+            out = arg
+        elif opt in ('-t', '--title'):
+            title = arg
+        elif opt in ('-p', '--products'):
+            products.append(arg)
+
+    if not (products and out):
+        usage(1)
+
+    products.extend(files)
+
+    # get all the files
+    pos = {}
+    pots = {}
+    for product in products:
+        if not pos.get(product, False):
+            pos[product] = []
+        pos[product].extend(utils.getPoFiles(product=product))
+        if not pots.get(product, False):
+            pots[product] = []
+        pots[product].extend(utils.getPotFiles(product=product))
+
+    # create catalogs of them
+    pot_ctl = None
+    for product in pots:
+        for file in pots[product]:
+            ctl = catalog.MessageCatalog(filename=file)
+            if pot_ctl is None:
+                pot_ctl = ctl
+            else:
+                pot_ctl.merge(ctl)
+
+    if not pot_ctl:
+        print >> sys.stderr, 'Error: No pot files found.'
+        return
+
+    po_ctls = {}
+    for product in pos:
+        for file in pos[product]:
+            ctl = catalog.MessageCatalog(filename=file)
+            language = utils.getLanguage(product, file)
+            lang_ctl = po_ctls.get(language, None)
+            if lang_ctl is None:
+                po_ctls[language] = ctl
+            else:
+                po_ctls[language].merge(ctl)
+
+    if not po_ctls:
+        print >> sys.stderr, 'Error: No po files found.'
+        return
+
+    # flatten to list
+    po_ctls = po_ctls.values()
+
+    visualisation.make_chart(pot_ctl, po_ctls, out, title=title)
+
 
 def main():
     if len(sys.argv) == 1:
@@ -481,10 +508,10 @@ def main():
                 'rebuild-pot': rebuild_pot,
                 'merge': merge,
                 'sync': sync,
-                'extract-literals': extract_literals,
                 'filter': filter,
                 'admix': admix,
-                'chart': chart}
+                'chart': chart,
+                'combinedchart': combinedchart}
 
     command = sys.argv[1]
 

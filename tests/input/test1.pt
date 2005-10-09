@@ -25,14 +25,23 @@
 
 <p i18n:translate="text_buzz">Buzz</p>
 
+<p i18n:translate="text_buzz">Buzzer</p>
+
 <p metal:use-macro="somemacro">Dummy</p>
 
 <p tal:replace="something">Dumbo</p>
 
+<p i18n:translate="spacing">
+    Space <br /> before and after.
+</p>
+
+<li i18n:translate="spacing_strong">
+    Please press your browser's <strong>Back</strong> button to try again.
+</li>
+
 <tal:block i18n:translate="">Job started at <span i18n:name="datetime"
 tal:replace="now">Now</span> by user <span i18n:name="userid"
-tal:replace="options
-/userid">Userid</span>.</tal:block>
+tal:replace="options/userid">Userid</span>.</tal:block>
 
 <form>
 <input type="submit" value="Dig this" i18n:attributes="value dig_this"/>
