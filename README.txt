@@ -25,17 +25,9 @@ Commands
 
 See the output of i18ndude --help
 
-=========
-Utilities
-=========
-There are two utilities, which aren't tested nor supported. Run them at your
-own risk.
-- replaceemptytags.py
-- renamemsgids.py
-Their usage is explained in their headers.
-
 ===========
 Development
 ===========
 
 i18ndude is being developed at http://plone.org/products/i18ndude
+
