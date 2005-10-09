@@ -1,9 +1,0 @@
-**REQUIREMENTS**
-
-    - Python 2.3.x
-    - pyXML (tested with 0.8.1) 
-
-**INSTALLATION**
-
-    python setup.py install
-
