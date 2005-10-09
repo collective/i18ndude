@@ -224,6 +224,29 @@ class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
         self.assertEquals(self.mc.getDefaultComment(self.msgid), self.default_comment, 'wrong default comment line')
         self.assertEquals(self.mc.getDefault(self.msgid), self.default_text, 'wrong default comment text')
 
+class TestMessageCatalogSync(ZopeTestCase.ZopeTestCase):
+
+    def afterSetUp(self):
+        mc = catalog.MessageCatalog
+        self.potfile = os.path.join(PACKAGE_HOME, 'input', 'synctest.pot')
+        self.pofile = os.path.join(PACKAGE_HOME, 'input', 'synctest-de.po')
+        self.pot = mc(filename=self.potfile)
+        self.po = mc(filename=self.pofile)
+
+    def test_sync(self):
+        old_defaults = {}
+        for id in self.po:
+            old_defaults[id] = self.po[id].getDefault()
+        self.po.sync(self.pot)
+        self.failUnless(len(self.pot)==len(self.po), 'number of messages does not match')
+        for msgid in self.pot:
+            self.failUnless(msgid in self.po, 'msgid %s could not be found' % self.pot[msgid])
+            self.failUnless(self.po[msgid].references == self.pot[msgid].references)
+            defaults = self.po[msgid].getDefaults()
+            if defaults is not None:
+                for dc in defaults:
+                    self.failUnless(dc == self.pot[msgid].getDefault() or
+                                    dc == old_defaults[msgid], 'Either old or new default comment is missing on msgid: %s' % msgid)
 
 class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
 
@@ -360,6 +383,7 @@ def test_suite():
     suite.addTest(makeSuite(TestMessageEntry))
     suite.addTest(makeSuite(TestMessageCatalogInit))
     suite.addTest(makeSuite(TestMessageCatalog))
+    suite.addTest(makeSuite(TestMessageCatalogSync))
     suite.addTest(makeSuite(TestMessagePoWriter))
     suite.addTest(makeSuite(TestMessagePTReader))
     suite.addTest(makeSuite(TestMessagePYReader))

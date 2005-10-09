@@ -72,12 +72,17 @@ class MessageEntry:
            return False
         return True
 
-    def getDefaultComment(self):
+    def getDefaultComment(self, multiple=False):
         """Returns the automatic comment starting with Default: """
+        defaults = []
         for c in self.automatic_comments:
             if c.startswith(DEFAULT_COMMENT):
-                return c
-        return None
+                defaults.append(c)
+        if len(defaults) == 0:
+            return None
+        if multiple:
+            return defaults
+        return defaults[0]
 
     def getDefault(self):
         """Returns the text of the default comment"""
@@ -86,6 +91,17 @@ class MessageEntry:
             default = comment.replace(DEFAULT_COMMENT+'\"','')
             return default[:-1]
         return None
+
+    def getDefaults(self):
+        """Returns the text of the default comments"""
+        comments = self.getDefaultComment(multiple=True)
+        defaults = []
+        if comments is None:
+            return None
+        for dc in comments:
+            default = dc.replace(DEFAULT_COMMENT+'\"','')
+            defaults.append(default[:-1])
+        return defaults
 
     def getOriginalComment(self):
         """Returns the comment line starting with Original: """
@@ -117,7 +133,6 @@ class MessageCatalog(odict):
     def __init__(self, filename=None, domain=None):
         """Build a MessageCatalog, either by reading from a .po-file or
         specifying a domain."""
-
         odict.__init__(self)
 
         # XOR
@@ -167,18 +182,21 @@ class MessageCatalog(odict):
 
         If the msgid already exists in my catalog, I will only add comment,
         reference and automatic comments to the entry if these doesn't exist yet"""
-
         if not self.has_key(msgid):
-            self[msgid] = MessageEntry(msgid, msgstr=msgstr, comments=comments, references=references, automatic_comments=automatic_comments)
+            self[msgid] = MessageEntry(msgid, msgstr=msgstr, comments=comments,
+                                       references=references,
+                                       automatic_comments=automatic_comments)
         else:
             if comments:
                 comments = [c for c in comments if c not in self[msgid].comments]
                 self[msgid].comments.extend(comments)
             if references:
-                references = [ref for ref in references if ref not in self[msgid].references]
+                references = [ref for ref in references
+                              if ref not in self[msgid].references]
                 self[msgid].references.extend(references)
             if automatic_comments:
-                automatic_comments = [ac for ac in automatic_comments if ac not in self[msgid].automatic_comments]
+                automatic_comments = [ac for ac in automatic_comments if ac
+                                      not in self[msgid].automatic_comments]
                 self[msgid].automatic_comments.extend(automatic_comments)
 
     def add_missing(self, msgctl, defaultmsgstr='', mergewarn=None):
@@ -193,12 +211,13 @@ class MessageCatalog(odict):
         that is to be translated in order to make sense to the translator.
 
         Returns the ids that were added."""
-
         ids = []
         for key in msgctl.keys():
             if not self.has_key(key):
                 entry = msgctl[key]
-                self.add(key, msgstr=defaultmsgstr, references=entry.references, comments=entry.comments, automatic_comments=entry.automatic_comments)
+                self.add(key, msgstr=defaultmsgstr, comments=entry.comments,
+                         references=entry.references,
+                         automatic_comments=entry.automatic_comments)
                 ids.append(key)
             elif mergewarn:
                 print >> sys.stderr, \
@@ -209,21 +228,39 @@ class MessageCatalog(odict):
     def merge(self, msgctl):
         """Each msgid that I miss and ``msgctl`` contains will be included in
         my catalog."""
-
         for key in msgctl.keys():
             if not self.has_key(key):
                 entry = msgctl[key]
-                self.add(key, msgstr=entry.msgstr, references=entry.references, comments=entry.comments, automatic_comments=entry.automatic_comments)
+                self.add(key, msgstr=entry.msgstr, comments=entry.comments,
+                              references=entry.references,
+                              automatic_comments=entry.automatic_comments)
+
+    def sync(self, msgctl):
+        """Syncronize the catalog with the given one. This removes all messages
+        which are not found anymore in the new catalog, adds additional ones and
+        overwrites the comments with the ones from the given catalog. This is
+        used in the sync command.
+        """
+        removed_msgids = [common.quote(msgid)
+                          for msgid in self.accept_ids(msgctl.keys())]
+        self.overwrite_context(msgctl)
+        added_msgids = [common.quote(msgid)
+                        for msgid in self.add_missing(msgctl)]
+
+        self.mime_header['POT-Creation-Date'] = msgctl.mime_header['POT-Creation-Date']
+
+        return (added_msgids, removed_msgids)
 
     def overwrite_context(self, msgctl):
         """For each message in the given message catalog that I know of,
         I will overwrite my contextual information with the given catalog's
         one."""
-
         for key in msgctl.keys():
             if self.has_key(key):
                 self[key].references = msgctl[key].references
-                self[key].automatic_comments = msgctl[key].automatic_comments
+                for ac in msgctl[key].automatic_comments:
+                    if ac not in self[key].automatic_comments:
+                        self[key].automatic_comments.append(ac)
 
     def accept_ids(self, ids):
         """Remove all messages from the catalog where the id is not in argument

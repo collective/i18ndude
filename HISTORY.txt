@@ -6,6 +6,10 @@ i18ndude 2.0 - unreleased
 
     - *** This is a development beta-version***
 
+    - Refactored sync option into function of catalog.py and wrote test for it.
+      Fixing a bug along the way and did some code cleanup.
+      [hannosch]
+
     - Added option to specify title of chart explicitly
       [hannosch]
 

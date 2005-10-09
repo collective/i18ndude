@@ -354,15 +354,7 @@ def sync():
         usage(1)
 
     for po in po_ctls:
-        removed_msgids = [common.quote(msgid)
-                          for msgid in po.accept_ids(pot_ctl.keys())]
-
-        po.overwrite_context(pot_ctl)
-        added_msgids = [common.quote(msgid)
-                        for msgid in po.add_missing(pot_ctl)]
-
-        md = po.mime_header
-        md['POT-Creation-Date'] = pot_ctl.mime_header['POT-Creation-Date']
+        added_msgids, removed_msgids = po.sync(pot_ctl)
 
         file = open(po.filename, 'w')
         writer = catalog.POWriter(file, po)
@@ -371,7 +363,6 @@ def sync():
         print '%s: %s added, %s removed' % (po.filename,
                                             len(added_msgids),
                                             len(removed_msgids))
-
         file.close()
 
 def filter():
