@@ -1,0 +1,91 @@
+*** This file is closed. Please see HISTORY.txt ***
+
+2005-08-28 Hanno Schlichting <schlichting at bakb dot org>
+
+	* Reformated ChangeLog as HISTORY.txt
+
+2005-05-07 Hanno Schlichting <schlichting at bakb dot org>
+
+	* Include msgstr in POT-file as an additional comment
+	"## English translation:"
+
+	* Fixed issue where the header information of an empty manual pot
+	were not applied to the product.pot
+
+2005-01-26  Daniel Nouri  <dpunktnpunkt at web.de>
+
+	* common.py (prepare_xml): Applied patch by Roel van der Steen.
+	(#982527)
+
+2004-01-14  Daniel Nouri  <daniel@con-fuse.org>
+
+	* catalog.py (PTReader._make_msgstr): Include msgstr in POT-file.
+
+	* i18ndude.py (filter_isfile): Now accepts directories on command-line.
+
+2003-12-20  Daniel Nouri  <daniel.nouri@con-fuse.org>
+
+	* untranslated.py (_severity): Improved namespace awareness.
+
+2003-12-12  Daniel Nouri  <daniel.nouri@con-fuse.org>
+
+	* i18ndude.py: Added extract-literals and filter commands.
+
+	* catalog.py: MessageCatalog uses an ordered dictionary now. POWriter
+	can now write ids in the order of the source's appearance.
+
+	* odict.py: Ordered dictionary implementation.
+
+2003-11-07  Daniel Nouri  <daniel@con-fuse.org>
+
+	* i18ndude.py: Some renaming and added --create option for
+	'rebuild-pot' command.
+
+2003-11-03 Daniel Nouri  <daniel.nouri@con-fuse.org>
+
+	* catalog.py: Added update-pot command. It needs heavy testing now!
+
+2003-11-03 Daniel Nouri  <daniel.nouri@con-fuse.org>
+
+	* i18ndude.py: i18ndude now knows 'find-untranslated' (which used to be
+	the only action in the versions before), 'update-pot' (not done) and
+	'sync' commands. For a usage summary see "i18ndude --help".
+
+	Note that 'sync' has only been tested sparsely. Please report any bugs
+	or suggestions that you might have. When writing out the .po- file,
+	sync orders entries by msgid, where 'literal' msgids come last.
+	Therefore it is not possible to keep up with comments that are of
+	chronological nature. ERASE THESE from the pot.
+
+	I feel :( and *ugh* about the fact that there are actually two other
+	projects that also aim to provide po-convenience. Sorry for the
+	headbutt.
+
+	* untranslated.py: Added. The contents were part of i18ndude.py before.
+
+	* catalog.py: Added. Contains classes MessageCatalog, POParser,
+	POWriter. PTReader, for reading from pts into a MessageCatalog is yet
+	to be implemented. (See docstrings)
+
+2003-10-20  Daniel Nouri  <daniel@tijuana>
+
+	* i18ndude.py (SilentHandler.endDocument): SilentHandler does not
+	mention parsed documents that had no errors or warnings anymore.
+
+2003-10-11  Daniel Nouri  <daniel.nouri@con-fuse.org>
+
+	* i18ndude.py: Applied patch from Jeroen Janssen, fixing a Python2.3
+	related bug.
+
+2003-10-03  Daniel Nouri  <daniel.nouri@con-fuse.org>
+
+	* i18ndude.py: Now has a --silent mode (use it as the first argument)
+	so that it reports a summary only.
+
+2003-10-01 22:42  Daniel Nouri <daniel.nouri@con-fuse.org>
+
+    * i18ndude.py: Comments marked by tal:condition="nothing" are now ignored.
+
+2003-09-21 17:01  batlogg
+
+    * ChangeLog: created, added misc files, please maintain README,...

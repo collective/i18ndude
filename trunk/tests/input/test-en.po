@@ -1,0 +1,77 @@
+# Translation of test.pot to English
+# Hanno Schlichting <schlichting@bakb.net>, 2005
+msgid ""
+msgstr ""
+"Project-Id-Version: i18ndude\n"
+"POT-Creation-Date: 2005-08-01 12:00+0000\n"
+"PO-Revision-Date: 2005-08-10 21:15+0000\n"
+"Last-Translator: Unicödé Guy\n"
+"Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: testing\n"
+
+msgid "msgid for text with german umlaut"
+msgstr "äöüß text"
+
+msgid "msgid for text with html-entity"
+msgstr "&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;"
+
+msgid "msgid for unicode text"
+msgstr "unicode msgstr ···"
+
+#. Default: [···]
+#: ./folder/file_unicode
+msgid "msgid for unicode text with comment"
+msgstr "unicode msgstr ···"
+
+## I am a dead comment
+msgid "msgid has spaces"
+msgstr "msgstr has spaces"
+
+# comment1
+#. Default: "msgstr1"
+#: file1
+#: file2
+msgid "msgid1"
+msgstr "msgstr1"
+
+#: file2
+msgid "msgid2"
+msgstr "msgstr2"
+
+# comment3
+#: file3
+msgid "msgid3"
+msgstr "msgstr3"
+
+#: file4
+msgid "msgid4"
+msgstr "msgstr4"
+
+# comment5
+msgid "msgid5"
+msgstr "msgstr5"
+
+msgid "msgid6"
+msgstr "msgstr6"
+
+#, fuzzy
+msgid "msgid7"
+msgstr "msgstr7"
+
+#, fuzzy
+msgid "msgid8"
+msgstr ""
+
+msgid "msgid_has_underlines"
+msgstr "msgstr_has_underlines"
+
+msgid "msgid_has_underlines and spaces"
+msgstr "msgstr_has_underlines and spaces"
+

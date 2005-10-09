@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="testing">
+
+<head>
+</head>
+
+<body>
+
+<img src=""
+     alt="Some alt"
+     title="Some title"
+     i18n:attributes="alt some_alt; title title_some_alt" />
+
+
+<p i18n:translate="">Buzz</p>
+
+<p i18n:translate="">
+    <div i18n:name="foo"></div>
+
+    <div i18n:name="bar"></div>
+</p>
+
+<p i18n:translate="text_buzz">Buzz</p>
+
+<p i18n:translate="text_buzz">Buzzer</p>
+
+<p metal:use-macro="somemacro">Dummy</p>
+
+<p tal:replace="something">Dumbo</p>
+
+<p i18n:translate="spacing">
+    Space <br /> before and after.
+</p>
+
+<li i18n:translate="spacing_strong">
+    Please press your browser's <strong>Back</strong> button to try again.
+</li>
+
+<tal:block i18n:translate="">Job started at <span i18n:name="datetime"
+tal:replace="now">Now</span> by user <span i18n:name="userid"
+tal:replace="options/userid">Userid</span>.</tal:block>
+
+<form>
+<input type="submit" value="Dig this" i18n:attributes="value dig_this"/>
+</form>
+
+</body>
+</html>
