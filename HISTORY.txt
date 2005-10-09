@@ -2,6 +2,10 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
+i18ndude 2.1 - unreleased
+
+    - 
+
 i18ndude 2.0 - released October 9, 2005
 
     - Removed two unsupported scripts, if you have used them please tell me
