@@ -44,17 +44,6 @@ def prepare_xml(file):
     return StringIO(content.strip())
 
 
-def make_lines(l, join=' ', max=70):
-    lines = ['']
-    for item in l:
-        lastline = lines[-1] + str(item) + join
-        if len(lastline) > 70 and lines[-1]:
-            lines.append(str(item))
-        else:
-            lines[-1] += join + str(item)
-
-    return lines
-
 def quote(s):
     """Quote if string has spaces."""
 

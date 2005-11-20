@@ -1,4 +1,3 @@
-import sys
 try:
     import gdchart
 except ImportError:
