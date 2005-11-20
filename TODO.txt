@@ -1,7 +1,5 @@
 ** TODO **
 
-- PyParser should deal correctly with translate() calls with options.
-
 - Tests needs to be written for more than catalog.py
 
 - Main i18ndude script needs to be refactored and fewer options.

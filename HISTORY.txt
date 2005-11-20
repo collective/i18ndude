@@ -4,7 +4,8 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
-    - 
+    - Don't add fuzzy status to empty messages anymore.
+      [hannosch]
 
 i18ndude 2.0 - released October 9, 2005
 

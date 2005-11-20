@@ -7,12 +7,8 @@ if __name__ == '__main__':
 from Testing import ZopeTestCase
 from utils import PACKAGE_HOME
 
-try:
-    from Products.i18ndude import catalog
-    from Products.i18ndude.visualisation import make_chart
-except ImportError:
-    from i18ndude import catalog
-    from i18ndude.visualisation import make_chart
+from i18ndude import catalog
+from i18ndude.visualisation import make_chart
 
 class TestVisualisation(ZopeTestCase.ZopeTestCase):
 

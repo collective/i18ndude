@@ -515,7 +515,7 @@ class POWriter:
             no += 1
             if no >= MAX_OCCUR: break
 
-        if msg_changed or fuzzy:
+        if msgstr and (msg_changed or fuzzy):
             self._printToFile(f, '#, fuzzy')
 
         self._printToFile(f, 'msgid "%s"' % id)

@@ -7,10 +7,7 @@ if __name__ == '__main__':
 from Testing import ZopeTestCase
 from utils import PACKAGE_HOME
 
-try:
-    from Products.i18ndude import catalog
-except ImportError:
-    from i18ndude import catalog
+from i18ndude import catalog
 
 class TestGlobal(ZopeTestCase.ZopeTestCase):
 
@@ -108,7 +105,7 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
                        'msgid5' : self.me('msgid5', msgstr='msgstr5', comments=['comment5']),
                        'msgid6' : self.me('msgid6', msgstr='msgstr6'),
                        'msgid7' : self.me('msgid7', msgstr='msgstr7', comments=[', fuzzy']),
-                       'msgid8' : self.me('msgid8', comments=[', fuzzy']),
+                       'msgid8' : self.me('msgid8'),
                        'msgid has spaces' : self.me('msgid has spaces', msgstr='msgstr has spaces', comments=['# I am a dead comment']),
                        'msgid_has_underlines' : self.me('msgid_has_underlines', msgstr='msgstr_has_underlines'),
                        'msgid_has_underlines and spaces' : self.me('msgid_has_underlines and spaces', msgstr='msgstr_has_underlines and spaces'),

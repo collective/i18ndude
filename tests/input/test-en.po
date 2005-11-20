@@ -65,7 +65,6 @@ msgstr "msgstr6"
 msgid "msgid7"
 msgstr "msgstr7"
 
-#, fuzzy
 msgid "msgid8"
 msgstr ""
 
