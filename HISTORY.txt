@@ -4,6 +4,14 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Change output of references's containing '//' to conform to the poEdit
+      format.
+      [hannosch]
+
+    - Change output of msgstr's containing newline codes (\n) to conform to the
+      gettext standard and specifically the poEdit format.
+      [hannosch]
+
     - Don't add fuzzy status to empty messages anymore.
       [hannosch]
 

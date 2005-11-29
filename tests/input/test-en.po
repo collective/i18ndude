@@ -48,7 +48,11 @@ msgstr "msgstr2"
 # comment3
 #: file3
 msgid "msgid3"
-msgstr "msgstr3"
+msgstr ""
+"\n"
+"\n"
+"msgstr\n"
+"3"
 
 #: file4
 msgid "msgid4"

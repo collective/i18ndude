@@ -100,7 +100,7 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
 
         self.msgids = {'msgid1' : self.me('msgid1', msgstr='msgstr1', references=['file1','file2'], automatic_comments=['Default: "msgstr1"'], comments=['comment1']),
                        'msgid2' : self.me('msgid2', msgstr='msgstr2', references=['file2']),
-                       'msgid3' : self.me('msgid3', msgstr='msgstr3', references=['file3'], comments=['comment3']),
+                       'msgid3' : self.me('msgid3', msgstr='\\n\\nmsgstr\\n3', references=['file3'], comments=['comment3']),
                        'msgid4' : self.me('msgid4', msgstr='msgstr4', references=['file4']),
                        'msgid5' : self.me('msgid5', msgstr='msgstr5', comments=['comment5']),
                        'msgid6' : self.me('msgid6', msgstr='msgstr6'),

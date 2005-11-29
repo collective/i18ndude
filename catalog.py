@@ -511,7 +511,14 @@ class POWriter:
 
         no = 0
         for ref in entry.references:
-            self._printToFile(f, '#: %s' % ref)
+            if not '//' in ref:
+                self._printToFile(f, '#: %s' % ref)
+            else:
+                refs = ref.split('//')
+                if refs[0]:
+                    self._printToFile(f, '#: %s//' % refs[0])
+                if refs[1]:
+                    self._printToFile(f, '#: %s' % refs[1].lstrip())
             no += 1
             if no >= MAX_OCCUR: break
 
@@ -519,7 +526,15 @@ class POWriter:
             self._printToFile(f, '#, fuzzy')
 
         self._printToFile(f, 'msgid "%s"' % id)
-        self._printToFile(f, 'msgstr "%s"' % msgstr)
+        if not '\\n' in msgstr:
+            self._printToFile(f, 'msgstr "%s"' % msgstr)
+        else:
+            self._printToFile(f, 'msgstr ""')
+            lines = msgstr.split('\\n')
+            for line in lines[:-1]:
+                self._printToFile(f, '"%s\\n"' % line)
+            if lines[-1]:
+                self._printToFile(f, '"%s"' % lines[-1])
 
 
 class PTReader:
