@@ -39,7 +39,7 @@ present:
           contain only the errors for each file.
 
    rebuild-pot --pot <filename> [--create <domain> [--merge <filename>
-   [--merge2 <filename>]] -s] file1 [file2 ...] | directory
+   [--merge2 <filename>]]] file1 [file2 ...] | directory
           Given a pot-file via the --pot option you can either specify a list
           of ZPT filenames or provide a directory that including all
           sub-folders will be searched for PageTemplates (*.pt and *.cpt) and
@@ -61,11 +61,7 @@ present:
           from this additional pot-file. If you provide a second pot-file via
           --merge2 <filename> I'll merge this into the first merge's result
 
-          Normally I'll append a comment to the pot-file containing one list of
-          msgids that I added and one of msgids that I removed.
-          Supply the -s option to suppress that.
-
-   merge --pot <filename> --merge <filename> [--merge2 <filename>] [-s]
+   merge --pot <filename> --merge <filename> [--merge2 <filename>]
           Given a pot-file via the --pot option and a second
           pot-file with the --merge <filename> option, I try to merge
           these msgids into the target-pot file. If a msgid already
@@ -74,19 +70,11 @@ present:
           If you provide a --merge2 <filename> I'll first merge this one
           in addition to the first one.
 
-          Normally I'll append a comment to the pot-file containing
-          one list of msgids that I added and one of msgids that I
-          removed.  Supply the -s option to suppress that.
-
-   sync --pot <filename> [-s] file1 [file2 ...]
+   sync --pot <filename> file1 [file2 ...]
           Given a pot-file with the --pot option and a list of po-files I'll
           remove from the po files those message translations of which the
           msgids are not in the pot-file and add messages that the pot-file has
           but the po-file doesn't.
-
-          Normally I'll append a comment to each modified po-file containing
-          one list of msgids that I added and one of msgids that I removed.
-          Supply the -s option to suppress that.
 
    filter <file1> <file2>
           Given two pot-files I will write a copy of file1 to stdout with all
