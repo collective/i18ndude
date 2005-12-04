@@ -43,6 +43,8 @@
 tal:replace="now">Now</span> by user <span i18n:name="userid"
 tal:replace="options/userid">Userid</span>.</tal:block>
 
+<span i18n:translate=""><tt>domain</tt> is one of the <em>local domains</em>:</span>
+
 <form>
 <input type="submit" value="Dig this" i18n:attributes="value dig_this"/>
 </form>

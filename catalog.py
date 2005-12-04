@@ -30,6 +30,7 @@ MAX_OCCUR = 3 # maximum number of occurrences listed
 
 ORIGINAL_COMMENT = 'Original: '
 DEFAULT_COMMENT = 'Default: '
+PUNCTUATIONS = ' ,.:;?'
 
 def now():
     fmt = '%Y-%m-%d %H:%M+0000'
@@ -660,9 +661,8 @@ class PTReader:
             if (cs('${') or cs('<') ):
                 chunk = ' ' + chunk + ' '
             msgstr += chunk
-        msgstr = msgstr.replace('  ', ' ')
-        msgstr = msgstr.replace(' .', '.')
-        msgstr = msgstr.replace(' ,', ',')
+        for p in PUNCTUATIONS:
+            msgstr = msgstr.replace(' %s' % p, p)
         return msgstr.strip()
 
     def _add_msg(self, msgid, msgstr, comments, filename, automatic_comments, domain):

@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Fixed yet another issue regarding whitespace and provided test for it.
+      [hannosch, Tuttle]
+
     - Change output of references's containing '//' to conform to the poEdit
       format.
       [hannosch]

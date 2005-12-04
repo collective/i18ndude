@@ -322,7 +322,8 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
                        u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=self.input),
                        u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', msgstr=u'Job started at ${datetime} by user ${userid}.', references=self.input),
                        u'spacing': self.me(u'spacing', msgstr=u'Space <br/> before and after.', references=self.input),
-                       u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=self.input)
+                       u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=self.input),
+                       u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', msgstr='<tt>domain</tt> is one of the <em>local domains</em>:', references=self.input)
                       }
 
     def test_read(self):
