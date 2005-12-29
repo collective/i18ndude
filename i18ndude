@@ -381,13 +381,11 @@ def admix():
     mixin_ctl = catalog.MessageCatalog(filename=fn)
 
     for msgid in mixin_ctl:
-        mixin_msgstr = mixin_ctl[msgid][0]
+        mixin_msgstr = mixin_ctl[msgid].msgstr
 
-        if mixin_msgstr and \
-           msgid in base_ctl and \
-           not base_ctl[msgid][0]:
-            entry = list(base_ctl[msgid])
-            entry[0] = mixin_ctl[msgid][0]
+        if mixin_msgstr and msgid in base_ctl and not base_ctl[msgid].msgstr:
+            entry = base_ctl[msgid]
+            entry.msgstr = mixin_ctl[msgid].msgstr
             base_ctl[msgid] = entry
 
     writer = catalog.POWriter(sys.stdout, base_ctl)
