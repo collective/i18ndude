@@ -4,6 +4,15 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Remove the 'addPortalMessage' again from the list of python functions
+      whose argument should be translated. We do these with proper MessageID's
+      now.
+      [hannosch]
+
+    - Exclude folders named 'tests' from subfolder scanning. Page templates and
+      Python code from tests shouldn't be scanned for i18n tags.
+      [hannosch]
+
     - Fix the broken admix option.
       [hannosch]
 

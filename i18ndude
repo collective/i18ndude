@@ -116,7 +116,7 @@ def usage(code, msg=''):
 def filter_isfile(files):
     result = []
     for name in files: # parse file by file
-        if os.path.isdir(name): # descend recursively
+        if os.path.isdir(name) and name != 'tests': # descend recursively
             join = lambda file: os.path.join(name, file)
             subdirs = filter_isfile([path for path in
                                      map(join, os.listdir(name))

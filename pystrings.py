@@ -23,7 +23,7 @@ class TokenEater(object):
 
     def __waiting(self, ttype, tstring, lineno):
         # Which functions to look for
-        if ttype == tokenize.NAME and tstring in ['_','translate','utranslate','addPortalMessage']:
+        if ttype == tokenize.NAME and tstring in ['_','translate','utranslate']:
             self.__state = self.__keywordseen
 
     def __suiteseen(self, ttype, tstring, lineno):
