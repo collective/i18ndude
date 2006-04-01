@@ -116,7 +116,7 @@ def usage(code, msg=''):
 def filter_isfile(files):
     result = []
     for name in files: # parse file by file
-        if os.path.isdir(name) and name != 'tests': # descend recursively
+        if os.path.isdir(name) and not name.endswith('tests'): # descend recursively
             join = lambda file: os.path.join(name, file)
             subdirs = filter_isfile([path for path in
                                      map(join, os.listdir(name))
@@ -125,7 +125,7 @@ def filter_isfile(files):
             result += subdirs
 
         elif not os.path.isfile(name):
-            print >> sys.stderr, 'Warning: %s is not a file.' % name
+            print >> sys.stderr, 'Warning: %s is not a file or is ignored.' % name
 
         else:
             result.append(name)
