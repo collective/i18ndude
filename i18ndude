@@ -138,6 +138,9 @@ def find_untranslated():
         usage(1)
 
     parser = xml.sax.make_parser(['expat'])
+    # disable external validation to make it work without network access
+    parser.setFeature(xml.sax.handler.feature_external_ges, False)
+    parser.setFeature(xml.sax.handler.feature_external_pes, False)
     handler = untranslated.VerboseHandler(parser, sys.stdout) # default
 
     for opt, arg in opts:
