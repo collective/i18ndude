@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Fixed tests, so they can be run with the normal Zope testrunner.
+      [hannosch]
+
     - Disabled external namespace validation for find-untranslated so you can
       run it without network access and results in a major speed increase.
       Thx to Chuck Bearden for the patch. This closes
