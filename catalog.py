@@ -679,8 +679,10 @@ class PTReader:
         if catalog.has_key(msgid):
             cat_msgstr = catalog[msgid].msgstr
             if msgstr != cat_msgstr:
-                print >> sys.stderr, 'Error: msgid "%s" in %s already exists with a different msgstr (bad: %s, should be: %s)\n' % \
-                         (msgid, filename, msgstr, cat_msgstr)
+                print >> sys.stderr, "Error: msgid '%s' in %s already exists " \
+                         "with a different msgstr (bad: %s, should be: %s)\n" \
+                         "The references for the existent value are: %s\n" % \
+                         (msgid, filename, msgstr, cat_msgstr, ''.join(catalog[msgid].references))
                 adding = False
 
         if adding:

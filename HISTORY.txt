@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Clarified the 'already exists with different text' message by providing
+      the location of the original text as well.
+      [hannosch]
+
     - Removed the 'Assuming rendered msgid' warning messages. These only clutter
       the logs but don't provide any real value.
       [hannosch]
