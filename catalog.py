@@ -591,10 +591,10 @@ class PTReader:
                element.hasAttribute('tal:replace') or \
                element.hasAttribute('content') or \
                element.hasAttribute('replace'):
-                print >> sys.stderr, 'Assuming rendered msgid in %s, not included:\n  %s\n' % \
-                      (self._curr_fn, element.toprettyxml('  ', '\n  '))
+               # don't translate messages which will be replaced anyways
+               pass
             else:
-                # tuttle@bbs.cvut.cz, XXX: XML quoting persists here, but
+                # tuttle@bbs.cvut.cz, XML quoting persists here, but
                 # even \" is untranslatable here either. Better go with
                 # non-literals in that case.
                 msgid = self._make_msgstr(element)
@@ -631,8 +631,7 @@ class PTReader:
 
         for attrname, msgid, msgstr in attrs:
             if attrname in rendered:
-                print >> sys.stderr, 'Assuming rendered msgid in %s, not included:\n%s\n' % \
-                      (self._curr_fn, element.toprettyxml('  '))
+                # don't translate messages which will be replaced anyways
                 continue
             if msgid:
                 self._add_msg(msgid, msgstr, [], filename, [], domain)

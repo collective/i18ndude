@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Removed the 'Assuming rendered msgid' warning messages. These only clutter
+      the logs but don't provide any real value.
+      [hannosch]
+
     - Fixed tests, so they can be run with the normal Zope testrunner.
       [hannosch]
 
