@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Sorted textual output of the combinedchart option by language code.
+      [hannosch]
+
     - Clarified the 'already exists with different text' message by providing
       the location of the original text as well.
       [hannosch]

@@ -483,10 +483,14 @@ def combinedchart():
         print >> sys.stderr, 'Error: No po files found.'
         return
 
-    # flatten to list
-    po_ctls = po_ctls.values()
+    po_catalogs = []
+    # flatten to list and sort
+    keys = po_ctls.keys()
+    keys.sort()
+    for key in keys:
+        po_catalogs.append(po_ctls[key])
 
-    visualisation.make_chart(pot_ctl, po_ctls, out, title=title)
+    visualisation.make_chart(pot_ctl, po_catalogs, out, title=title)
 
 
 def main():
