@@ -4,6 +4,12 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Egg enabled i18ndude. The next release will be available as an egg. If you
+      are in a development environment you might want to reinstall i18ndude by
+      using 'python setup.py develop' instead of 'python setup.py install' now,
+      so you don't have to do this whenever something changes in SVN :)
+      [hannosch]
+
     - Sorted textual output of the combinedchart option by language code.
       [hannosch]
 

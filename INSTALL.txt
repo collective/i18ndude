@@ -1,8 +1,7 @@
-**REQUIREMENTS**
+i18ndude installation
+=====================
 
-    - Python 2.3.x
-
-**INSTALLATION**
-
-    python setup.py install
-
+ * When you're reading this you have probably already run 
+   'easy_install i18ndude'. Find out how to install setuptools
+   (and EasyInstall) here:
+   http://peak.telecommunity.com/DevCenter/EasyInstall

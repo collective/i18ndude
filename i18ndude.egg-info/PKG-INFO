@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: i18ndude
+Version: 2.1dev-r24984
+Summary: i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
+Home-page: http://plone.org/products/i18ndude
+Author: Plone i18n team
+Author-email: plone-i18n@lists.sourceforge.net
+License: GPL
+Description: UNKNOWN
+Keywords: Plone i18n zpt
+Platform: UNKNOWN
