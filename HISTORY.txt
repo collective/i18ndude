@@ -4,6 +4,11 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Some small refinements to setup.py. i18ndude is now registered in the
+      Cheese Shop and you can get the current development version just by
+      typing 'easy_install i18ndude' :)
+      [hannosch] 
+
     - Egg enabled i18ndude. The next release will be available as an egg. If you
       are in a development environment you might want to reinstall i18ndude by
       using 'python setup.py develop' instead of 'python setup.py install' now,

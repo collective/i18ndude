@@ -1,11 +1,17 @@
 Metadata-Version: 1.0
 Name: i18ndude
-Version: 2.1dev-r24984
+Version: 2.1dev-r25864
 Summary: i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
 Home-page: http://plone.org/products/i18ndude
-Author: Plone i18n team
-Author-email: plone-i18n@lists.sourceforge.net
+Author: Hanno Schlichting
+Author-email: plone@hannosch.info
 License: GPL
-Description: UNKNOWN
+Description: i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
 Keywords: Plone i18n zpt
 Platform: UNKNOWN
+Classifier: Classifier: Development Status :: 5 - Production/Stable
+Classifier: Classifier: Environment :: Console
+Classifier: Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Classifier: Operating System :: OS Independent
+Classifier: Classifier: Programming Language :: Python
+Classifier: Classifier: Topic :: Utilities
