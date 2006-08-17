@@ -29,6 +29,7 @@ visualisation.py
 ./visualisation.py
 i18ndude.egg-info/PKG-INFO
 i18ndude.egg-info/SOURCES.txt
+i18ndude.egg-info/dependency_links.txt
 i18ndude.egg-info/entry_points.txt
 i18ndude.egg-info/not-zip-safe
 i18ndude.egg-info/top_level.txt
