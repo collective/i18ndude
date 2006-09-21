@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Added framework classifiers to the package metadata.
+      [hannosch]
+
     - Some small refinements to setup.py. i18ndude is now registered in the
       Cheese Shop and you can get the current development version just by
       typing 'easy_install i18ndude' :)

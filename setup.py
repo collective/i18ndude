@@ -10,6 +10,8 @@ setup(name='i18ndude',
       classifiers=[
           'Classifier: Development Status :: 5 - Production/Stable',
           'Classifier: Environment :: Console',
+          'Framework :: Zope2',
+          'Framework :: Zope3',
           'Classifier: License :: OSI Approved :: GNU General Public License (GPL)',
           'Classifier: Operating System :: OS Independent',
           'Classifier: Programming Language :: Python',
