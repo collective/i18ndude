@@ -1,6 +1,5 @@
 ChangeLog
 README.txt
-setup.cfg
 setup.py
 version.txt
 docs/COPYRIGHT
