@@ -2,6 +2,15 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
+i18ndude 2.1.1 - Unreleased
+
+    - Removed some unused test files.
+      [hannosch]
+
+    - Corrected the package information in the setup.py. Figured out how to use
+      find_packages() with the correct arguments.
+      [hannosch]
+
 i18ndude 2.1 - Released September 22, 2006
 
     - Refactored the package source code layout to comply to the usual best
