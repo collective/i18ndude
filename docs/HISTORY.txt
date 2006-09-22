@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 2.1.1 - Unreleased
 
+    - Use entry_points console_scripts from setuptools to install the main
+      script. This should generate an executable file on Windows platforms.
+      [hannosch]
+
     - Removed some unused test files.
       [hannosch]
 

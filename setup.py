@@ -32,7 +32,8 @@ setup(name='i18ndude',
           # -*- Extra requirements: -*-
       ],
       entry_points="""
-      # -*- Entry points: -*-
+      [console_scripts]
+          i18ndude=i18ndude.script:main
       """,
-      scripts=['src/i18ndude/i18ndude'],
+      scripts=[],
       )

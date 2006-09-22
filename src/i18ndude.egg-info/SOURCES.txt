@@ -11,10 +11,10 @@ docs/TODO.txt
 src/i18ndude/__init__.py
 src/i18ndude/catalog.py
 src/i18ndude/common.py
-src/i18ndude/i18ndude
 src/i18ndude/odict.py
 src/i18ndude/pygettext.py
 src/i18ndude/pystrings.py
+src/i18ndude/script.py
 src/i18ndude/untranslated.py
 src/i18ndude/utils.py
 src/i18ndude/visualisation.py

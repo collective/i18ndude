@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!python
 
 #    Copyright (C) 2003-2005 Daniel Nouri <dpunktnpunkt@web.de>
 
@@ -102,10 +102,7 @@ import os, sys
 import getopt
 import xml.sax
 
-try:
-    import common, untranslated, catalog, visualisation, utils
-except ImportError:
-    from i18ndude import common, untranslated, catalog, visualisation, utils
+from i18ndude import common, untranslated, catalog, visualisation, utils
 
 def usage(code, msg=''):
     print >> sys.stderr, __doc__
@@ -518,7 +515,6 @@ def main():
             sys.exit(1)
 
     fun()
-
 
 if __name__ == '__main__':
     main()
