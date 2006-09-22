@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import unittest
+import os, unittest
 from unittest import makeSuite
 
 from utils import PACKAGE_HOME
@@ -10,7 +10,7 @@ from i18ndude.visualisation import make_chart
 
 class TestVisualisation(unittest.TestCase):
 
-    def afterSetUp(self):
+    def setUp(self):
         self.pot = os.path.join(PACKAGE_HOME, 'input', 'testchart.pot')
         self.po1 = os.path.join(PACKAGE_HOME, 'input', 'testchart-de.po')
         self.po2 = os.path.join(PACKAGE_HOME, 'input', 'testchart-no.po')

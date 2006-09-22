@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import unittest
+import os, unittest
 from unittest import makeSuite
 
 from utils import PACKAGE_HOME
@@ -28,7 +28,7 @@ class TestGlobal(unittest.TestCase):
 
 class TestMessageEntry(unittest.TestCase):
 
-    def afterSetUp(self):
+    def setUp(self):
         self.me = catalog.MessageEntry
         self.msgid = 'test msgid'
         self.msgstr = 'test text'
@@ -74,7 +74,7 @@ class TestMessageEntry(unittest.TestCase):
 
 class TestMessageCatalogInit(unittest.TestCase):
 
-    def afterSetUp(self):
+    def setUp(self):
         self.mc = catalog.MessageCatalog
         self.me = catalog.MessageEntry
         self.file = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
@@ -159,7 +159,7 @@ class TestMessageCatalogInit(unittest.TestCase):
 
 class TestMessageCatalog(unittest.TestCase):
 
-    def afterSetUp(self):
+    def setUp(self):
         self.domain = 'testing'
         self.mc = catalog.MessageCatalog(domain=self.domain)
         self.msgid = 'test msgid'
@@ -221,7 +221,7 @@ class TestMessageCatalog(unittest.TestCase):
 
 class TestMessageCatalogSync(unittest.TestCase):
 
-    def afterSetUp(self):
+    def setUp(self):
         mc = catalog.MessageCatalog
         self.potfile = os.path.join(PACKAGE_HOME, 'input', 'synctest.pot')
         self.pofile = os.path.join(PACKAGE_HOME, 'input', 'synctest-de.po')
@@ -245,7 +245,7 @@ class TestMessageCatalogSync(unittest.TestCase):
 
 class TestMessagePoWriter(unittest.TestCase):
 
-    def afterSetUp(self):
+    def setUp(self):
         mc = catalog.MessageCatalog
         self.input = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.output = os.path.join(PACKAGE_HOME, 'output', 'test-en.po')
@@ -308,7 +308,7 @@ class TestMessagePoWriter(unittest.TestCase):
 
 class TestMessagePTReader(unittest.TestCase):
 
-    def afterSetUp(self):
+    def setUp(self):
         self.me = catalog.MessageEntry
         filepath = os.path.join(PACKAGE_HOME, 'input', 'test1.pt')
         self.input = [filepath]
@@ -340,7 +340,7 @@ class TestMessagePTReader(unittest.TestCase):
 
 class TestMessagePYReader(unittest.TestCase):
 
-    def afterSetUp(self):
+    def setUp(self):
         self.me = catalog.MessageEntry
         dirpath = os.path.join(PACKAGE_HOME, 'input')
         filepath = os.path.join(dirpath, 'test2.py')
