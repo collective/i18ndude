@@ -15,5 +15,5 @@ if True:
 
 four = context.translate(msgid='msgid_four',
                          default='Four ${map}',
-                         {'map': zero})
-return four
+                         mapping={'map': zero})
+

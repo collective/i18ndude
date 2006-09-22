@@ -24,9 +24,9 @@ setup(name='i18ndude',
       maintainer_email='plone@hannosch.info',
       url='http://plone.org/products/i18ndude',
       license='GPL',
-      packages=find_packages(exclude=['ez_setup']),
-      # package_dir = {'i18ndude':'.'},
-      # packages=['i18ndude'],
+      package_dir = {'':'src'},
+      #packages=find_packages(exclude=['ez_setup']),
+      packages=['i18ndude'],
       include_package_data=True,
       zip_safe=False,
       install_requires=[
@@ -35,5 +35,5 @@ setup(name='i18ndude',
       entry_points="""
       # -*- Entry points: -*-
       """,
-      scripts=['i18ndude'],
+      scripts=['src/i18ndude'],
       )
