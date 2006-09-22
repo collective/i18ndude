@@ -1,16 +1,14 @@
 # -*- coding: UTF-8 -*-
 
-import os, sys
-if __name__ == '__main__':
-    execfile(os.path.join(sys.path[0], 'framework.py'))
+import unittest
+from unittest import makeSuite
 
-from Testing import ZopeTestCase
 from utils import PACKAGE_HOME
 
 from i18ndude import catalog
 from i18ndude.visualisation import make_chart
 
-class TestVisualisation(ZopeTestCase.ZopeTestCase):
+class TestVisualisation(unittest.TestCase):
 
     def afterSetUp(self):
         self.pot = os.path.join(PACKAGE_HOME, 'input', 'testchart.pot')
@@ -34,10 +32,6 @@ class TestVisualisation(ZopeTestCase.ZopeTestCase):
             os.remove(self.out)
 
 def test_suite():
-    from unittest import TestSuite, makeSuite
-    suite = TestSuite()
+    suite = unittest.TestSuite()
     suite.addTest(makeSuite(TestVisualisation))
     return suite
-
-if __name__ == '__main__':
-    framework()

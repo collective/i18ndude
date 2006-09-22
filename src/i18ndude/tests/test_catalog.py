@@ -1,15 +1,13 @@
 # -*- coding: UTF-8 -*-
 
-import os, sys
-if __name__ == '__main__':
-    execfile(os.path.join(sys.path[0], 'framework.py'))
+import unittest
+from unittest import makeSuite
 
-from Testing import ZopeTestCase
 from utils import PACKAGE_HOME
 
 from i18ndude import catalog
 
-class TestGlobal(ZopeTestCase.ZopeTestCase):
+class TestGlobal(unittest.TestCase):
 
     def test_isLiteralId(self):
         i = catalog.is_literal_id
@@ -28,7 +26,7 @@ class TestGlobal(ZopeTestCase.ZopeTestCase):
         self.assertEquals(catalog.DEFAULT_COMMENT, 'Default: ', 'Wrong default comment constant')
 
 
-class TestMessageEntry(ZopeTestCase.ZopeTestCase):
+class TestMessageEntry(unittest.TestCase):
 
     def afterSetUp(self):
         self.me = catalog.MessageEntry
@@ -74,7 +72,7 @@ class TestMessageEntry(ZopeTestCase.ZopeTestCase):
                           'Default text not set correctly')
 
 
-class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
+class TestMessageCatalogInit(unittest.TestCase):
 
     def afterSetUp(self):
         self.mc = catalog.MessageCatalog
@@ -159,7 +157,7 @@ class TestMessageCatalogInit(ZopeTestCase.ZopeTestCase):
             for key in test:
                 self.failUnless(test[key] == self.msgids[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.msgids[key]))
 
-class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
+class TestMessageCatalog(unittest.TestCase):
 
     def afterSetUp(self):
         self.domain = 'testing'
@@ -221,7 +219,7 @@ class TestMessageCatalog(ZopeTestCase.ZopeTestCase):
         self.assertEquals(self.mc.getDefaultComment(self.msgid), self.default_comment, 'wrong default comment line')
         self.assertEquals(self.mc.getDefault(self.msgid), self.default_text, 'wrong default comment text')
 
-class TestMessageCatalogSync(ZopeTestCase.ZopeTestCase):
+class TestMessageCatalogSync(unittest.TestCase):
 
     def afterSetUp(self):
         mc = catalog.MessageCatalog
@@ -245,7 +243,7 @@ class TestMessageCatalogSync(ZopeTestCase.ZopeTestCase):
                     self.failUnless(dc == self.pot[msgid].getDefault() or
                                     dc == old_defaults[msgid], 'Either old or new default comment is missing on msgid: %s' % msgid)
 
-class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
+class TestMessagePoWriter(unittest.TestCase):
 
     def afterSetUp(self):
         mc = catalog.MessageCatalog
@@ -308,7 +306,7 @@ class TestMessagePoWriter(ZopeTestCase.ZopeTestCase):
             os.remove(self.output2)
 
 
-class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
+class TestMessagePTReader(unittest.TestCase):
 
     def afterSetUp(self):
         self.me = catalog.MessageEntry
@@ -340,7 +338,7 @@ class TestMessagePTReader(ZopeTestCase.ZopeTestCase):
         self.assertEqual(len(out), len(self.output))
 
 
-class TestMessagePYReader(ZopeTestCase.ZopeTestCase):
+class TestMessagePYReader(unittest.TestCase):
 
     def afterSetUp(self):
         self.me = catalog.MessageEntry
@@ -375,8 +373,7 @@ class TestMessagePYReader(ZopeTestCase.ZopeTestCase):
 
 
 def test_suite():
-    from unittest import TestSuite, makeSuite
-    suite = TestSuite()
+    suite = unittest.TestSuite()
     suite.addTest(makeSuite(TestGlobal))
     suite.addTest(makeSuite(TestMessageEntry))
     suite.addTest(makeSuite(TestMessageCatalogInit))
@@ -386,6 +383,3 @@ def test_suite():
     suite.addTest(makeSuite(TestMessagePTReader))
     suite.addTest(makeSuite(TestMessagePYReader))
     return suite
-
-if __name__ == '__main__':
-    framework()
