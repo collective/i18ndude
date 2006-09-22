@@ -2,7 +2,7 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
-i18ndude 2.1 - unreleased
+i18ndude 2.1 - Released September 22, 2006
 
     - Refactored the package source code layout to comply to the usual best
       practices.
