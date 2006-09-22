@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 2.1 - unreleased
 
+    - Refactored the package source code layout to comply to the usual best
+      practices.
+      [hannosch]
+
     - Added framework classifiers to the package metadata.
       [hannosch]
 
