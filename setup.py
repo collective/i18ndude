@@ -35,5 +35,5 @@ setup(name='i18ndude',
       entry_points="""
       # -*- Entry points: -*-
       """,
-      scripts=['src/i18ndude'],
+      scripts=['src/i18ndude/i18ndude'],
       )
