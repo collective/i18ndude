@@ -1,9 +1,9 @@
-ChangeLog
 README.txt
 setup.cfg
 setup.py
 version.txt
 docs/COPYRIGHT
+docs/ChangeLog
 docs/HISTORY.txt
 docs/INSTALL.txt
 docs/LICENSE
