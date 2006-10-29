@@ -1,5 +1,4 @@
 README.txt
-setup.cfg
 setup.py
 version.txt
 docs/COPYRIGHT
@@ -27,3 +26,11 @@ src/i18ndude.egg-info/top_level.txt
 src/i18ndude/tests/__init__.py
 src/i18ndude/tests/test_catalog.py
 src/i18ndude/tests/utils.py
+src/i18ndude/tests/input/empty-en.po
+src/i18ndude/tests/input/synctest-de.po
+src/i18ndude/tests/input/synctest.pot
+src/i18ndude/tests/input/test-en.po
+src/i18ndude/tests/input/test1.pt
+src/i18ndude/tests/input/test2-en.po
+src/i18ndude/tests/input/test2.py
+src/i18ndude/tests/input/test2_expected-en.po
