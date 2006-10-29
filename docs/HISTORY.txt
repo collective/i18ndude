@@ -2,7 +2,7 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
-i18ndude 2.1.1 - Unreleased
+i18ndude 2.1.1 - Released October 28, 2006
 
     - Use entry_points console_scripts from setuptools to install the main
       script. This should generate an executable file on Windows platforms.
