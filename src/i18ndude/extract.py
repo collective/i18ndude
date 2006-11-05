@@ -460,7 +460,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
         def write(self, s):
             pass
 
-    for filename in find_files(dir, '*.pt', exclude=tuple(exclude)):
+    for filename in find_files(dir, '*.*pt', exclude=tuple(exclude)):
         try:
             engine.file = filename
             p = HTMLTALParser()

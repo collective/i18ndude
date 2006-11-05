@@ -712,7 +712,7 @@ class PYReader:
         python_only = True
 
         from extract import py_strings
-        py = py_strings(self.path, self.domain)
+        py = py_strings(self.path, self.domain, exclude=('tests', ))
 
         for msgid in py:
             self._add_msg(msgid, msgid.default or '',
