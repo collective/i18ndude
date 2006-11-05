@@ -559,7 +559,11 @@ class PTReader:
             if isinstance(msgid, Message):
                 msgstr = msgid.default or ''
 
-            msgstr = msgstr.strip()
+            lines = msgstr.split("\n")
+            for i in range(len(lines)):
+                lines[i] = ' ' + lines[i].strip()
+            msgstr = ''.join(lines).strip()
+                        
             if msgid:
                 self._add_msg(msgid,
                               msgstr,
