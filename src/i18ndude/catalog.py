@@ -564,7 +564,7 @@ class PTReader:
                 lines[i] = ' ' + lines[i].strip()
             msgstr = ''.join(lines).strip()
                         
-            if msgid:
+            if msgid and msgid <> '${DYNAMIC_CONTENT}':
                 self._add_msg(msgid,
                               msgstr,
                               [],
