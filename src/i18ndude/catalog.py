@@ -560,12 +560,13 @@ class PTReader:
                 msgstr = msgid.default or ''
 
             msgstr = msgstr.strip()
-            self._add_msg(msgid,
-                          msgstr,
-                          [],
-                          [tal[msgid][0][0]+':'+str(tal[msgid][0][1])],
-                          [],
-                          self.domain)
+            if msgid:
+                self._add_msg(msgid,
+                              msgstr,
+                              [],
+                              [tal[msgid][0][0]+':'+str(tal[msgid][0][1])],
+                              [],
+                              self.domain)
 
         return []
 
@@ -591,7 +592,7 @@ class PTReader:
                 adding = False
 
         if adding:
-            self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=[filename], automatic_comments=automatic_comments)
+            self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=filename, automatic_comments=automatic_comments)
 
 
 class PYReader:

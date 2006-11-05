@@ -222,21 +222,23 @@ def rebuild_pot():
             comments = ptctl[key][2] + orig_ctl.getComments(key)
             ptctl[key] = (ptctl[key][0], ptctl[key][1], comments)
 
-    pyctl = pyreader.catalogs[domain]
-    comments = {} # keyed by msgid
-    for key in orig_ctl.keys():
-        if key in pyctl:
-            # preserve comments
-            comments = pyctl[key][2] + orig_ctl.getComments(key)
-            pyctl[key] = (pyctl[key][0], pyctl[key][1], comments)
+    if pyreader.catalogs.has_key(domain):
+        pyctl = pyreader.catalogs[domain]
+        comments = {} # keyed by msgid
+        for key in orig_ctl.keys():
+            if key in pyctl:
+                # preserve comments
+                comments = pyctl[key][2] + orig_ctl.getComments(key)
+                pyctl[key] = (pyctl[key][0], pyctl[key][1], comments)
 
     # keep 'literal' ids only
     orig_ctl.accept_fct(lambda id, str: catalog.is_literal_id(id))
     orig_ctl.add_missing(ptctl)
 
     ctl = ptctl
-    orig_ctl.add_missing(pyctl)
-    ctl.add_missing(pyctl)
+    if pyreader.catalogs.has_key(domain):
+        orig_ctl.add_missing(pyctl)
+        ctl.add_missing(pyctl)
 
     added_by_merge=[]
     if merge_ctl is not None:
