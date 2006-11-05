@@ -262,8 +262,13 @@ class TokenEater(object):
         self.__state(ttype, tstring, stup[0])
 
     def __waiting(self, ttype, tstring, lineno):
-        if ttype == tokenize.NAME and tstring in ['_']:
+        # Include both translate and utranslate as recognized methods for now
+
+        # if ttype == tokenize.NAME and tstring in ['_']:
+        #     self.__state = self.__keywordseen
+        if ttype == tokenize.NAME and tstring in ['_', 'translate', 'utranslate']:
             self.__state = self.__keywordseen
+
 
     def __suiteseen(self, ttype, tstring, lineno):
         # ignore anything until we see the colon
@@ -411,7 +416,7 @@ def py_strings(dir, domain="none", exclude=()):
     for filename in find_files(
             # We want to include cpy and vpy scripts as well
             # dir, '*.py', exclude=('extract.py', 'pygettext.py')+tuple(exclude)):
-            dir, '*.py', exclude=('extract.py', 'pygettext.py')+tuple(exclude)):
+            dir, '*.*py', exclude=('extract.py', 'pygettext.py')+tuple(exclude)):
         fp = open(filename)
         try:
             eater.set_filename(filename)
