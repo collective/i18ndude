@@ -42,7 +42,7 @@ present:
    [--merge2 <filename>]] path
           Given a pot-file via the --pot option you can specify a directory
           which including all sub-folders will be searched for PageTemplates
-          (*.*pt) and Python scripts (*.*py).
+          (*.pt and *.cpt) and Python scripts (*.*py).
 
           Make sure you have a backup copy of the original pot-file in case
           you need to fill back in ids by hand.

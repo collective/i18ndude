@@ -551,7 +551,7 @@ class PTReader:
         ``catalogs``, which indexes the MessageCatalogs by their domain.
         """
         from extract import tal_strings
-        tal = tal_strings(self.path, domain=self.domain, exclude=('tests', ))
+        tal = tal_strings(self.path, domain=self.domain, exclude=('tests', 'docs'))
 
         for msgid in tal:
 
@@ -561,7 +561,9 @@ class PTReader:
 
             lines = msgstr.split("\n")
             for i in range(len(lines)):
-                lines[i] = ' ' + lines[i].strip()
+                lines[i] = lines[i].strip()
+                if lines[i]:
+                    lines[i] = ' ' + lines[i]
             msgstr = ''.join(lines).strip()
                         
             if msgid and msgid <> '${DYNAMIC_CONTENT}':
