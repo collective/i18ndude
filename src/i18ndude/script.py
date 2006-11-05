@@ -21,7 +21,7 @@
 
 # -----------------------------------------------------------------------------
 
-"""Usage: i18ndude command [options] [file1 [file2 ...]]
+"""Usage: i18ndude command [options] [path | file1 file2 ...]]
 
 i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
 
@@ -38,21 +38,14 @@ present:
           errors or warnings). If you provide the -n option, the report will
           contain only the errors for each file.
 
-   rebuild-pot --pot <filename> [--create <domain> [--merge <filename>
-   [--merge2 <filename>]]] file1 [file2 ...] | directory
-          Given a pot-file via the --pot option you can either specify a list
-          of ZPT filenames or provide a directory that including all
-          sub-folders will be searched for PageTemplates (*.pt and *.cpt) and
-          Python scripts. I first remove non-literal msgids from the pot. Next,
-          I put all message ids that I find in the ZPTs (and eventually PYs)
-          into the pot-file (including context info).
+   rebuild-pot --pot <filename> --create <domain> [--merge <filename>
+   [--merge2 <filename>]] path
+          Given a pot-file via the --pot option you can specify a directory
+          which including all sub-folders will be searched for PageTemplates
+          (*.*pt) and Python scripts (*.*py).
 
           Make sure you have a backup copy of the original pot-file in case
           you need to fill back in ids by hand.
-
-          If you provide the --create <domain> option (in addition to --pot), I
-          will create a new pot-file, the domain of which is <domain> (This is
-          necessary for including py files, because these have no i18n domain).
 
           If you give me an additional pot-file with the --merge <filename>
           option, I try to merge these msgids into the target-pot file
@@ -113,7 +106,7 @@ def usage(code, msg=''):
 def filter_isfile(files):
     result = []
     for name in files: # parse file by file
-        if os.path.isdir(name) and not name.endswith('tests'): # descend recursively
+        if os.path.isdir(name): # descend recursively
             join = lambda file: os.path.join(name, file)
             subdirs = filter_isfile([path for path in
                                      map(join, os.listdir(name))
@@ -193,12 +186,11 @@ def rebuild_pot():
         merge2_fn = False
 
     path = files[0]
-    files = filter_isfile(files)
     merge_ctl = None
     pyreader = None
 
     try:
-        if create_domain:
+        if create_domain is not None:
             orig_ctl = catalog.MessageCatalog(domain=create_domain)
         else:
             orig_ctl = catalog.MessageCatalog(filename=pot_fn)
@@ -206,23 +198,14 @@ def rebuild_pot():
             merge_ctl = catalog.MessageCatalog(filename=merge_fn)
         if merge2_fn:
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
-        ptreader = catalog.PTReader(files)
-        if (os.path.isdir(path)):
-            pyreader = catalog.PYReader(path, create_domain)
+        ptreader = catalog.PTReader(path, create_domain)
+        pyreader = catalog.PYReader(path, create_domain)
     except IOError, e:
         print >> sys.stderr, 'I/O Error: %s' % e
         usage(0)
 
-    pttroubles = ptreader.read()
-    if pyreader:
-        pytroubles = pyreader.read()
-
-    if pttroubles:
-        print >> sys.stderr, \
-              "there were fatal errors (didn't touch %s):" % pot_fn
-        for t in pttroubles:
-            print >> sys.stderr, '%s:\n%s\n' % (t[0], t[1])
-            sys.exit(1)
+    ptresult = ptreader.read()
+    pyresult = pyreader.read()
 
     orig_msgids = orig_ctl.keys()
     domain = orig_ctl.domain
@@ -239,24 +222,21 @@ def rebuild_pot():
             comments = ptctl[key][2] + orig_ctl.getComments(key)
             ptctl[key] = (ptctl[key][0], ptctl[key][1], comments)
 
-    if pyreader and pyreader.catalogs.has_key(domain):
-        pyctl = pyreader.catalogs[domain]
-        comments = {} # keyed by msgid
-        for key in orig_ctl.keys():
-            if key in pyctl:
-                # preserve comments
-                comments = pyctl[key][2] + orig_ctl.getComments(key)
-                pyctl[key] = (pyctl[key][0], pyctl[key][1], comments)
+    pyctl = pyreader.catalogs[domain]
+    comments = {} # keyed by msgid
+    for key in orig_ctl.keys():
+        if key in pyctl:
+            # preserve comments
+            comments = pyctl[key][2] + orig_ctl.getComments(key)
+            pyctl[key] = (pyctl[key][0], pyctl[key][1], comments)
 
     # keep 'literal' ids only
     orig_ctl.accept_fct(lambda id, str: catalog.is_literal_id(id))
     orig_ctl.add_missing(ptctl)
 
     ctl = ptctl
-
-    if pyreader and pyreader.catalogs.has_key(domain):
-        orig_ctl.add_missing(pyctl)
-        ctl.add_missing(pyctl)
+    orig_ctl.add_missing(pyctl)
+    ctl.add_missing(pyctl)
 
     added_by_merge=[]
     if merge_ctl is not None:

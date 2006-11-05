@@ -17,11 +17,11 @@
 
 <p i18n:translate="">Buzz</p>
 
-<p i18n:translate="">
+<span i18n:translate="">
     <div i18n:name="foo"></div>
 
     <div i18n:name="bar"></div>
-</p>
+</span>
 
 <p i18n:translate="text_buzz">Buzz</p>
 

@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 3.0.0 - Unreleased
 
+    - Removed custom TAL parser. Use the one from zope.tal.talgettext instead.
+      [hannosch]
+
     - Integrate extract.py and interfaces.py from zope.app.locales. Got rid of
       our own version of TokenEater and the whole pystrings.py file.
       [hannosch]

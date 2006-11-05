@@ -310,22 +310,22 @@ class TestMessagePTReader(unittest.TestCase):
 
     def setUp(self):
         self.me = catalog.MessageEntry
-        filepath = os.path.join(PACKAGE_HOME, 'input', 'test1.pt')
-        self.input = [filepath]
-        self.output = {u'Buzz': self.me(u'Buzz', msgstr=u'Buzz', references=self.input),
-                       u'${foo} ${bar}': self.me(u'${foo} ${bar}', msgstr=u'${foo} ${bar}', references=self.input),
-                       u'Dig this': self.me(u'Dig this', msgstr=u'Dig this', references=self.input),
-                       u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=self.input),
-                       u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=self.input),
-                       u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=self.input),
-                       u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', msgstr=u'Job started at ${datetime} by user ${userid}.', references=self.input),
-                       u'spacing': self.me(u'spacing', msgstr=u'Space <br/> before and after.', references=self.input),
-                       u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=self.input),
-                       u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', msgstr='<tt>domain</tt> is one of the <em>local domains</em>:', references=self.input)
+        self.input = os.path.join(PACKAGE_HOME, 'input')
+        filename = self.input + os.sep + 'test1.pt'
+        self.output = {u'Buzz': self.me(u'Buzz', msgstr=u'Buzz', references=[[filename+':18']]),
+                       u'${foo} ${bar}': self.me(u'${foo} ${bar}', msgstr=u'${foo} ${bar}', references=[[filename+':23']]),
+                       u'dig_this': self.me(u'dig_this', msgstr=u'Dig this', references=[[filename+':49']]),
+                       u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=[[filename+':26']]),
+                       u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=[[filename+':12']]),
+                       u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=[[filename+':12']]),
+                       u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', msgstr=u'Job started at ${datetime} by user ${userid}.', references=[[filename+':43']]),
+                       u'spacing': self.me(u'spacing', msgstr=u'Space <br /> before and after.', references=[[filename+':34']]),
+                       u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[[filename+':38']]),
+                       u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', msgstr='<tt>domain</tt> is one of the <em>local domains</em>:', references=[[filename+':46']])
                       }
 
     def test_read(self):
-        ptr = catalog.PTReader(self.input)
+        ptr = catalog.PTReader(self.input, domain='testing')
         ptr.read()
         out = ptr.catalogs['testing']
         for key in out:

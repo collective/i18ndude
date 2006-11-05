@@ -1,8 +1,6 @@
-import re, sys, copy, time
-import xml.dom.minidom
-import xml.sax
+import re, sys, time
 
-ELEMENT_NODE = xml.dom.Node.ELEMENT_NODE
+from zope.i18nmessageid import Message
 
 import common
 from odict import odict
@@ -30,7 +28,6 @@ MAX_OCCUR = 3 # maximum number of occurrences listed
 
 ORIGINAL_COMMENT = 'Original: '
 DEFAULT_COMMENT = 'Default: '
-PUNCTUATIONS = ' ,.:;?'
 
 def now():
     fmt = '%Y-%m-%d %H:%M+0000'
@@ -540,129 +537,37 @@ class POWriter:
 
 class PTReader:
     """Reads in a list of page templates"""
-    def __init__(self, filenames):
 
+    def __init__(self, path, domain='none'):
+
+        self.domain = domain
         self.catalogs = {} # keyed by domain name
-        self._filenames = filenames
-        self._curr_doc = None
+        self.path = path
 
     def read(self):
         """Reads in from all given ZPTs and builds up MessageCatalogs accordingly.
 
         The MessageCatalogs can after this call be accessed through attribute
         ``catalogs``, which indexes the MessageCatalogs by their domain.
-
-        read returns the list of tuples (filename, errormsg), where filename
-        is the name of the file that could not be read and errormsg a human
-        readable error message.
         """
-        troubles = []
-        for fn in self._filenames:
-            try:
-                content = common.prepare_xml(open(fn))
-                doc = xml.dom.minidom.parse(content)
-            except Exception, e: # exceptions may be sax-parser specific :(
-                troubles.append((fn, str(e)))
-            else:
-                self._curr_doc = doc
-                self._curr_fn = fn
-                self._do_element(doc.documentElement, domain=None)
+        from extract import tal_strings
+        tal = tal_strings(self.path, domain=self.domain, exclude=('tests', ))
 
-        return troubles
+        for msgid in tal:
 
-    def _do_element(self, element, domain):
-        domain = element.getAttribute('i18n:domain') or domain
+            msgstr = msgid or ''
+            if isinstance(msgid, Message):
+                msgstr = msgid.default or ''
 
-        if element.hasAttribute('i18n:translate'):
-            self._do_translate(element, domain)
-        if element.hasAttribute('i18n:attributes'):
-            self._do_attributes(element, domain)
+            msgstr = msgstr.strip()
+            self._add_msg(msgid,
+                          msgstr,
+                          [],
+                          [tal[msgid][0][0]+':'+str(tal[msgid][0][1])],
+                          [],
+                          self.domain)
 
-        for child in element.childNodes:
-            if child.nodeType == ELEMENT_NODE:
-                self._do_element(child, domain)
-
-    def _do_translate(self, element, domain):
-        filename = self._curr_fn
-        msgid = element.getAttribute('i18n:translate')
-
-        if msgid == '':
-            if element.hasAttribute('tal:content') or \
-               element.hasAttribute('tal:replace') or \
-               element.hasAttribute('content') or \
-               element.hasAttribute('replace'):
-               # don't translate messages which will be replaced anyways
-               pass
-            else:
-                # tuttle@bbs.cvut.cz, XML quoting persists here, but
-                # even \" is untranslatable here either. Better go with
-                # non-literals in that case.
-                msgid = self._make_msgstr(element)
-
-                print >> sys.stderr, 'Warning: Literal msgids should be avoided in %s, still adding:\n  %s\n' % \
-                      (self._curr_fn, element.toprettyxml('  ', '\n  '))
-
-        if msgid:
-            msgstr = self._make_msgstr(element)
-            self._add_msg(msgid, msgstr, [], filename, [], domain)
-
-    def _do_attributes(self, element, domain):
-        rendered = []
-        if element.hasAttribute('tal:attributes'):
-            attrs = element.getAttribute('tal:attributes').split(';')
-            attrs = [attr.strip() for attr in attrs if attr.strip()]
-            rendered = [attr.split()[0] for attr in attrs]
-
-        filename = self._curr_fn
-        i18nattrs = element.getAttribute('i18n:attributes');
-        
-        # construct list of (attrname, msgid) pairs
-        if i18nattrs.find(';') == -1:	# old syntax without explicit msgids
-            attrs = [(attrname, element.getAttribute(attrname), element.getAttribute(attrname))
-                     for attrname in i18nattrs.split()]
-        else:                           # new syntax with explicit msgids
-            attrs = [(adata[0],
-                      len(adata) > 1 and adata[1]  # explicit msgid given
-                                      or element.getAttribute(adata[0]),
-                                      element.getAttribute(adata[0]))
-                     for adata in [attr.strip().split(None, 1)
-                                   for attr in i18nattrs.split(';')]
-                     if adata]
-
-        for attrname, msgid, msgstr in attrs:
-            if attrname in rendered:
-                # don't translate messages which will be replaced anyways
-                continue
-            if msgid:
-                self._add_msg(msgid, msgstr, [], filename, [], domain)
-
-    def _make_pretty(self, node):
-        """Replace named subelements with ${name}."""
-        for child in node.childNodes:
-            if child.nodeType == ELEMENT_NODE:
-                if child.hasAttribute('i18n:name'):
-                    replacement = '${%s}' % child.getAttribute('i18n:name')
-                    newchild = self._curr_doc.createTextNode(replacement)
-                    node.replaceChild(newchild, child)
-                else:
-                    self._make_pretty(child)
-
-    def _make_msgstr(self, element):
-        node = copy.deepcopy(element)
-        self._make_pretty(node)
-        msgstr = ''
-        for child in node.childNodes:
-            chunk = child.toxml()
-            # XXX Do we need to escape anything else?
-            chunk = chunk.replace('"', '\\"')
-            chunk = ' '.join(chunk.split())
-            cs = chunk.startswith
-            if (cs('${') or cs('<') ):
-                chunk = ' ' + chunk + ' '
-            msgstr += chunk
-        for p in PUNCTUATIONS:
-            msgstr = msgstr.replace(' %s' % p, p)
-        return msgstr.strip()
+        return []
 
     def _add_msg(self, msgid, msgstr, comments, filename, automatic_comments, domain):
         if not domain:
@@ -688,8 +593,10 @@ class PTReader:
         if adding:
             self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=[filename], automatic_comments=automatic_comments)
 
+
 class PYReader:
     """Reads in a list of python scripts"""
+
     def __init__(self, path, domain):
 
         self.domain = domain
@@ -715,7 +622,8 @@ class PYReader:
         py = py_strings(self.path, self.domain, exclude=('tests', ))
 
         for msgid in py:
-            self._add_msg(msgid, msgid.default or '',
+            self._add_msg(msgid,
+                          msgid.default or '',
                           [],
                           [py[msgid][0][0]+':'+str(py[msgid][0][1])],
                           [],
