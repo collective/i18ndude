@@ -1,19 +1,15 @@
 # bla
 
-_ = context.translate
+zero = _('Zero')
+one = _('One')
 
-zero = context.translate('Zero')
-one = context.translate('One', domain='testing')
-two = _('Two')
-
-out = context.translate('Out1', domain='running')
-#out = context.translate('Out2', domain='testing')
+out = _('Out1', domain='running')
 
 if True:
-    three = context.translate(msgid='msgid_three',
-                              default='Three')
+    three = _(msgid='msgid_three',
+              default='Three')
 
-four = context.translate(msgid='msgid_four',
-                         default='Four ${map}',
-                         mapping={'map': zero})
+four = _(msgid='msgid_four',
+        default='Four ${map}',
+        mapping={'map': zero})
 

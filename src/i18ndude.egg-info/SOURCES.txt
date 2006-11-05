@@ -11,9 +11,10 @@ docs/TODO.txt
 src/i18ndude/__init__.py
 src/i18ndude/catalog.py
 src/i18ndude/common.py
+src/i18ndude/extract.py
+src/i18ndude/interfaces.py
 src/i18ndude/odict.py
 src/i18ndude/pygettext.py
-src/i18ndude/pystrings.py
 src/i18ndude/script.py
 src/i18ndude/untranslated.py
 src/i18ndude/utils.py
@@ -23,7 +24,9 @@ src/i18ndude.egg-info/SOURCES.txt
 src/i18ndude.egg-info/dependency_links.txt
 src/i18ndude.egg-info/entry_points.txt
 src/i18ndude.egg-info/not-zip-safe
+src/i18ndude.egg-info/requires.txt
 src/i18ndude.egg-info/top_level.txt
 src/i18ndude/tests/__init__.py
 src/i18ndude/tests/test_catalog.py
+src/i18ndude/tests/test_extract.py
 src/i18ndude/tests/utils.py

@@ -711,12 +711,15 @@ class PYReader:
         include_default_domain = False
         python_only = True
 
-        from pystrings import py_strings
+        from extract import py_strings
         py = py_strings(self.path, self.domain)
 
         for msgid in py:
-            self._add_msg(msgid, '', [], [py[msgid][0][0]+':'+str(py[msgid][0][1])], [], self.domain)
-
+            self._add_msg(msgid, msgid.default or '',
+                          [],
+                          [py[msgid][0][0]+':'+str(py[msgid][0][1])],
+                          [],
+                          self.domain)
         return []
 
     def _add_msg(self, msgid, msgstr, comments, references, automatic_comments, domain):

@@ -345,15 +345,13 @@ class TestMessagePYReader(unittest.TestCase):
         dirpath = os.path.join(PACKAGE_HOME, 'input')
         filepath = os.path.join(dirpath, 'test2.py')
         self.input = dirpath
-        self.output = {u'Zero': self.me(u'Zero', references=[filepath+':5']),
-                       u'One': self.me(u'One', references=[filepath+':6']),
-                       u'Two': self.me(u'Two', references=[filepath+':7']),
-                       u'msgid_three': self.me(u'msgid_three', references=[filepath+':14']),
-                       # XXX Disabled for now: u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath])
-                       # non-literal msgids are not recognized
-                       u'Four ${map}': self.me(u'Four ${map}', references=[filepath+':18']),
+        self.output = {u'Zero': self.me(u'Zero', references=[filepath+':3']),
+                       u'One': self.me(u'One', references=[filepath+':4']),
+                       u'msgid_three': self.me(u'msgid_three', msgstr='Three', references=[filepath+':9']),
+                       u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath+':12']),
                        # XXX This should not be found as it's in a different domain
-                       u'Out1': self.me(u'Out1', references=[filepath+':9'])
+                       # instead it recognizes the domain as a msgstr now
+                       u'Out1': self.me(u'Out1', msgstr='running', references=[filepath+':6'])
                       }
 
     def test_read(self):
@@ -383,3 +381,6 @@ def test_suite():
     suite.addTest(makeSuite(TestMessagePTReader))
     suite.addTest(makeSuite(TestMessagePYReader))
     return suite
+
+if __name__ == '__main__':
+    unittest.main()
