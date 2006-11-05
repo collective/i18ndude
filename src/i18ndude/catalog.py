@@ -490,9 +490,11 @@ class POWriter:
         if msgstrToComment and msgstr:
             # no html markup in the default comments as these are not
             # allowed in msgstr's either
+            msgstr = msgstr.replace('"','\\\"')
             msgstr = msgstr.replace('&quot;','\\\"')
             msgstr = msgstr.replace('&amp;','&')
             msgstr = msgstr.replace('&hellip;','...')
+            msgstr = msgstr.replace('&mdash;','-')
             self._printToFile(f, '#. %s"%s"' % (DEFAULT_COMMENT, msgstr))
             msgstr = ''
 
