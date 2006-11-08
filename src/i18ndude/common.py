@@ -28,7 +28,7 @@ def prepare_xml(file):
 
     # We want namespace declarations for tal, metal and i18n.
     # http://sf.net/tracker/?func=detail&atid=516339&aid=982527&group_id=66950
-    mobj = re.search(r'<([a-z]).*\s', content)
+    mobj = re.search(r'<([a-zA-Z]).*\s', content)
     if mobj:
         if mobj.group(1) == 'html':
             m = mobj.end()
