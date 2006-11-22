@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 3.0.0 - Unreleased
 
+    - Whitespace fix for filename filter.
+      [sunew]
+
     - Improved the regular expression used in find_untranslated, so that it also
       matches tags beginning with capital letters.
       [kclarks]
