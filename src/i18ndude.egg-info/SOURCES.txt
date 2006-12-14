@@ -24,7 +24,6 @@ src/i18ndude.egg-info/SOURCES.txt
 src/i18ndude.egg-info/dependency_links.txt
 src/i18ndude.egg-info/entry_points.txt
 src/i18ndude.egg-info/not-zip-safe
-src/i18ndude.egg-info/requires.txt
 src/i18ndude.egg-info/top_level.txt
 src/i18ndude/tests/__init__.py
 src/i18ndude/tests/test_catalog.py

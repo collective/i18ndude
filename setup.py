@@ -28,12 +28,17 @@ setup(name='i18ndude',
       packages=find_packages('src', exclude=['ez_setup']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=['zope.tal >= 3.2',
-                        'zope.interface >= 3.2',
-                        'zope.i18nmessageid >= 3.2',
-                        'zope.testing'
-      ],
-      dependency_links=['http://download.zope.org/distribution/',],
+      install_requires=[],
+      # We do really require the following packages, but dependency tracking
+      # for those is currently a PITA, as the latest versions aren't available
+      # as proper eggs yet.
+      # install_requires=['zope.tal >= 3.2',
+      #                   'zope.interface >= 3.2',
+      #                   'zope.i18nmessageid >= 3.2',
+      #                   'zope.testing'
+      # ],
+      # dependency_links=['http://download.zope.org/distribution/',],
+      dependency_links=[],
       entry_points="""
       [console_scripts]
           i18ndude=i18ndude.script:main
