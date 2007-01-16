@@ -1,4 +1,0 @@
-
-      [console_scripts]
-          i18ndude=i18ndude.script:main
-      
