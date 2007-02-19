@@ -213,7 +213,10 @@ class MessageCatalog(odict):
         for key in msgctl.keys():
             if not self.has_key(key):
                 entry = msgctl[key]
-                self.add(key, msgstr=defaultmsgstr, comments=entry.comments,
+                msgstr = defaultmsgstr
+                if isinstance(key, Message):
+                    msgstr = key.default or msgstr
+                self.add(key, msgstr=msgstr, comments=entry.comments,
                          references=entry.references,
                          automatic_comments=entry.automatic_comments)
                 ids.append(key)

@@ -262,13 +262,8 @@ class TokenEater(object):
         self.__state(ttype, tstring, stup[0])
 
     def __waiting(self, ttype, tstring, lineno):
-        # Include both translate and utranslate as recognized methods for now
-
-        # if ttype == tokenize.NAME and tstring in ['_']:
-        #     self.__state = self.__keywordseen
-        if ttype == tokenize.NAME and tstring in ['_', 'translate', 'utranslate']:
+        if ttype == tokenize.NAME and tstring in ['_']:
             self.__state = self.__keywordseen
-
 
     def __suiteseen(self, ttype, tstring, lineno):
         # ignore anything until we see the colon

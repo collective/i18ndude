@@ -4,6 +4,12 @@ Changelog for i18ndude
 
 i18ndude 3.0.0 - Unreleased
 
+    - Fixed bug in mixing different catalogs into one. It wouldn't respect the
+      default value of messages extracted from Python code. Also don't extract
+      messages from translate and utranslate functions anymore, because they
+      have a different call signature.
+      [hannosch]
+
     - Whitespace fix for filename filter.
       [sunew]
 
