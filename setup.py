@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '3.0.0'
+version = '3.0b1'
 
 setup(name='i18ndude',
       version=version,
@@ -9,6 +9,7 @@ setup(name='i18ndude',
       long_description="""i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.""",
       classifiers=[
         'Development Status :: 5 - Production/Stable',
+        'Framework :: Plone',
         'Framework :: Zope2',
         'Framework :: Zope3',
         'Environment :: Console',
@@ -28,9 +29,6 @@ setup(name='i18ndude',
       packages=find_packages('src', exclude=['ez_setup']),
       include_package_data=True,
       zip_safe=False,
-      # We do really require the following packages, but dependency tracking
-      # for those is currently a PITA, as the latest versions aren't available
-      # as proper eggs yet.
       install_requires=['zope.tal >= 3.2',
                         'zope.interface >= 3.2',
                         'zope.i18nmessageid >= 3.2',

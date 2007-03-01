@@ -1,9 +1,9 @@
 #!python
 
-#    Copyright (C) 2003-2005 Daniel Nouri <dpunktnpunkt@web.de>
+#    Copyright (C) 2003-2007 Daniel Nouri <dpunktnpunkt@web.de>
 
 #    If you find any bugs in here they were probably added by
-#    Hanno Schlichting <schlichting@bakb.net>
+#    Hanno Schlichting <plone@hannosch.info>
 
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by

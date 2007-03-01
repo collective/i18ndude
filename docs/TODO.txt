@@ -5,10 +5,3 @@
 - Main i18ndude script needs to be refactored and fewer options.
 
 - Assume a domain called "default" if the i18n:domain attribute is not present.
-
-- untranslated.py does not handle xml namespaces, e.g. it just looks for an
-  attribute 'i18n:translate' even if the tag itself is in the i18n namespace.
-
-- Sometimes untranslated.py spits out errors that are actually warnings. That
-  happens for tal:replace and metal:use-macro tags that contain other tags.
-
