@@ -4,6 +4,11 @@ Changelog for i18ndude
 
 i18ndude 3.0b2 - Unreleased
 
+    - Added new --exclude argument to the rebuilt-pot command, which lets you
+      specify a whitespace delimited list of files that should not be included
+      in the message extraction.
+      [hannosch]
+
     - Added automatic replace from '&#8230;' to '...'.
       [hannosch]
 

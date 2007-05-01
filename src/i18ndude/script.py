@@ -39,10 +39,10 @@ present:
           contain only the errors for each file.
 
    rebuild-pot --pot <filename> --create <domain> [--merge <filename>
-   [--merge2 <filename>]] path
+   [--merge2 <filename>]] [--exclude="<ignore1> <ignore2> ..."] path
           Given a pot-file via the --pot option you can specify a directory
           which including all sub-folders will be searched for PageTemplates
-          (*.pt and *.cpt) and Python scripts (*.*py).
+          (*.*pt) and Python scripts (*.*py).
 
           Make sure you have a backup copy of the original pot-file in case
           you need to fill back in ids by hand.
@@ -53,6 +53,10 @@ present:
           ZPTs, I'll warn you and ignore that msgid. I take the mime-header
           from this additional pot-file. If you provide a second pot-file via
           --merge2 <filename> I'll merge this into the first merge's result
+
+          You can also provide a list of filenames which should not be included
+          by using the --exclude argument, which takes a whitespace delimited
+          list of files.
 
    merge --pot <filename> --merge <filename> [--merge2 <filename>]
           Given a pot-file via the --pot option and a second
@@ -162,7 +166,7 @@ def find_untranslated():
 def rebuild_pot():
     try:
         opts, files = getopt.getopt(sys.argv[2:], 'mp:c:',
-                                   ('pot=', 'create=', 'merge=', 'merge2='))
+                                   ('pot=', 'create=', 'merge=', 'merge2=', 'exclude='))
     except:
         usage(1)
 
@@ -170,6 +174,7 @@ def rebuild_pot():
     merge_fn = None
     merge2_fn = None
     create_domain = None
+    exclude = ()
     for opt, arg in opts:
         if opt in ('-p', '--pot'):
             pot_fn = arg
@@ -179,6 +184,8 @@ def rebuild_pot():
             merge_fn = arg
         if opt in ('--merge2'):
             merge2_fn = arg
+        if opt in ('--exclude'):
+            exclude = tuple(arg.split())
 
     if not pot_fn:
         usage(1)
@@ -199,8 +206,8 @@ def rebuild_pot():
             merge_ctl = catalog.MessageCatalog(filename=merge_fn)
         if merge2_fn:
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
-        ptreader = catalog.PTReader(path, create_domain)
-        pyreader = catalog.PYReader(path, create_domain)
+        ptreader = catalog.PTReader(path, create_domain, exclude=exclude)
+        pyreader = catalog.PYReader(path, create_domain, exclude=exclude)
     except IOError, e:
         print >> sys.stderr, 'I/O Error: %s' % e
         usage(0)

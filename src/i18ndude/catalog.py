@@ -544,11 +544,12 @@ class POWriter:
 class PTReader:
     """Reads in a list of page templates"""
 
-    def __init__(self, path, domain='none'):
+    def __init__(self, path, domain='none', exclude=()):
 
         self.domain = domain
         self.catalogs = {} # keyed by domain name
         self.path = path
+        self.exclude = exclude
 
     def read(self):
         """Reads in from all given ZPTs and builds up MessageCatalogs accordingly.
@@ -557,7 +558,8 @@ class PTReader:
         ``catalogs``, which indexes the MessageCatalogs by their domain.
         """
         from extract import tal_strings
-        tal = tal_strings(self.path, domain=self.domain, exclude=('tests', 'docs'))
+        tal = tal_strings(self.path, domain=self.domain,
+                          exclude=self.exclude+('tests', 'docs'))
 
         for msgid in tal:
 
@@ -610,11 +612,12 @@ class PTReader:
 class PYReader:
     """Reads in a list of python scripts"""
 
-    def __init__(self, path, domain):
+    def __init__(self, path, domain, exclude=()):
 
         self.domain = domain
         self.catalogs = {} # keyed by domain name
         self.path = path
+        self.exclude = exclude
 
     def read(self):
         """Reads in from all given PYs and builds up MessageCatalogs
@@ -632,7 +635,8 @@ class PYReader:
         python_only = True
 
         from extract import py_strings
-        py = py_strings(self.path, self.domain, exclude=('tests', ))
+        py = py_strings(self.path, self.domain,
+                        exclude=self.exclude+('tests', ))
 
         for msgid in py:
             self._add_msg(msgid,
