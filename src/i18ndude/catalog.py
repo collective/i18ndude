@@ -497,6 +497,7 @@ class POWriter:
             msgstr = msgstr.replace('&quot;','\\\"')
             msgstr = msgstr.replace('&amp;','&')
             msgstr = msgstr.replace('&hellip;','...')
+            msgstr = msgstr.replace('&#8230;','...')
             msgstr = msgstr.replace('&mdash;','-')
             self._printToFile(f, '#. %s"%s"' % (DEFAULT_COMMENT, msgstr))
             msgstr = ''

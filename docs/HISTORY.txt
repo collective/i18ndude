@@ -2,7 +2,12 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
-i18ndude 3.0.0 - Released March 1, 2007
+i18ndude 3.0b2 - Unreleased
+
+    - Added automatic replace from '&#8230;' to '...'.
+      [hannosch]
+
+i18ndude 3.0b1 - Released March 1, 2007
 
     - Fixed bug in mixing different catalogs into one. It wouldn't respect the
       default value of messages extracted from Python code. Also don't extract
