@@ -390,6 +390,10 @@ class TokenEater(object):
 
 def find_files(dir, pattern, exclude=()):
     files = []
+    folders = dir
+
+    if isinstance(dir, str):
+        folders = (dir, )
 
     def visit(files, dirname, names):
         names[:] = filter(lambda x:x not in exclude, names)
@@ -397,7 +401,8 @@ def find_files(dir, pattern, exclude=()):
                   for name in fnmatch.filter(names, pattern)
                   if name not in exclude]
 
-    os.path.walk(dir, visit, files)
+    for folder in folders:
+        os.path.walk(folder, visit, files)
     return files
 
 # We don't want to assume a default domain of Zope

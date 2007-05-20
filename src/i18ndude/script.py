@@ -39,10 +39,10 @@ present:
           contain only the errors for each file.
 
    rebuild-pot --pot <filename> --create <domain> [--merge <filename>
-   [--merge2 <filename>]] [--exclude="<ignore1> <ignore2> ..."] path
-          Given a pot-file via the --pot option you can specify a directory
-          which including all sub-folders will be searched for PageTemplates
-          (*.*pt) and Python scripts (*.*py).
+   [--merge2 <filename>]] [--exclude="<ignore1> <ignore2> ..."] path [path2 ...]
+          Given a pot-file via the --pot option you can specify one or more
+          directories which including all sub-folders will be searched for
+          PageTemplates (*.*pt) and Python scripts (*.*py).
 
           Make sure you have a backup copy of the original pot-file in case
           you need to fill back in ids by hand.
@@ -193,7 +193,7 @@ def rebuild_pot():
     if merge2_fn == merge_fn:
         merge2_fn = False
 
-    path = files[0]
+    path = files
     merge_ctl = None
     pyreader = None
 

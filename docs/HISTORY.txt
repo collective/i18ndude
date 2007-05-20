@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 3.0b2 - Unreleased
 
+    - Added back support for specifying multiple folders to be searched in the
+      rebuilt-pot command.
+      [hannosch]
+
     - Added new --exclude argument to the rebuilt-pot command, which lets you
       specify a whitespace delimited list of files that should not be included
       in the message extraction.
