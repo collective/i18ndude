@@ -196,6 +196,7 @@ def rebuild_pot():
     path = files
     merge_ctl = None
     pyreader = None
+    gsreader = None
 
     try:
         if create_domain is not None:
@@ -208,12 +209,14 @@ def rebuild_pot():
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
         ptreader = catalog.PTReader(path, create_domain, exclude=exclude)
         pyreader = catalog.PYReader(path, create_domain, exclude=exclude)
+        gsreader = catalog.GSReader(path, create_domain, exclude=exclude)
     except IOError, e:
         print >> sys.stderr, 'I/O Error: %s' % e
         usage(0)
 
     ptresult = ptreader.read()
     pyresult = pyreader.read()
+    gsresult = gsreader.read()
 
     orig_msgids = orig_ctl.keys()
     domain = orig_ctl.domain
@@ -239,6 +242,10 @@ def rebuild_pot():
                 comments = pyctl[key][2] + orig_ctl.getComments(key)
                 pyctl[key] = (pyctl[key][0], pyctl[key][1], comments)
 
+    if gsreader.catalogs.has_key(domain):
+        gsctl = gsreader.catalogs[domain]
+        # XXX Preserve comments?
+
     # keep 'literal' ids only
     orig_ctl.accept_fct(lambda id, str: catalog.is_literal_id(id))
     orig_ctl.add_missing(ptctl)
@@ -247,6 +254,9 @@ def rebuild_pot():
     if pyreader.catalogs.has_key(domain):
         orig_ctl.add_missing(pyctl)
         ctl.add_missing(pyctl)
+    if gsreader.catalogs.has_key(domain):
+        orig_ctl.add_missing(gsctl)
+        ctl.add_missing(gsctl)
 
     added_by_merge=[]
     if merge_ctl is not None:

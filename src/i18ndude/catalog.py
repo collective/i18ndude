@@ -2,8 +2,8 @@ import re, sys, time
 
 from zope.i18nmessageid import Message
 
-import common
-from odict import odict
+from i18ndude import common
+from i18ndude.odict import odict
 
 DEFAULT_PO_HEADER = [
     '--- PLEASE EDIT THE LINES BELOW CORRECTLY ---',
@@ -643,6 +643,53 @@ class PYReader:
                           msgid.default or '',
                           [],
                           [py[msgid][0][0]+':'+str(py[msgid][0][1])],
+                          [],
+                          self.domain)
+        return []
+
+    def _add_msg(self, msgid, msgstr, comments, references, automatic_comments, domain):
+        if not domain:
+            print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
+                  (msgid, references)
+            return
+
+        if not self.catalogs.has_key(domain):
+            self.catalogs[domain] = MessageCatalog(domain=domain)
+
+        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=references, automatic_comments=automatic_comments)
+
+
+class GSReader(object):
+    """Reads in a list of GenericSetup profile files."""
+
+    def __init__(self, path, domain, exclude=()):
+        self.domain = domain
+        self.catalogs = {} # keyed by domain name
+        self.path = path
+        self.exclude = exclude
+
+    def read(self):
+        """Reads in from all given xml's and builds up MessageCatalogs
+        accordingly.
+
+        The MessageCatalogs can after this call be accessed through attribute
+        ``catalogs``, which indexes the MessageCatalogs by their domain.
+
+        read returns the list of tuples (filename, errormsg), where filename
+        is the name of the file that could not be read and errormsg a human
+        readable error message.
+        """
+
+        from gsextract import gs_strings
+        gs = gs_strings(self.path, self.domain,
+                        exclude=self.exclude+('tests', ))
+
+        for msgid in gs:
+            self._add_msg(msgid,
+                          msgid.default or '',
+                          [],
+                          [],
+                          # [gs[msgid][0][0]+':'+str(gs[msgid][0][1])],
                           [],
                           self.domain)
         return []

@@ -32,7 +32,8 @@ setup(name='i18ndude',
       install_requires=['zope.tal >= 3.2',
                         'zope.interface >= 3.2',
                         'zope.i18nmessageid >= 3.2',
-                        'zope.testing'
+                        'zope.testing',
+                        'elementtree'
       ],
       dependency_links=['http://download.zope.org/distribution/',],
       entry_points="""

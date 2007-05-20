@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 3.0b2 - Unreleased
 
+    - Started adding a new GenericSetup profile extractor, which automatically
+      extracts messages marked with i18n:translate.
+      [hannosch]
+
     - Added back support for specifying multiple folders to be searched in the
       rebuilt-pot command.
       [hannosch]
