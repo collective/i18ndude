@@ -6,8 +6,12 @@ except ImportError:
     from elementtree.ElementTree import ElementTree
 
 from i18ndude.extract import find_files
-I18N_DOMAIN = '{http://xml.zope.org/namespaces/i18n}domain'
-I18N_TRANSLATE = '{http://xml.zope.org/namespaces/i18n}translate'
+
+I18N_NS = 'http://xml.zope.org/namespaces/i18n'
+I18N_DOMAIN = '{%s}domain' % I18N_NS
+I18N_TRANSLATE = '{%s}translate' % I18N_NS
+I18N_ATTRIBUTES = '{%s}attributes' % I18N_NS
+
 
 class GSParser(object):
     """GenericSetup profile i18n parser."""
@@ -27,15 +31,23 @@ class GSParser(object):
         for child in elem.getchildren():
             domain = child.get(I18N_DOMAIN, domain)
             translate = child.get(I18N_TRANSLATE)
-            if domain is not None and translate is not None:
-                name = child.get('name')
-                msgid = msgstr = child.text
-                if translate:
-                    msgid = translate
+            attributes = child.get(I18N_ATTRIBUTES)
+            if domain is not None:
                 if domain not in self.catalogs:
                     self.catalogs[domain] = []
-                if msgid is not None:
-                    self.catalogs[domain].append((msgid, msgstr, self.filename, name))
+                if translate is not None:
+                    name = child.get('name')
+                    msgid = msgstr = child.text
+                    if translate:
+                        msgid = translate
+                    if msgid is not None:
+                        self.catalogs[domain].append((msgid, msgstr, self.filename))
+                if attributes is not None:
+                    # XXX Support for multiple attributes...
+                    msgid = msgstr = child.get(attributes)
+                    # XXX Support for explicit msgids...
+                    if msgid is not None:
+                        self.catalogs[domain].append((msgid, msgstr, self.filename))
             self.parseChildren(child, domain)
 
     def getCatalogs(self):
