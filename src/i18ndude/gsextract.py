@@ -13,7 +13,7 @@ class GSParser(object):
     """GenericSetup profile i18n parser."""
 
     def __init__(self):
-        self.messages = {}
+        self.catalogs = {}
         self.filename = None
 
     def parse(self, filename):
@@ -32,17 +32,14 @@ class GSParser(object):
                 msgid = msgstr = child.text
                 if translate:
                     msgid = translate
-                if domain not in self.messages:
-                    self.messages[domain] = []
+                if domain not in self.catalogs:
+                    self.catalogs[domain] = []
                 if msgid is not None:
-                    self.messages[domain].append((msgid, msgstr, self.filename, name))
+                    self.catalogs[domain].append((msgid, msgstr, self.filename, name))
             self.parseChildren(child, domain)
 
     def getCatalogs(self):
-        catalog = {}
-        # XXX actions and types are working...
-
-        return catalog
+        return self.catalogs
 
 
 def gs_strings(dir, domain="none", exclude=()):

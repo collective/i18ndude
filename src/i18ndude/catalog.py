@@ -684,14 +684,14 @@ class GSReader(object):
         gs = gs_strings(self.path, self.domain,
                         exclude=self.exclude+('tests', ))
 
-        for msgid in gs:
-            self._add_msg(msgid,
-                          msgid.default or '',
-                          [],
-                          [],
-                          # [gs[msgid][0][0]+':'+str(gs[msgid][0][1])],
-                          [],
-                          self.domain)
+        for domain in gs:
+            for msgid in gs[domain]:
+                self._add_msg(msgid[0],
+                              msgid[1],
+                              [],
+                              [msgid[2]],
+                              [],
+                              domain)
         return []
 
     def _add_msg(self, msgid, msgstr, comments, references, automatic_comments, domain):
