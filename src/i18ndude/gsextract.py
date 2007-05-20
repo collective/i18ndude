@@ -40,14 +40,16 @@ class GSParser(object):
                     msgid = msgstr = child.text
                     if translate:
                         msgid = translate
-                    if msgid is not None:
+                    if msgid:
                         self.catalogs[domain].append((msgid, msgstr, self.filename))
                 if attributes is not None:
-                    # XXX Support for multiple attributes...
-                    msgid = msgstr = child.get(attributes)
-                    # XXX Support for explicit msgids...
-                    if msgid is not None:
-                        self.catalogs[domain].append((msgid, msgstr, self.filename))
+                    # TODO Support for explicit msgids...
+                    attributes = attributes.strip().split(';')
+                    for attr in attributes:
+                        attr = attr.strip()
+                        msgid = msgstr = child.get(attr)
+                        if msgid:
+                            self.catalogs[domain].append((msgid, msgstr, self.filename))
             self.parseChildren(child, domain)
 
     def getCatalogs(self):
