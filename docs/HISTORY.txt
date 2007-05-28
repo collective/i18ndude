@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 3.0b2 - Unreleased
 
+    - Quote new lines in the default comment properly.
+      [hannosch]
+
     - Added support for extracting i18n:attributes from GenericSetup profiles.
       [hannosch]
 

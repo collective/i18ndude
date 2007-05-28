@@ -494,6 +494,7 @@ class POWriter:
             # no html markup in the default comments as these are not
             # allowed in msgstr's either
             msgstr = msgstr.replace('"','\\\"')
+            msgstr = msgstr.replace('\n','\\n')
             msgstr = msgstr.replace('&quot;','\\\"')
             msgstr = msgstr.replace('&amp;','&')
             msgstr = msgstr.replace('&hellip;','...')
