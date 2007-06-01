@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 3.0b2 - Unreleased
 
+    - Made gdchart dependency for the combinedchart command optional. Instead
+      you only get a textual listing right now.
+      [hannosch]
+
     - Quote new lines in the default comment properly.
       [hannosch]
 

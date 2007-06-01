@@ -4,9 +4,6 @@ except ImportError:
     gdchart = None
 
 def make_chart(pot, pos, out, size=None, title=None, **kwargs):
-    if not gdchart:
-        raise ImportError, 'No module named gdchart'
-
     msgids = pot.keys()
     total = len(msgids)
     names = [pot.mime_header['Language-Code']]
@@ -48,20 +45,21 @@ def make_chart(pot, pos, out, size=None, title=None, **kwargs):
         names.append(n)
         colors.append(c)
 
-    options = {'bg_color': 0xffffff,
-               'border': gdchart.GDC_BORDER_ALL,
-               'xaxis_font': gdchart.GDC_SMALL,
-               'title': title or pot.mime_header['Project-Id-Version'],
-               'ext_color' : colors,
-               }
-    options.update(kwargs)
-    gdchart.option(**options)
+    if gdchart is not None:
+        options = {'bg_color': 0xffffff,
+                   'border': gdchart.GDC_BORDER_ALL,
+                   'xaxis_font': gdchart.GDC_SMALL,
+                   'title': title or pot.mime_header['Project-Id-Version'],
+                   'ext_color' : colors,
+                   }
+        options.update(kwargs)
+        gdchart.option(**options)
 
-    gdchart.chart(gdchart.GDC_3DBAR,
-                  size,
-                  out,
-                  names,
-                  values)
+        gdchart.chart(gdchart.GDC_3DBAR,
+                      size,
+                      out,
+                      names,
+                      values)
 
     status = {}
     i = 0
