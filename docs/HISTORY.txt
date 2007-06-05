@@ -2,7 +2,7 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
-i18ndude 3.0b2 - Unreleased
+i18ndude 3.0b2 - Released June 5, 2007
 
     - Made gdchart dependency for the combinedchart command optional. Instead
       you only get a textual listing right now.
