@@ -4,6 +4,12 @@ Changelog for i18ndude
 
 i18ndude 3.0b2 - Released June 5, 2007
 
+    - Added basic Unicode support to the MessageCatalog class.
+      [hannosch]
+
+    - Fixed comment handling in the merge command.
+      [hannosch]
+
     - Made gdchart dependency for the combinedchart command optional. Instead
       you only get a textual listing right now.
       [hannosch]

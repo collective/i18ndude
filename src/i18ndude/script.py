@@ -230,8 +230,7 @@ def rebuild_pot():
     for key in orig_ctl.keys():
         if key in ptctl:
             # preserve comments
-            comments = ptctl[key][2] + orig_ctl.getComments(key)
-            ptctl[key] = (ptctl[key][0], ptctl[key][1], comments)
+            ptctl[key].comments = ptctl[key].comments + orig_ctl.getComments(key)
 
     if pyreader.catalogs.has_key(domain):
         pyctl = pyreader.catalogs[domain]
@@ -239,8 +238,7 @@ def rebuild_pot():
         for key in orig_ctl.keys():
             if key in pyctl:
                 # preserve comments
-                comments = pyctl[key][2] + orig_ctl.getComments(key)
-                pyctl[key] = (pyctl[key][0], pyctl[key][1], comments)
+                ptctl[key].comments = pyctl[key].comments + orig_ctl.getComments(key)
 
     if gsreader.catalogs.has_key(domain):
         gsctl = gsreader.catalogs[domain]

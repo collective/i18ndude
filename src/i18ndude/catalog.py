@@ -144,6 +144,7 @@ class MessageCatalog(odict):
 
         self.filename = filename
         self.domain = domain
+        self.encoding = 'utf-8'
 
         if filename:
             self._initialize_with(filename)
@@ -175,11 +176,21 @@ class MessageCatalog(odict):
         assert msgid in self
         return self[msgid].getDefault()
 
+    def update(self, dict):
+        for (key, val) in dict.items():
+            if getattr(val, 'msgid', None) is not None:
+                val.msgid = val.msgid.decode(self.encoding)
+            if getattr(val, 'msgstr', None) is not None:
+                val.msgstr = val.msgstr.decode(self.encoding)                
+            self[key.decode(self.encoding)] = val
+
     def add(self, msgid, msgstr='', comments=[], references=[], automatic_comments=[]):
         """Add a entry into the catalogue.
 
         If the msgid already exists in my catalog, I will only add comment,
         reference and automatic comments to the entry if these doesn't exist yet"""
+        msgid = msgid.decode(self.encoding)
+        msgstr = msgstr.decode(self.encoding)
         if not self.has_key(msgid):
             self[msgid] = MessageEntry(msgid, msgstr=msgstr, comments=comments,
                                        references=references,
@@ -290,13 +301,15 @@ class MessageCatalog(odict):
         parser = POParser(file)
         parser.read()
         file.close()
-        self.update(parser.msgdict)
+        header = parser.msgdict.get('')
         try:
-            self.commentary_header = self[''].comments
-            self._parse_mime_header(self[''].msgstr)
-            del self['']
+            self.commentary_header = header.comments
+            self._parse_mime_header(header.msgstr)
+            del parser.msgdict['']
         except KeyError, e:
             print >> sys.stderr, "%s lacks MIME header." % filename
+        # Update the file after the header has been read.
+        self.update(parser.msgdict)
 
     def _parse_mime_header(self, msgstr):
         pairs = [line.split(':', 1) for line in msgstr.split(r'\n') if line]
@@ -304,6 +317,9 @@ class MessageCatalog(odict):
             self.mime_header[key.strip()] = value.strip()
             if key.lower() == 'domain':
                 self.domain = value.strip()
+            if key.lower() == 'content-type':
+                self.encoding = value.strip().lower().split('=')[-1]
+
 
 class POParser:
     """Parses an existing po- file and builds a dictionary according to
@@ -336,7 +352,7 @@ class POParser:
                 self._readSameMessage()
             else:
                 self._readNewMessage()
-            
+
             newstatus = self.sameMessageEntry
             if oldstatus != newstatus:
                 # function changed stateid: call new function with same line
