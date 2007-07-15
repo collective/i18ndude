@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 3.0b2 - Released June 5, 2007
 
+    - No longer replace &hellip; and &mdash; with simple ASCII equivalents, but
+      use proper Unicode characters, properly representing these HTML entities.
+      [hannosch]
+
     - Fixed some minor bugs found while rebuilding the Plone pot files.
       [hannosch]
 

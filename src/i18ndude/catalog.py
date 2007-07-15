@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import re, sys, time
 
 from zope.i18nmessageid import Message
@@ -508,9 +510,9 @@ class POWriter:
             msgstr = msgstr.replace('\n','\\n')
             msgstr = msgstr.replace('&quot;','\\\"')
             msgstr = msgstr.replace('&amp;','&')
-            msgstr = msgstr.replace('&hellip;','...')
-            msgstr = msgstr.replace('&#8230;','...')
-            msgstr = msgstr.replace('&mdash;','-')
+            msgstr = msgstr.replace('&hellip;',u'\u2026')
+            msgstr = msgstr.replace('&#8230;',u'\u2026')
+            msgstr = msgstr.replace('&mdash;',u'\u2014')
             self._printToFile(f, '#. %s"%s"' % (DEFAULT_COMMENT, msgstr))
             msgstr = ''
 
