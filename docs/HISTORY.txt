@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 3.0b2 - Released June 5, 2007
 
+    - Fixed some minor bugs found while rebuilding the Plone pot files.
+      [hannosch]
+
     - Added basic Unicode support to the MessageCatalog class.
       [hannosch]
 

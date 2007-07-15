@@ -96,21 +96,21 @@ class TestMessageCatalogInit(unittest.TestCase):
                            'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
                           }
 
-        self.msgids = {'msgid1' : self.me('msgid1', msgstr='msgstr1', references=['file1','file2'], automatic_comments=['Default: "msgstr1"'], comments=['comment1']),
-                       'msgid2' : self.me('msgid2', msgstr='msgstr2', references=['file2']),
-                       'msgid3' : self.me('msgid3', msgstr='\\n\\nmsgstr\\n3', references=['file3'], comments=['comment3']),
-                       'msgid4' : self.me('msgid4', msgstr='msgstr4', references=['file4']),
-                       'msgid5' : self.me('msgid5', msgstr='msgstr5', comments=['comment5']),
-                       'msgid6' : self.me('msgid6', msgstr='msgstr6'),
-                       'msgid7' : self.me('msgid7', msgstr='msgstr7', comments=[', fuzzy']),
-                       'msgid8' : self.me('msgid8'),
-                       'msgid has spaces' : self.me('msgid has spaces', msgstr='msgstr has spaces', comments=['# I am a dead comment']),
-                       'msgid_has_underlines' : self.me('msgid_has_underlines', msgstr='msgstr_has_underlines'),
-                       'msgid_has_underlines and spaces' : self.me('msgid_has_underlines and spaces', msgstr='msgstr_has_underlines and spaces'),
-                       'msgid for unicode text' : self.me('msgid for unicode text', msgstr='unicode msgstr ···'),
-                       'msgid for unicode text with comment' : self.me('msgid for unicode text with comment', msgstr='unicode msgstr ···', references=['./folder/file_unicode'], automatic_comments=['Default: [···]']),
-                       'msgid for text with german umlaut' : self.me('msgid for text with german umlaut', msgstr='äöüß text'),
-                       'msgid for text with html-entity' : self.me('msgid for text with html-entity', msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;')
+        self.msgids = {u'msgid1' : self.me('msgid1', msgstr='msgstr1', references=['file1','file2'], automatic_comments=['Default: "msgstr1"'], comments=['comment1']),
+                       u'msgid2' : self.me('msgid2', msgstr='msgstr2', references=['file2']),
+                       u'msgid3' : self.me('msgid3', msgstr='\\n\\nmsgstr\\n3', references=['file3'], comments=['comment3']),
+                       u'msgid4' : self.me('msgid4', msgstr='msgstr4', references=['file4']),
+                       u'msgid5' : self.me('msgid5', msgstr='msgstr5', comments=['comment5']),
+                       u'msgid6' : self.me('msgid6', msgstr='msgstr6'),
+                       u'msgid7' : self.me('msgid7', msgstr='msgstr7', comments=[', fuzzy']),
+                       u'msgid8' : self.me('msgid8'),
+                       u'msgid has spaces' : self.me('msgid has spaces', msgstr='msgstr has spaces', comments=['# I am a dead comment']),
+                       u'msgid_has_underlines' : self.me('msgid_has_underlines', msgstr='msgstr_has_underlines'),
+                       u'msgid_has_underlines and spaces' : self.me('msgid_has_underlines and spaces', msgstr='msgstr_has_underlines and spaces'),
+                       u'msgid for unicode text' : self.me('msgid for unicode text', msgstr=u'unicode msgstr \xb7\xb7\xb7'),
+                       u'msgid for unicode text with comment' : self.me('msgid for unicode text with comment', msgstr=u'unicode msgstr \xb7\xb7\xb7', references=['./folder/file_unicode'], automatic_comments=['Default: [···]']),
+                       u'msgid for text with german umlaut' : self.me('msgid for text with german umlaut', msgstr=u'\xe4\xf6\xfc\xdf text'),
+                       u'msgid for text with html-entity' : self.me('msgid for text with html-entity', msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;')
                       }
 
     def test_init(self):

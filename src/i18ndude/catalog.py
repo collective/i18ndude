@@ -189,8 +189,10 @@ class MessageCatalog(odict):
 
         If the msgid already exists in my catalog, I will only add comment,
         reference and automatic comments to the entry if these doesn't exist yet"""
-        msgid = msgid.decode(self.encoding)
-        msgstr = msgstr.decode(self.encoding)
+        if not isinstance(msgid, unicode):
+            msgid = msgid.decode(self.encoding)
+        if not isinstance(msgstr, unicode):
+            msgstr = msgstr.decode(self.encoding)
         if not self.has_key(msgid):
             self[msgid] = MessageEntry(msgid, msgstr=msgstr, comments=comments,
                                        references=references,
@@ -212,19 +214,12 @@ class MessageCatalog(odict):
         """Each msgid that I miss and ``msgctl`` contains will be included in
         my catalog, including contextual information.
 
-        Note that the msgstr is set to be the empty string by default, but
-        you can override what's filled in by providing a defaultmsgstr arg.
-
-        The original msgstr is never copied. Therefore the contextual
-        information (i.e. lines that start with '#') must contain the string
-        that is to be translated in order to make sense to the translator.
-
         Returns the ids that were added."""
         ids = []
         for key in msgctl.keys():
             if not self.has_key(key):
                 entry = msgctl[key]
-                msgstr = defaultmsgstr
+                msgstr = defaultmsgstr or entry.msgstr
                 if isinstance(key, Message):
                     msgstr = key.default or msgstr
                 self.add(key, msgstr=msgstr, comments=entry.comments,
