@@ -1,4 +1,23 @@
 ** TODO **
+==========
+
+Before 3.0 final
+----------------
+
+- The chart generation should either work or should be removed properly,
+  ideally it should generate a HTML page instead which has some nice bars
+
+- Pin the release to exact final versions of the zope.* dependencies
+
+- Figure out how to do a proper Windows installer release if that is still
+  possible. At least the egg-based version should work OOTB (win eggs of all
+  dependencies should be available)
+
+- Update installation instructions to cover workingenv and zc.buildout, provide
+  a default zc.buildout configuration
+
+Long term todos
+---------------
 
 - Tests needs to be written for more than catalog.py
 
