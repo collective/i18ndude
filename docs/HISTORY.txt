@@ -2,6 +2,13 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
+i18ndude 3.0b3 - Unreleased
+
+    - Fixed some bugs in the GenericSetup extraction handler. Messages defined
+      on the root node will now be extracted as well. The message texts are
+      stripped from beginning and trailing whitespace.
+      [hannosch]
+
 i18ndude 3.0b2 - Released June 5, 2007
 
     - No longer replace &hellip; and &mdash; with simple ASCII equivalents, but

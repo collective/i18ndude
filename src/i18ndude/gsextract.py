@@ -1,5 +1,3 @@
-import sys
-
 try:
     from xml.etree.ElementTree import ElementTree
 except ImportError:
@@ -25,32 +23,41 @@ class GSParser(object):
         tree = ElementTree(file=filename)
         elem = tree.getroot()
         domain = elem.get(I18N_DOMAIN, None)
+        self.parseNode(elem, domain)
         self.parseChildren(elem, domain)
 
     def parseChildren(self, elem, domain):
+        domain = elem.get(I18N_DOMAIN, None)
         for child in elem.getchildren():
-            domain = child.get(I18N_DOMAIN, domain)
-            translate = child.get(I18N_TRANSLATE)
-            attributes = child.get(I18N_ATTRIBUTES)
-            if domain is not None:
-                if domain not in self.catalogs:
-                    self.catalogs[domain] = []
-                if translate is not None:
-                    name = child.get('name')
-                    msgid = msgstr = child.text
-                    if translate:
-                        msgid = translate
-                    if msgid:
-                        self.catalogs[domain].append((msgid, msgstr, self.filename))
-                if attributes is not None:
-                    # TODO Support for explicit msgids...
-                    attributes = attributes.strip().split(';')
-                    for attr in attributes:
-                        attr = attr.strip()
-                        msgid = msgstr = child.get(attr)
-                        if msgid:
-                            self.catalogs[domain].append((msgid, msgstr, self.filename))
+            self.parseNode(child, domain)
             self.parseChildren(child, domain)
+
+    def parseNode(self, elem, domain):
+        domain = elem.get(I18N_DOMAIN, domain)
+        translate = elem.get(I18N_TRANSLATE)
+        attributes = elem.get(I18N_ATTRIBUTES)
+        if domain is not None:
+            if domain not in self.catalogs:
+                self.catalogs[domain] = []
+            if translate is not None:
+                name = elem.get('name')
+                text = elem.text
+                if text is not None:
+                    text = text.strip()
+                msgid = msgstr = text
+                if translate:
+                    msgid = translate
+                if msgid:
+                    self.catalogs[domain].append((msgid, msgstr, self.filename))
+            if attributes is not None:
+                # TODO Support for explicit msgids...
+                attributes = attributes.strip().split(';')
+                for attr in attributes:
+                    attr = attr.strip()
+                    text = elem.get(attr)
+                    if text:
+                        msgid = msgstr = text
+                        self.catalogs[domain].append((msgid, msgstr, self.filename))
 
     def getCatalogs(self):
         return self.catalogs
