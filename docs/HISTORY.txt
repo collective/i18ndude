@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 3.0b3 - Unreleased
 
+    - Stripped some more trailing whitespace. Fixed recursive algorithm for
+      i18n domain extraction.
+      [hannosch]
+
     - Fixed some bugs in the GenericSetup extraction handler. Messages defined
       on the root node will now be extracted as well. The message texts are
       stripped from beginning and trailing whitespace.

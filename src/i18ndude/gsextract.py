@@ -27,7 +27,7 @@ class GSParser(object):
         self.parseChildren(elem, domain)
 
     def parseChildren(self, elem, domain):
-        domain = elem.get(I18N_DOMAIN, None)
+        domain = elem.get(I18N_DOMAIN, domain)
         for child in elem.getchildren():
             self.parseNode(child, domain)
             self.parseChildren(child, domain)
@@ -56,6 +56,7 @@ class GSParser(object):
                     attr = attr.strip()
                     text = elem.get(attr)
                     if text:
+                        text = text.strip()
                         msgid = msgstr = text
                         self.catalogs[domain].append((msgid, msgstr, self.filename))
 
