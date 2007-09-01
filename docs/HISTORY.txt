@@ -2,7 +2,7 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
-i18ndude 3.0b3 - Unreleased
+i18ndude 3.0b3 - Released September 1, 2007
 
     - Stripped some more trailing whitespace. Fixed recursive algorithm for
       i18n domain extraction.
