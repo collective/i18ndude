@@ -191,6 +191,12 @@ class MessageCatalog(odict):
 
         If the msgid already exists in my catalog, I will only add comment,
         reference and automatic comments to the entry if these doesn't exist yet"""
+        if isinstance(msgid, MessageEntry):
+            msgstr = msgid.msgstr
+            references = msgid.references
+            automatic_comments = msgid.automatic_comments
+            comments = msgid.comments
+            msgid = msgid.msgid
         if not isinstance(msgid, unicode):
             msgid = msgid.decode(self.encoding)
         if not isinstance(msgstr, unicode):
