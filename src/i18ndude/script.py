@@ -92,7 +92,8 @@ present:
 
    combinedchart -o <imagefile> --title <title> --products <product1> [<product2> ...]
           This will create a chart that displays how much of the combined
-          products pot's is translated for each language.
+          products pot's is translated for each language.  Run this from
+          the directory containing the pot-files.
 """
 
 import os, sys
@@ -105,6 +106,12 @@ def usage(code, msg=''):
     print >> sys.stderr, __doc__
     if msg:
         print >> sys.stderr, msg
+    sys.exit(code)
+
+def short_usage(code, msg=''):
+    if msg:
+        print >> sys.stderr, msg
+    print >> sys.stderr, u"Type i18ndude<Enter> to see the help."
     sys.exit(code)
 
 def filter_isfile(files):
@@ -188,7 +195,7 @@ def rebuild_pot():
             exclude = tuple(arg.split())
 
     if not pot_fn:
-        usage(1)
+        short_usage(1, u"No pot file specified as target with --pot.")
 
     if merge2_fn == merge_fn:
         merge2_fn = False
@@ -211,8 +218,7 @@ def rebuild_pot():
         pyreader = catalog.PYReader(path, create_domain, exclude=exclude)
         gsreader = catalog.GSReader(path, create_domain, exclude=exclude)
     except IOError, e:
-        print >> sys.stderr, 'I/O Error: %s' % e
-        usage(0)
+        short_usage(0, 'I/O Error: %s' % e)
 
     ptresult = ptreader.read()
     pyresult = pyreader.read()
@@ -222,8 +228,7 @@ def rebuild_pot():
     domain = orig_ctl.domain
 
     if not ptreader.catalogs.has_key(domain):
-        print >> sys.stderr, 'No entries for domain "%s".' % domain
-        usage(0)
+        short_usage(0, 'No entries for domain "%s".' % domain)
 
     ptctl = ptreader.catalogs[domain]
     comments = {} # keyed by msgid
@@ -295,8 +300,10 @@ def merge():
         if opt in ('--merge2'):
             merge2_fn = arg
 
-    if not pot_fn or not merge_fn:
-        usage(1)
+    if not pot_fn:
+        short_usage(1, u"No pot file specified as target with --pot.")
+    if not merge_fn:
+        short_usage(1, u"No potfile specified as source with --merge.")
 
     try:
         orig_ctl = catalog.MessageCatalog(filename=pot_fn)
@@ -304,8 +311,7 @@ def merge():
         if merge2_fn:
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
     except IOError, e:
-        print >> sys.stderr, 'I/O Error: %s' % e
-        usage(0)
+        short_usage(0, 'I/O Error: %s' % e)
 
     # merge
     added_by_merge = orig_ctl.add_missing(merge_ctl, '', 1)
@@ -328,7 +334,7 @@ def sync():
             pot_fn = arg
 
     if not pot_fn:
-        usage(1)
+        short_usage(1, u"No pot file specified as target with --pot.")
 
     files = filter_isfile(files)
 
@@ -336,8 +342,7 @@ def sync():
         pot_ctl = catalog.MessageCatalog(filename=pot_fn)
         po_ctls = [catalog.MessageCatalog(filename=fn) for fn in files]
     except IOError, e:
-        print >> sys.stderr, 'I/O Error: %s' % e
-        usage(1)
+        short_usage(1, 'I/O Error: %s' % e)
 
     for po in po_ctls:
         added_msgids, removed_msgids = po.sync(pot_ctl)
@@ -403,8 +408,10 @@ def chart():
         elif opt in ('-p', '--pot'):
             pot_fn = arg
 
-    if not (pot_fn and out):
-        usage(1)
+    if not pot_fn:
+        short_usage(1, u"No pot file specified with --pot.")
+    if not out:
+        short_usage(1, u"No image file specified for output with -o.")
 
     files = filter_isfile(files)
 
@@ -412,7 +419,7 @@ def chart():
         pot_ctl = catalog.MessageCatalog(filename=pot_fn)
         po_ctls = [catalog.MessageCatalog(filename=fn) for fn in files]
     except IOError, e:
-        print >> sys.stderr, 'I/O Error: %s' % e
+        short_usage(1, 'I/O Error: %s' % e)
 
     visualisation.make_chart(pot_ctl, po_ctls, out)
 
@@ -433,8 +440,10 @@ def combinedchart():
         elif opt in ('-p', '--products'):
             products.append(arg)
 
-    if not (products and out):
-        usage(1)
+    if not products:
+        short_usage(1, u"No products specified with --products.")
+    if not out:
+        short_usage(1, u"No image file specified for output with -o.")
 
     products.extend(files)
 
@@ -460,8 +469,7 @@ def combinedchart():
                 pot_ctl.merge(ctl)
 
     if not pot_ctl:
-        print >> sys.stderr, 'Error: No pot files found.'
-        return
+        short_usage(1, 'Error: No pot files found.')
 
     po_ctls = {}
     for product in pos:
@@ -475,8 +483,7 @@ def combinedchart():
                 po_ctls[language].merge(ctl)
 
     if not po_ctls:
-        print >> sys.stderr, 'Error: No po files found.'
-        return
+        short_usage(1, 'Error: No po files found.')
 
     po_catalogs = []
     # flatten to list and sort

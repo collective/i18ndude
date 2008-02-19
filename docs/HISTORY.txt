@@ -2,6 +2,13 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
+i18ndude - Unreleased
+
+    - On most errors, show the error and a very short help message,
+      instead of the complete doc string of the file.
+      [maurits]
+
+
 i18ndude 3.0b3 - Released September 1, 2007
 
     - Stripped some more trailing whitespace. Fixed recursive algorithm for
