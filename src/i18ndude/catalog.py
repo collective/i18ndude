@@ -535,25 +535,22 @@ class POWriter:
 
         no = 0
         for ref in entry.references:
-            if not '//' in ref:
-                pparts = ref.split('Products%s' % os.sep)
-                p2parts = ref.split('products%s' % os.sep)
-                sparts = ref.split('src%s' % os.sep)
-                if len(pparts) > 1:
-                    ref = pparts[1]
-                elif len(p2parts) > 1:
-                    ref = p2parts[1]
-                elif len(sparts) > 1:
-                    ref = sparts[1]
-                self._printToFile(f, '#: %s' % ref)
-            else:
-                refs = ref.split('//')
-                if refs[0]:
-                    self._printToFile(f, '#: %s//' % refs[0])
-                if refs[1]:
-                    self._printToFile(f, '#: %s' % refs[1].lstrip())
+            pparts = ref.split('Products%s' % os.sep)
+            p2parts = ref.split('products%s' % os.sep)
+            sparts = ref.split('src%s' % os.sep)
+            if len(pparts) > 1:
+                ref = pparts[1]
+            elif len(p2parts) > 1:
+                ref = p2parts[1]
+            elif len(sparts) > 1:
+                ref = sparts[1]
+            # Normalize path separators to unix-style
+            ref.replace(os.sep, '/')
+            self._printToFile(f, '#: %s' % ref)
+            # Support for max number of references
             no += 1
-            if no >= MAX_OCCUR: break
+            if no >= MAX_OCCUR:
+                break
 
         if msgstr and (msg_changed or fuzzy):
             self._printToFile(f, '#, fuzzy')

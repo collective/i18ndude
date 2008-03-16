@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 3.0b4 - Unreleased
 
+    - Normalize path separators in references to `/` on all platforms.
+      [hannosch]
+
     - Reverted undocumented c58402, which broke in presence of Unicode strings.
       [hannosch]
 
