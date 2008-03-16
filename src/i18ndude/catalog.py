@@ -1,12 +1,11 @@
 # -*- coding: UTF-8 -*-
 
-import re, sys, time
+import os, re, sys, time
 
 from zope.i18nmessageid import Message
 
 from i18ndude import common
 from i18ndude.odict import odict
-from pygettext import normalize
 
 DEFAULT_PO_HEADER = [
     '--- PLEASE EDIT THE LINES BELOW CORRECTLY ---',
@@ -537,6 +536,15 @@ class POWriter:
         no = 0
         for ref in entry.references:
             if not '//' in ref:
+                pparts = ref.split('Products%s' % os.sep)
+                p2parts = ref.split('products%s' % os.sep)
+                sparts = ref.split('src%s' % os.sep)
+                if len(pparts) > 1:
+                    ref = pparts[1]
+                elif len(p2parts) > 1:
+                    ref = p2parts[1]
+                elif len(sparts) > 1:
+                    ref = sparts[1]
                 self._printToFile(f, '#: %s' % ref)
             else:
                 refs = ref.split('//')
@@ -550,8 +558,16 @@ class POWriter:
         if msgstr and (msg_changed or fuzzy):
             self._printToFile(f, '#, fuzzy')
 
-        self._printToFile(f, 'msgid %s' % normalize(id))
-        self._printToFile(f, 'msgstr %s' % normalize(msgstr))
+        self._printToFile(f, 'msgid "%s"' % id)
+        if not '\\n' in msgstr:
+            self._printToFile(f, 'msgstr "%s"' % msgstr)
+        else:
+            self._printToFile(f, 'msgstr ""')
+            lines = msgstr.split('\\n')
+            for line in lines[:-1]:
+                self._printToFile(f, '"%s\\n"' % line)
+            if lines[-1]:
+                self._printToFile(f, '"%s"' % lines[-1])
 
 
 class PTReader:

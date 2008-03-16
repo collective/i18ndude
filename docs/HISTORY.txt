@@ -2,12 +2,17 @@ Changelog for i18ndude
 
     (name of developer listed in brackets)
 
-i18ndude - Unreleased
+i18ndude 3.0b4 - Unreleased
+
+    - Reverted undocumented c58402, which broke in presence of Unicode strings.
+      [hannosch]
+
+    - Strip the computer specific base folder from generated references.
+      [hannosch]
 
     - On most errors, show the error and a very short help message,
       instead of the complete doc string of the file.
       [maurits]
-
 
 i18ndude 3.0b3 - Released September 1, 2007
 
