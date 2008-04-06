@@ -454,16 +454,25 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
     # right sys path until app_dir has run
     from zope.tal.talgettext import POEngine, POTALInterpreter
     from zope.tal.htmltalparser import HTMLTALParser
+    from zope.tal.talparser import TALParser
     engine = POEngine()
 
     class Devnull(object):
         def write(self, s):
             pass
 
-    for filename in find_files(dir, '*.*pt', exclude=tuple(exclude)):
+    for filename in (find_files(dir, '*.pt', exclude=tuple(exclude)) +
+                     find_files(dir, '*.html', exclude=tuple(exclude)) +
+                     find_files(dir, '*.kupu', exclude=tuple(exclude)) + 
+                     find_files(dir, '*.pox', exclude=tuple(exclude)) +
+                     find_files(dir, '*.xsl', exclude=tuple(exclude))):
         try:
             engine.file = filename
-            p = HTMLTALParser()
+            name, ext = os.path.splitext(filename)
+            if ext in ['.pt', '.html']:
+                p = HTMLTALParser()
+            else:
+                p = TALParser()
             p.parseFile(filename)
             program, macros = p.getCode()
             POTALInterpreter(program, macros, engine, stream=Devnull(),

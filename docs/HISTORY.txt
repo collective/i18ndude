@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 3.0b4 - Unreleased
 
+    - Applied kupu-i18nextract-sa-diff.patch from kupu to be able to rebuild
+      the kupu pot files from xsl and html files.
+      [hannosch]
+
     - Normalize path separators in references to `/` on all platforms.
       [hannosch]
 
