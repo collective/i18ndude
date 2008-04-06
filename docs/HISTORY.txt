@@ -4,6 +4,9 @@ Changelog for i18ndude
 
 i18ndude 3.0b4 - Unreleased
 
+    - Added special handling of some more entities to please kupu.
+      [hannosch]
+
     - Applied kupu-i18nextract-sa-diff.patch from kupu to be able to rebuild
       the kupu pot files from xsl and html files.
       [hannosch]

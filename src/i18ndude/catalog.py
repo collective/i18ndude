@@ -515,10 +515,14 @@ class POWriter:
             msgstr = msgstr.replace('"','\\\"')
             msgstr = msgstr.replace('\n','\\n')
             msgstr = msgstr.replace('&quot;','\\\"')
+            msgstr = msgstr.replace('&#xa0;',' ')
             msgstr = msgstr.replace('&amp;','&')
             msgstr = msgstr.replace('&hellip;',u'\u2026')
             msgstr = msgstr.replace('&#8230;',u'\u2026')
             msgstr = msgstr.replace('&mdash;',u'\u2014')
+            msgstr = msgstr.replace('&#9632;',u'\u25A0')
+            msgstr = msgstr.replace('&#9675;',u'\u25CB')
+            msgstr = msgstr.replace('&#9679;',u'\u25CF')
             self._printToFile(f, '#. %s"%s"' % (DEFAULT_COMMENT, msgstr))
             msgstr = ''
 
