@@ -227,15 +227,14 @@ def rebuild_pot():
     orig_msgids = orig_ctl.keys()
     domain = orig_ctl.domain
 
-    if not ptreader.catalogs.has_key(domain):
-        short_usage(0, 'No entries for domain "%s".' % domain)
-
-    ptctl = ptreader.catalogs[domain]
-    comments = {} # keyed by msgid
-    for key in orig_ctl.keys():
-        if key in ptctl:
-            # preserve comments
-            ptctl[key].comments = ptctl[key].comments + orig_ctl.getComments(key)
+    ptctl = pyctl = gsctl = {}
+    if ptreader.catalogs.has_key(domain):
+        ptctl = ptreader.catalogs[domain]
+        comments = {} # keyed by msgid
+        for key in orig_ctl.keys():
+            if key in ptctl:
+                # preserve comments
+                ptctl[key].comments = ptctl[key].comments + orig_ctl.getComments(key)
 
     if pyreader.catalogs.has_key(domain):
         pyctl = pyreader.catalogs[domain]
@@ -249,11 +248,14 @@ def rebuild_pot():
         gsctl = gsreader.catalogs[domain]
         # XXX Preserve comments?
 
+    if not (ptctl or pyctl or gsctl):
+        short_usage(0, 'No entries for domain "%s".' % domain)
+
     # keep 'literal' ids only
     orig_ctl.accept_fct(lambda id, str: catalog.is_literal_id(id))
     orig_ctl.add_missing(ptctl)
 
-    ctl = ptctl
+    ctl = ptctl or pyctl or gsctl
     if pyreader.catalogs.has_key(domain):
         orig_ctl.add_missing(pyctl)
         ctl.add_missing(pyctl)

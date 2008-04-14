@@ -4,6 +4,10 @@ Changelog for i18ndude
 
 i18ndude 3.0b4 - Unreleased
 
+    - Fixed parsing of projects without any i18n in page templates. It is sufficient to have 
+      i18n in python files or GS profile.
+      [naro] 
+
     - Added special handling of some more entities to please kupu.
       [hannosch]
 
