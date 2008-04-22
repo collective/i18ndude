@@ -77,10 +77,6 @@ present:
           Given two pot-files I will write a copy of file1 to stdout with all
           messages removed that are also in file2, i.e. where msgids match.
 
-          file2 is usually the generated catalog via 'rebuild-pot --create'
-          and file1 the catalog with messages that you retrieved by applying
-          'extract-literals'.
-
    admix <file1> <file2>
           Given two po-files I will look for translated entries in file2 that
           are untranslated in file1. I add these translations (msgstrs) to
