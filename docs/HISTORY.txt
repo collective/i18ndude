@@ -1,11 +1,14 @@
-Changelog for i18ndude
+Changelog
+=========
 
-    (name of developer listed in brackets)
+3.0b4 - Unreleased
+------------------
 
-i18ndude 3.0b4 - Unreleased
+    - Updated documentation.
+      [hannosch]
 
-    - Fixed parsing of projects without any i18n in page templates. It is sufficient to have 
-      i18n in python files or GS profile.
+    - Fixed parsing of projects without any i18n in page templates. It is
+      sufficient to have i18n in Python files or in GS profiles.
       [naro] 
 
     - Added special handling of some more entities to please kupu.
@@ -28,7 +31,9 @@ i18ndude 3.0b4 - Unreleased
       instead of the complete doc string of the file.
       [maurits]
 
-i18ndude 3.0b3 - Released September 1, 2007
+
+3.0b3 (2007-09-01)
+------------------
 
     - Stripped some more trailing whitespace. Fixed recursive algorithm for
       i18n domain extraction.
@@ -39,7 +44,9 @@ i18ndude 3.0b3 - Released September 1, 2007
       stripped from beginning and trailing whitespace.
       [hannosch]
 
-i18ndude 3.0b2 - Released June 5, 2007
+
+3.0b2 (2007-06-05)
+------------------
 
     - No longer replace &hellip; and &mdash; with simple ASCII equivalents, but
       use proper Unicode characters, properly representing these HTML entities.
@@ -80,7 +87,9 @@ i18ndude 3.0b2 - Released June 5, 2007
     - Added automatic replace from '&#8230;' to '...'.
       [hannosch]
 
-i18ndude 3.0b1 - Released March 1, 2007
+
+3.0b1 (2007-03-01)
+------------------
 
     - Fixed bug in mixing different catalogs into one. It wouldn't respect the
       default value of messages extracted from Python code. Also don't extract
@@ -91,8 +100,8 @@ i18ndude 3.0b1 - Released March 1, 2007
     - Whitespace fix for filename filter.
       [sunew]
 
-    - Improved the regular expression used in find_untranslated, so that it also
-      matches tags beginning with capital letters.
+    - Improved the regular expression used in find_untranslated, so that it
+      also matches tags beginning with capital letters.
       [kclarks]
 
     - Removed custom TAL parser. Use the one from zope.tal.talgettext instead.
@@ -102,7 +111,9 @@ i18ndude 3.0b1 - Released March 1, 2007
       our own version of TokenEater and the whole pystrings.py file.
       [hannosch]
 
-i18ndude 2.1.1 - Released October 28, 2006
+
+2.1.1 (2006-10-28)
+------------------
 
     - Use entry_points console_scripts from setuptools to install the main
       script. This should generate an executable file on Windows platforms.
@@ -111,11 +122,13 @@ i18ndude 2.1.1 - Released October 28, 2006
     - Removed some unused test files.
       [hannosch]
 
-    - Corrected the package information in the setup.py. Figured out how to use
-      find_packages() with the correct arguments.
+    - Corrected the package information in the setup.py. Figured out how to
+      use find_packages() with the correct arguments.
       [hannosch]
 
-i18ndude 2.1 - Released September 22, 2006
+
+2.1 (2006-09-22)
+----------------
 
     - Refactored the package source code layout to comply to the usual best
       practices.
@@ -184,7 +197,9 @@ i18ndude 2.1 - Released September 22, 2006
     - Don't add fuzzy status to empty messages anymore.
       [hannosch]
 
-i18ndude 2.0 - released October 9, 2005
+
+2.0 (2005-10-09)
+----------------
 
     - Removed two unsupported scripts, if you have used them please tell me
       [hannosch]
@@ -252,7 +267,9 @@ i18ndude 2.0 - released October 9, 2005
       Rewrote POWriter to use new gettext standard conform output.
       [hannosch]
 
-i18ndude 1.0 - released September 2, 2005
+
+1.0 (2005-09-02)
+----------------
 
     - This is the last release with old-stlye output formatting and command line
       options. The next release will be incompatible in many ways, so update
@@ -298,7 +315,9 @@ i18ndude 1.0 - released September 2, 2005
     - Fix an issue in merge option when trying to merge two files
       [hannosch]
 
-i18ndude 0.6 - released July 4, 2005
+
+0.6 (2005-07-04)
+----------------
 
     - tagged and released 0.6
       [batlogg]
@@ -308,7 +327,9 @@ i18ndude 0.6 - released July 4, 2005
       messages in Plone 2.1 to be automagically extracted
       [hannosch]
 
-i18ndude 0.5 - released June 14, 2005
+
+0.5 (2005-06-14)
+----------------
 
     - tagged and released 0.5
       [batlogg]
@@ -370,11 +391,13 @@ i18ndude 0.5 - released June 14, 2005
       Which happens because we try to preserve comments.
       [dn]
 
-i18ndude 0.4 - released May 08, 2005
 
-    - moved from cvs.sf.net to svn.plone.org. history was NOT migrated
+0.4 (2005-05-08)
+----------------
+
+    - Moved from cvs.sf.net to svn.plone.org. History was NOT migrated
       check http://cvs.sf.net/viewcvs.py/plone-i18n/i18ndude for older 
-      revisions
+      revisions.
       [batlogg]
 
     - Older entries can be found in the ChangeLog.

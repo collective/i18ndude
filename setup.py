@@ -6,7 +6,8 @@ version = '3.0b4'
 setup(name='i18ndude',
       version=version,
       description="i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.",
-      long_description="""i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.""",
+      long_description=open("README.txt").read() + "\n" + \
+                       open(os.path.join("docs", "HISTORY.txt")).read(),
       classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Plone',
@@ -23,7 +24,7 @@ setup(name='i18ndude',
       author_email='plone-i18n@lists.sourceforge.net',
       maintainer='Hanno Schlichting',
       maintainer_email='plone@hannosch.info',
-      url='http://plone.org/products/i18ndude',
+      url='http://pypi.python.org/pypi/i18ndude',
       license='GPL',
       package_dir = {'':'src'},
       packages=find_packages('src', exclude=['ez_setup']),
@@ -35,7 +36,6 @@ setup(name='i18ndude',
                         'zope.testing',
                         'elementtree'
       ],
-      dependency_links=['http://download.zope.org/distribution/',],
       entry_points="""
       [console_scripts]
           i18ndude=i18ndude.script:main
