@@ -82,14 +82,10 @@ present:
           are untranslated in file1. I add these translations (msgstrs) to
           file1. Note that this will not affect the number of entries in file1.
 
-   chart -o <imagefile> --pot <filename> file1 [file2 ...]
-          This will create a chart that displays how much of the pot-file the
-          po-files translate.
-
-   combinedchart -o <imagefile> --title <title> --products <product1> [<product2> ...]
-          This will create a chart that displays how much of the combined
-          products pot's is translated for each language.  Run this from
-          the directory containing the pot-files.
+   list --products <product1> [<product2> ...]
+          This will create a simple listing that displays how much of the
+          combined products pot's is translated for each language. Run this
+          from the directory containing the pot-files.
 """
 
 import os, sys
@@ -392,56 +388,19 @@ def admix():
     writer = catalog.POWriter(sys.stdout, base_ctl)
     writer.write(sort=False)
 
-def chart():
+def list():
     try:
-        opts, files = getopt.getopt(sys.argv[2:], 'o:p:', ('out=', 'pot='))
-    except:
-        usage(1)
-
-    pot_fn = None
-    out = None
-    for opt, arg in opts:
-        if opt in ('-o', '--out'):
-            out = arg
-        elif opt in ('-p', '--pot'):
-            pot_fn = arg
-
-    if not pot_fn:
-        short_usage(1, u"No pot file specified with --pot.")
-    if not out:
-        short_usage(1, u"No image file specified for output with -o.")
-
-    files = filter_isfile(files)
-
-    try:
-        pot_ctl = catalog.MessageCatalog(filename=pot_fn)
-        po_ctls = [catalog.MessageCatalog(filename=fn) for fn in files]
-    except IOError, e:
-        short_usage(1, 'I/O Error: %s' % e)
-
-    visualisation.make_chart(pot_ctl, po_ctls, out)
-
-def combinedchart():
-    try:
-        opts, files = getopt.getopt(sys.argv[2:], 'o:t:p:', ('out=', 'title=', 'products='))
+        opts, files = getopt.getopt(sys.argv[2:], 'p:', ('products='))
     except:
         usage(1)
 
     products = []
-    out = None
-    title = None
     for opt, arg in opts:
-        if opt in ('-o', '--out'):
-            out = arg
-        elif opt in ('-t', '--title'):
-            title = arg
-        elif opt in ('-p', '--products'):
+        if opt in ('-p', '--products'):
             products.append(arg)
 
     if not products:
         short_usage(1, u"No products specified with --products.")
-    if not out:
-        short_usage(1, u"No image file specified for output with -o.")
 
     products.extend(files)
 
@@ -490,7 +449,7 @@ def combinedchart():
     for key in keys:
         po_catalogs.append(po_ctls[key])
 
-    visualisation.make_chart(pot_ctl, po_catalogs, out, title=title)
+    visualisation.make_listing(pot_ctl, po_catalogs)
 
 
 def main():
@@ -503,8 +462,7 @@ def main():
                 'sync': sync,
                 'filter': filter,
                 'admix': admix,
-                'chart': chart,
-                'combinedchart': combinedchart}
+                'list': list}
 
     command = sys.argv[1]
 

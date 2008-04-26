@@ -1,22 +1,35 @@
-try:
-    import gdchart
-except ImportError:
-    gdchart = None
+IGNORE = frozenset(('zh', 'sr-Latn', ))
 
-def make_chart(pot, pos, out, size=None, title=None, **kwargs):
+GROUP1 = [
+    'fr', 'it', 'de', 'es', 'nl', 'zh-cn', 'zh-tw', 'ja', 'ko', 'pt-br',
+    'ru', 'pl', 'tr', 'th', 'ar',
+    ]
+
+GROUP2 = [
+    'sv', 'fi', 'da', 'pt', 'ro', 'hu', 'he', 'id', 'cs', 'el', 'no', 'vi',
+    'bg', 'hr', 'lt', 'sk', 'tl', 'sl', 'sr', 'ca', 'lv', 'uk', 'hi',
+    ]
+
+def make_listing(pot, pos):
+    from plone.i18n.locales.languages import LanguageAvailability
+    languagelist = LanguageAvailability().getLanguages(combined=True)
+
     msgids = pot.keys()
     total = len(msgids)
     names = [pot.mime_header['Language-Code']]
-    values = [total]
-    colors = [0x00ff00] # green
+    values = {}
 
-    if size is None:
-        width = len(pos) * 20
-        size = (width, width / 2)
-
-    print "languages: %s, msgid's: %s" % (len(pos), len(msgids))
+    print "Msgid's: %s\n" % (len(pos), len(msgids))
     for po in [p for p in pos if p.mime_header['Language-Code'] != 'en']:
-        name = '%s' % po.mime_header['Language-Code']
+        code = po.mime_header.get('Language-Code')
+        if code in IGNORE:
+            continue
+        name = po.mime_header.get('Language-Name')
+        language = languagelist.get(code)
+        if language is not None:
+            desc = "%s (%s)" % (language['name'], code)
+        else:
+            desc = "%s (%s)" % (name, code)
 
         value = 0
         for msgid in msgids:
@@ -24,48 +37,42 @@ def make_chart(pot, pos, out, size=None, title=None, **kwargs):
                 if not [1 for fuzzy in po[msgid].comments if 'fuzzy' in fuzzy]:
                     value += 1
 
-        names.append(name)
-        values.append(value)
-        complete = int(value / (total*1.0) * 100)
-        # don't ask me why or how, but this seems to work... ;-)
-        colors.append(colors[0] * (101 - complete) * 3)
+        percentage = int(value / (total*1.0) * 100)
+        if percentage == 99:
+            percentage = 100
+        values[code] = dict(percentage=percentage, desc=desc)
 
-        print "%s: %s missing (%d%% done)" % (name, total - value, complete)
+    out = values.copy()
 
-    # sort by number of translated messages
-    # keeping 'en' always on first position
-    z = zip(values[1:], names[1:], colors[1:])
-    z.sort(lambda x, y: x[0] == y[0] and cmp((x[0], x[1]), (y[0], y[1])) or
-                                         cmp((y[0], y[1]), (x[0], x[1])))
-    values = values[0:1]
-    names = names[0:1]
-    colors = colors[0:1]
-    for v,n,c in z:
-        values.append(v)
-        names.append(n)
-        colors.append(c)
+    def _print(percentage, desc):
+        if percentage < 10:
+            percentage = ' %d' % percentage
+        print "%s%% - %s" % (percentage, desc)
 
-    if gdchart is not None:
-        options = {'bg_color': 0xffffff,
-                   'border': gdchart.GDC_BORDER_ALL,
-                   'xaxis_font': gdchart.GDC_SMALL,
-                   'title': title or pot.mime_header['Project-Id-Version'],
-                   'ext_color' : colors,
-                   }
-        options.update(kwargs)
-        gdchart.option(**options)
+    print 'Priority 1:\n'
+    print '100% - English (en)'
+    for code in GROUP1:
+        if code in out:
+            _print(out[code]['percentage'], out[code]['desc'])
+            del out[code]
+        else:
+            print ' 0%% - %s (%s)' % (languagelist.get(code)['name'], code)
 
-        gdchart.chart(gdchart.GDC_3DBAR,
-                      size,
-                      out,
-                      names,
-                      values)
+    print '\nPriority 2:\n'
+    for code in GROUP2:
+        if code in out:
+            _print(out[code]['percentage'], out[code]['desc'])
+            del out[code]
+        else:
+            print ' 0%% - %s (%s)' % (languagelist.get(code)['name'], code)
 
-    status = {}
-    i = 0
-    while i < len(names):
-        status[names[i]] = values[i]
-        i += 1
-
-    return status
-
+    print '\nPriority 3:\n'
+    group3 = out.values()
+    group3.sort()
+    for value in group3:
+        perc = value['percentage']
+        if perc == 0:
+            continue
+        if perc < 10:
+            perc = ' %d' % perc
+        print '%s%% - %s' % (perc, value['desc'])

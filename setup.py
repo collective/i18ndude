@@ -34,7 +34,8 @@ setup(name='i18ndude',
                         'zope.interface >= 3.3',
                         'zope.i18nmessageid >= 3.3',
                         'zope.testing',
-                        'elementtree'
+                        'elementtree',
+                        'plone.i18n',
       ],
       entry_points="""
       [console_scripts]

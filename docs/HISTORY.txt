@@ -4,6 +4,10 @@ Changelog
 3.0c1 (unreleased)
 ------------------
 
+    - Ripped out the long unmaintained chart and combinedchart commands.
+      Added a new list command instead, which shows the translation status
+      in a simple listing.
+      [hannosch]
 
 3.0b4 (2008-04-26)
 ------------------
