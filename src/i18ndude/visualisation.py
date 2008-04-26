@@ -19,7 +19,7 @@ def make_listing(pot, pos):
     names = [pot.mime_header['Language-Code']]
     values = {}
 
-    print "Msgid's: %s\n" % len(msgids)
+    print "Messages: %s\n" % len(msgids)
     for po in [p for p in pos if p.mime_header['Language-Code'] != 'en']:
         code = po.mime_header.get('Language-Code')
         if code in IGNORE:
