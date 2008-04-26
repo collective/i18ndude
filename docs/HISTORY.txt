@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0b4 - Unreleased
+3.0b4 (2008-04-26)
 ------------------
 
     - Updated documentation.
