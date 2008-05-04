@@ -390,14 +390,18 @@ def admix():
 
 def list():
     try:
-        opts, files = getopt.getopt(sys.argv[2:], 'p:', ('products='))
+        opts, files = getopt.getopt(sys.argv[2:], 'tp:',
+                                    ('products=', 'table='))
     except:
         usage(1)
 
+    table = False
     products = []
     for opt, arg in opts:
         if opt in ('-p', '--products'):
             products.append(arg)
+        if opt in ('-t', '--table'):
+            table = True
 
     if not products:
         short_usage(1, u"No products specified with --products.")
@@ -449,7 +453,7 @@ def list():
     for key in keys:
         po_catalogs.append(po_ctls[key])
 
-    visualisation.make_listing(pot_ctl, po_catalogs)
+    visualisation.make_listing(pot_ctl, po_catalogs, table=table)
 
 
 def main():
