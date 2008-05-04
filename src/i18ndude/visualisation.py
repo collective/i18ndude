@@ -34,7 +34,7 @@ def print_row(percentage, desc):
     if width == 0:
         width = 1
     color = 'green'
-    if percentage < 85:
+    if percentage < 90:
         color = 'yellow'
     if percentage < 50:
         color = 'red'
