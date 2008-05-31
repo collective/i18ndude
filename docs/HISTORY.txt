@@ -4,6 +4,9 @@ Changelog
 3.0c1 (unreleased)
 ------------------
 
+    - Updated the table output with some styling tips from limi.
+      [hannosch]
+
     - Added a new -t option to the list command. This will output a simple
       HTML page with some colored progress bars instead of the simple text
       listing.

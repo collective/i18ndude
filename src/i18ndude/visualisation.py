@@ -26,14 +26,20 @@ _TABLE = """<table>%(table)s
 </table>"""
 
 _ROW = """
-<tr><td><div style="width:%(width)spx; background-color: %(color)s">%(percent)s%%</div></td><td>%(name)s</td></tr>"""
+<tr>
+<td><div style="padding: 2px; margin: 2px; width:%(width)spx; background-color: %(color)s">
+%(percent)s%%
+</div></td>
+<td>%(name)s</td>
+</tr>
+"""
 
 
 def print_row(percentage, desc):
     width = percentage * 2
     if width == 0:
         width = 1
-    color = 'green'
+    color = '#0d0' # some kind og green
     if percentage < 90:
         color = 'yellow'
     if percentage < 50:
