@@ -4,6 +4,10 @@ Changelog
 3.0c1 (unreleased)
 ------------------
 
+    - Fixed major bug introduced in the kupu changes. We didn't include
+      cpt pages anymore.
+      [hannosch]
+
     - Updated the table output with some styling tips from limi.
       [hannosch]
 

@@ -461,7 +461,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
         def write(self, s):
             pass
 
-    for filename in (find_files(dir, '*.pt', exclude=tuple(exclude)) +
+    for filename in (find_files(dir, '*.*pt', exclude=tuple(exclude)) +
                      find_files(dir, '*.html', exclude=tuple(exclude)) +
                      find_files(dir, '*.kupu', exclude=tuple(exclude)) + 
                      find_files(dir, '*.pox', exclude=tuple(exclude)) +
@@ -469,7 +469,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
         try:
             engine.file = filename
             name, ext = os.path.splitext(filename)
-            if ext in ['.pt', '.html']:
+            if ext == '.html' or ext.endswith('pt'):
                 p = HTMLTALParser()
             else:
                 p = TALParser()
