@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0c1 (unreleased)
+3.0c1 (2008-10-04)
 ------------------
 
     - Fixed major bug introduced in the kupu changes. We didn't include
