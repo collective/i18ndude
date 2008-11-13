@@ -1,11 +1,16 @@
 Changelog
 =========
 
+3.0.1 (unreleased)
+------------------
+
+
 3.0 (2008-11-13)
 ----------------
 
 - No changes.
   [hannosch]
+
 
 3.0c1 (2008-10-04)
 ------------------
@@ -26,6 +31,7 @@ Changelog
   Added a new list command instead, which shows the translation status
   in a simple listing.
   [hannosch]
+
 
 3.0b4 (2008-04-26)
 ------------------
