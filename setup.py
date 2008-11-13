@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '3.0c2'
+version = '3.0'
 
 setup(name='i18ndude',
       version=version,
@@ -23,7 +23,7 @@ setup(name='i18ndude',
       author='Daniel Nouri',
       author_email='plone-i18n@lists.sourceforge.net',
       maintainer='Hanno Schlichting',
-      maintainer_email='plone@hannosch.info',
+      maintainer_email='hannosch@plone.org',
       url='http://pypi.python.org/pypi/i18ndude',
       license='GPL',
       package_dir = {'':'src'},
