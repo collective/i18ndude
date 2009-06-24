@@ -169,6 +169,7 @@ def rebuild_pot(config=None):
     merge2_fn = None
     create_domain = None
     exclude = ()
+    readers = ('gs', 'pt', 'py')
 
     if config is None:
         try:
@@ -190,10 +191,11 @@ def rebuild_pot(config=None):
                 exclude = tuple(arg.split())
     else:
         pot_fn = config['pot']
-        create_domain = config['domain']
-        merge_fn = config['merge']
-        exclude = tuple(config['exclude'].split())
+        create_domain = config.get('domain', None)
+        merge_fn = config.get('merge', None)
+        exclude = tuple(config.get('exclude', '').split())
         files = tuple(config['paths'].split())
+        readers = tuple(config.get('readers', 'gs pt py').split())
 
     if not pot_fn:
         short_usage(1, u"No pot file specified as target with --pot.")
@@ -203,8 +205,9 @@ def rebuild_pot(config=None):
 
     path = files
     merge_ctl = None
-    pyreader = None
     gsreader = None
+    ptreader = None
+    pyreader = None
 
     try:
         if create_domain is not None:
@@ -215,21 +218,27 @@ def rebuild_pot(config=None):
             merge_ctl = catalog.MessageCatalog(filename=merge_fn)
         if merge2_fn:
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
-        ptreader = catalog.PTReader(path, create_domain, exclude=exclude)
-        pyreader = catalog.PYReader(path, create_domain, exclude=exclude)
-        gsreader = catalog.GSReader(path, create_domain, exclude=exclude)
+        if 'pt' in readers:
+            ptreader = catalog.PTReader(path, create_domain, exclude=exclude)
+        if 'py' in readers:
+            pyreader = catalog.PYReader(path, create_domain, exclude=exclude)
+        if 'gs' in readers:
+            gsreader = catalog.GSReader(path, create_domain, exclude=exclude)
     except IOError, e:
         short_usage(0, 'I/O Error: %s' % e)
 
-    ptresult = ptreader.read()
-    pyresult = pyreader.read()
-    gsresult = gsreader.read()
+    if ptreader is not None:
+        ptresult = ptreader.read()
+    if pyreader is not None:
+        pyresult = pyreader.read()
+    if gsreader is not None:
+        gsresult = gsreader.read()
 
     orig_msgids = orig_ctl.keys()
     domain = orig_ctl.domain
 
     ptctl = pyctl = gsctl = {}
-    if ptreader.catalogs.has_key(domain):
+    if ptreader is not None and ptreader.catalogs.has_key(domain):
         ptctl = ptreader.catalogs[domain]
         comments = {} # keyed by msgid
         for key in orig_ctl.keys():
@@ -237,7 +246,7 @@ def rebuild_pot(config=None):
                 # preserve comments
                 ptctl[key].comments = ptctl[key].comments + orig_ctl.getComments(key)
 
-    if pyreader.catalogs.has_key(domain):
+    if pyreader is not None and pyreader.catalogs.has_key(domain):
         pyctl = pyreader.catalogs[domain]
         comments = {} # keyed by msgid
         for key in orig_ctl.keys():
@@ -245,7 +254,7 @@ def rebuild_pot(config=None):
                 # preserve comments
                 ptctl[key].comments = pyctl[key].comments + orig_ctl.getComments(key)
 
-    if gsreader.catalogs.has_key(domain):
+    if gsreader is not None and gsreader.catalogs.has_key(domain):
         gsctl = gsreader.catalogs[domain]
         # XXX Preserve comments?
 
@@ -257,10 +266,10 @@ def rebuild_pot(config=None):
     orig_ctl.add_missing(ptctl)
 
     ctl = ptctl or pyctl or gsctl
-    if pyreader.catalogs.has_key(domain):
+    if pyreader is not None and pyreader.catalogs.has_key(domain):
         orig_ctl.add_missing(pyctl)
         ctl.add_missing(pyctl)
-    if gsreader.catalogs.has_key(domain):
+    if gsreader is not None and gsreader.catalogs.has_key(domain):
         orig_ctl.add_missing(gsctl)
         ctl.add_missing(gsctl)
 
@@ -325,16 +334,21 @@ def merge():
     writer = catalog.POWriter(file, orig_ctl)
     writer.write(msgstrToComment=True)
 
-def sync():
-    try:
-        opts, files = getopt.getopt(sys.argv[2:], 'p:', ('pot='))
-    except getopt.GetoptError, e:
-        usage(1)
-
+def sync(config=None):
     pot_fn = None
-    for opt, arg in opts:
-        if opt in ('-p', '--pot'):
-            pot_fn = arg
+
+    if config is None:
+        try:
+            opts, files = getopt.getopt(sys.argv[2:], 'p:', ('pot='))
+        except getopt.GetoptError, e:
+            usage(1)
+
+        for opt, arg in opts:
+            if opt in ('-p', '--pot'):
+                pot_fn = arg
+    else:
+        pot_fn = config['pot']
+        files = tuple(config['pos'].split())
 
     if not pot_fn:
         short_usage(1, u"No pot file specified as target with --pot.")
