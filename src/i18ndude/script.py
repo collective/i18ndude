@@ -91,6 +91,7 @@ present:
 import os, sys
 import getopt
 import xml.sax
+from ConfigParser import RawConfigParser
 
 from i18ndude import common, untranslated, catalog, visualisation, utils
 
@@ -162,29 +163,37 @@ def find_untranslated():
             handler.log('ERROR in document:\n%s' % e, 'FATAL')
 
 
-def rebuild_pot():
-    try:
-        opts, files = getopt.getopt(sys.argv[2:], 'mp:c:',
-                                   ('pot=', 'create=', 'merge=', 'merge2=', 'exclude='))
-    except:
-        usage(1)
-
+def rebuild_pot(config=None):
     pot_fn = None
     merge_fn = None
     merge2_fn = None
     create_domain = None
     exclude = ()
-    for opt, arg in opts:
-        if opt in ('-p', '--pot'):
-            pot_fn = arg
-        if opt in ('-c', '--create'):
-            create_domain = arg
-        if opt in ('-m', '--merge'):
-            merge_fn = arg
-        if opt in ('--merge2'):
-            merge2_fn = arg
-        if opt in ('--exclude'):
-            exclude = tuple(arg.split())
+
+    if config is None:
+        try:
+            opts, files = getopt.getopt(sys.argv[2:], 'mp:c:',
+                                       ('pot=', 'create=', 'merge=', 'merge2=', 'exclude='))
+        except:
+            usage(1)
+
+        for opt, arg in opts:
+            if opt in ('-p', '--pot'):
+                pot_fn = arg
+            if opt in ('-c', '--create'):
+                create_domain = arg
+            if opt in ('-m', '--merge'):
+                merge_fn = arg
+            if opt in ('--merge2'):
+                merge2_fn = arg
+            if opt in ('--exclude'):
+                exclude = tuple(arg.split())
+    else:
+        pot_fn = config['pot']
+        create_domain = config['domain']
+        merge_fn = config['merge']
+        exclude = tuple(config['exclude'].split())
+        files = tuple(config['paths'].split())
 
     if not pot_fn:
         short_usage(1, u"No pot file specified as target with --pot.")
@@ -456,7 +465,7 @@ def list():
     visualisation.make_listing(pot_ctl, po_catalogs, table=table)
 
 
-def main():
+def main(config=None):
     if len(sys.argv) == 1:
         usage(0)
 
@@ -479,7 +488,14 @@ def main():
             print >> sys.stderr, 'Unknown command %s' % command
             sys.exit(1)
 
-    fun()
+    if config is not None:
+        _config = RawConfigParser()
+        _config.optionxform = lambda s: s
+        _config.read(config)
+        for part in _config.get('i18ndude', 'parts').split():
+            fun(dict(_config.items(part)))
+    else:
+        fun()
 
 if __name__ == '__main__':
     main()
