@@ -3,6 +3,8 @@ Changelog
 
 3.0.1 (unreleased)
 ------------------
+- Fix behaviour when dealing with broken xml files to be parsed.
+  [afd]
 
 
 3.0 (2008-11-13)

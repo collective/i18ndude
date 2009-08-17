@@ -4,6 +4,7 @@ except ImportError:
     from elementtree.ElementTree import ElementTree
 
 from i18ndude.extract import find_files
+import sys
 
 I18N_NS = 'http://xml.zope.org/namespaces/i18n'
 I18N_DOMAIN = '{%s}domain' % I18N_NS
@@ -20,7 +21,11 @@ class GSParser(object):
 
     def parse(self, filename):
         self.filename = filename
-        tree = ElementTree(file=filename)
+        try:
+            tree = ElementTree(file=filename)
+        except Exception, e: 
+            print u"There was an error in parsing %s: %s" % (filename, e)
+            sys.exit(0)
         elem = tree.getroot()
         domain = elem.get(I18N_DOMAIN, None)
         self.parseNode(elem, domain)
