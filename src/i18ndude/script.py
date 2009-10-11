@@ -234,7 +234,7 @@ def rebuild_pot():
         for key in orig_ctl.keys():
             if key in pyctl:
                 # preserve comments
-                ptctl[key].comments = pyctl[key].comments + orig_ctl.getComments(key)
+                pyctl[key].comments = pyctl[key].comments + orig_ctl.getComments(key)
 
     if gsreader.catalogs.has_key(domain):
         gsctl = gsreader.catalogs[domain]
