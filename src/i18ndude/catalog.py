@@ -593,17 +593,8 @@ class PTReader:
 
         for msgid in tal:
 
-            msgstr = msgid or ''
-            if isinstance(msgid, Message):
-                msgstr = msgid.default or ''
+            msgstr = msgid.default or ''
 
-            lines = msgstr.split("\n")
-            for i in range(len(lines)):
-                lines[i] = lines[i].strip()
-                if lines[i]:
-                    lines[i] = ' ' + lines[i]
-            msgstr = ''.join(lines).strip()
-                        
             if msgid and msgid <> '${DYNAMIC_CONTENT}':
                 self._add_msg(msgid,
                               msgstr,
@@ -623,20 +614,7 @@ class PTReader:
         if not self.catalogs.has_key(domain):
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        # check if the msgid is already in the catalog with a different text
-        catalog = self.catalogs[domain]
-        adding = True
-        if catalog.has_key(msgid):
-            cat_msgstr = catalog[msgid].msgstr
-            if msgstr != cat_msgstr:
-                print >> sys.stderr, "Error: msgid '%s' in %s already exists " \
-                         "with a different msgstr (bad: %s, should be: %s)\n" \
-                         "The references for the existent value are: %s\n" % \
-                         (msgid, filename, msgstr, cat_msgstr, ''.join(catalog[msgid].references))
-                adding = False
-
-        if adding:
-            self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=filename, automatic_comments=automatic_comments)
+        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=filename, automatic_comments=automatic_comments)
 
 
 class PYReader:

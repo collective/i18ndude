@@ -3,6 +3,11 @@ Changelog
 
 3.0.1 (unreleased)
 ------------------
+
+- Depend now on zope.tal 3.5.2 to print a warning when msgid already exists
+  in catalog with a different default message. Simplified PTReader code.
+  [vincentfretin]
+
 - Fix behaviour when dealing with broken xml files to be parsed.
   [afd]
 
