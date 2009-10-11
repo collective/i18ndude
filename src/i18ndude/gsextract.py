@@ -45,24 +45,35 @@ class GSParser(object):
             if domain not in self.catalogs:
                 self.catalogs[domain] = []
             if translate is not None:
-                name = elem.get('name')
                 text = elem.text
                 if text is not None:
                     text = text.strip()
-                msgid = msgstr = text
-                if translate:
-                    msgid = translate
-                if msgid:
-                    self.catalogs[domain].append((msgid, msgstr, self.filename))
+                if text:
+                    msgid = msgstr = text
+                    if translate:
+                        msgid = translate
+                    else:
+                        msgstr = u""
+                    if msgid:
+                        self.catalogs[domain].append((msgid, msgstr, self.filename))
             if attributes is not None:
-                # TODO Support for explicit msgids...
                 attributes = attributes.strip().split(';')
                 for attr in attributes:
-                    attr = attr.strip()
+                    parts = attr.split()
+                    if len(parts) == 2:
+                        attr, msgid = parts
+                    else:
+                        attr = parts[0]
+                        msgid = u""
                     text = elem.get(attr)
-                    if text:
+                    if text is not None:
                         text = text.strip()
-                        msgid = msgstr = text
+                    if text:
+                        if msgid:
+                            msgstr = text
+                        else:
+                            msgid = text
+                            msgstr = u""
                         self.catalogs[domain].append((msgid, msgstr, self.filename))
 
     def getCatalogs(self):

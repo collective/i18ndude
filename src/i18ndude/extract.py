@@ -356,6 +356,17 @@ class TokenEater(object):
         if default is not None:
             default = unicode(default)
         msg = Message(msg, default=default)
+        if msg in self.__messages:
+            messages = self.__messages.keys()
+            idx = messages.index(msg)
+            existing_msg = messages[idx]
+            if msg.default != existing_msg.default:
+                references = '\n'.join([location[0]+':'+str(location[1])
+                    for location in self.__messages[msg].keys()])
+                print >> sys.stderr, "Warning: msgid '%s' in %s already exists " \
+                         "with a different default (bad: %s, should be: %s)\n" \
+                         "The references for the existent value are:\n%s\n" % \
+                         (msg, self.__curfile+':'+str(lineno), msg.default, existing_msg.default, references)
         entry = (self.__curfile, lineno)
         self.__messages.setdefault(msg, {})[entry] = isdocstring
 

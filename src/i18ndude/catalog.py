@@ -189,10 +189,10 @@ class MessageCatalog(odict):
             self[key.decode(self.encoding)] = val
 
     def add(self, msgid, msgstr='', comments=[], references=[], automatic_comments=[]):
-        """Add a entry into the catalogue.
+        """Add an entry to the catalog.
 
-        If the msgid already exists in my catalog, I will only add comment,
-        reference and automatic comments to the entry if these doesn't exist yet"""
+        If the msgid already exists in the catalog, we only add comments,
+        references and automatic comments to the entry."""
         if isinstance(msgid, MessageEntry):
             msgstr = msgid.msgstr
             references = msgid.references
@@ -203,11 +203,25 @@ class MessageCatalog(odict):
             msgid = msgid.decode(self.encoding)
         if not isinstance(msgstr, unicode):
             msgstr = msgstr.decode(self.encoding)
-        if not self.has_key(msgid):
+        if msgid not in self:
+            # if msgid is equal to msgstr (only with Message from PTReader),
+            # we reset msgstr to empty string.
+            # in this case, we can look up for existing msgid with different msgstr
+            if msgid == msgstr:
+                msgstr = u""
             self[msgid] = MessageEntry(msgid, msgstr=msgstr, comments=comments,
                                        references=references,
                                        automatic_comments=automatic_comments)
         else:
+            # We can have a msgid with an associated default in a page template,
+            # and the same msgid with a different default in a Python file
+            if msgstr != self[msgid].msgstr:
+                print >> sys.stderr, "Warning: msgid '%s' in %s already exists " \
+                         "with a different default (bad: %s, should be: %s)\n" \
+                         "The references for the existent value are:\n%s\n" % \
+                         (msgid, '\n'.join(references), msgstr, self[msgid].msgstr,
+                          '\n'.join(self[msgid].references))
+
             if comments:
                 comments = [c for c in comments if c not in self[msgid].comments]
                 self[msgid].comments.extend(comments)
@@ -226,8 +240,8 @@ class MessageCatalog(odict):
 
         Returns the ids that were added."""
         ids = []
-        for key in msgctl.keys():
-            if not self.has_key(key):
+        for key in msgctl:
+            if key not in self:
                 entry = msgctl[key]
                 msgstr = defaultmsgstr or entry.msgstr
                 if isinstance(key, Message):
@@ -245,12 +259,11 @@ class MessageCatalog(odict):
     def merge(self, msgctl):
         """Each msgid that I miss and ``msgctl`` contains will be included in
         my catalog."""
-        for key in msgctl.keys():
-            if not self.has_key(key):
-                entry = msgctl[key]
-                self.add(key, msgstr=entry.msgstr, comments=entry.comments,
-                              references=entry.references,
-                              automatic_comments=entry.automatic_comments)
+        for key in msgctl:
+            entry = msgctl[key]
+            self.add(key, msgstr=entry.msgstr, comments=entry.comments,
+                          references=entry.references,
+                          automatic_comments=entry.automatic_comments)
 
     def sync(self, msgctl):
         """Syncronize the catalog with the given one. This removes all messages

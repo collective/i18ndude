@@ -4,6 +4,9 @@ Changelog
 3.0.1 (unreleased)
 ------------------
 
+- Support for explicit msgids in GSReader.
+  [vincentfretin]
+
 - Better handling of msgid references. Keep all the references in PTReader
   and PYReader. In POWriter, normalize and sort the references, write only
   MAX_OCCUR (default is 3) references. Add an ellipsis if there is more.
@@ -14,6 +17,8 @@ Changelog
 
 - Depend now on zope.tal 3.5.2 to print a warning when msgid already exists
   in catalog with a different default message. Simplified PTReader code.
+  Check for msgid with different default in GSReader, PYReader and in the
+  merged catalog (ptctl, pyctl, gsctl).
   [vincentfretin]
 
 - Fix behaviour when dealing with broken xml files to be parsed.

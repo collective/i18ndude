@@ -194,8 +194,6 @@ def rebuild_pot():
 
     path = files
     merge_ctl = None
-    pyreader = None
-    gsreader = None
 
     try:
         if create_domain is not None:
@@ -216,11 +214,10 @@ def rebuild_pot():
     pyresult = pyreader.read()
     gsresult = gsreader.read()
 
-    orig_msgids = orig_ctl.keys()
     domain = orig_ctl.domain
 
     ptctl = pyctl = gsctl = {}
-    if ptreader.catalogs.has_key(domain):
+    if domain in ptreader.catalogs:
         ptctl = ptreader.catalogs[domain]
         comments = {} # keyed by msgid
         for key in orig_ctl.keys():
@@ -228,7 +225,7 @@ def rebuild_pot():
                 # preserve comments
                 ptctl[key].comments = ptctl[key].comments + orig_ctl.getComments(key)
 
-    if pyreader.catalogs.has_key(domain):
+    if domain in pyreader.catalogs:
         pyctl = pyreader.catalogs[domain]
         comments = {} # keyed by msgid
         for key in orig_ctl.keys():
@@ -236,40 +233,34 @@ def rebuild_pot():
                 # preserve comments
                 pyctl[key].comments = pyctl[key].comments + orig_ctl.getComments(key)
 
-    if gsreader.catalogs.has_key(domain):
+    if domain in gsreader.catalogs:
         gsctl = gsreader.catalogs[domain]
         # XXX Preserve comments?
 
     if not (ptctl or pyctl or gsctl):
         short_usage(0, 'No entries for domain "%s".' % domain)
 
-    # keep 'literal' ids only
-    orig_ctl.accept_fct(lambda id, str: catalog.is_literal_id(id))
-    orig_ctl.add_missing(ptctl)
-
     ctl = ptctl or pyctl or gsctl
-    if pyreader.catalogs.has_key(domain):
-        orig_ctl.add_missing(pyctl)
-        ctl.add_missing(pyctl)
-    if gsreader.catalogs.has_key(domain):
-        orig_ctl.add_missing(gsctl)
-        ctl.add_missing(gsctl)
+    if pyctl and pyctl is not ctl:
+        ctl.merge(pyctl)
+    if gsctl and gsctl is not ctl:
+        ctl.merge(gsctl)
 
-    added_by_merge=[]
+    added_by_merge = []
     if merge_ctl is not None:
         # use headers from merge-catalog
         ctl.commentary_header = merge_ctl.commentary_header
         ctl.mime_header = merge_ctl.mime_header
         # merge
-        added_by_merge=ctl.add_missing(merge_ctl,'',1)
+        added_by_merge = ctl.add_missing(merge_ctl, mergewarn=True)
     else:
         # use headers from orig-catalog
         ctl.commentary_header = orig_ctl.commentary_header
         ctl.mime_header = orig_ctl.mime_header
 
-    added_by_merge2=[]
+    added_by_merge2 = []
     if merge2_fn:
-        added_by_merge2=ctl.add_missing(merge2_ctl,'',1)
+        added_by_merge2 = ctl.add_missing(merge2_ctl, mergewarn=True)
 
     ctl.mime_header['POT-Creation-Date'] = catalog.now()
     file = open(pot_fn, 'w')
