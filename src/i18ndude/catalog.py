@@ -27,6 +27,8 @@ DEFAULT_PO_MIME = (('Project-Id-Version', 'PACKAGE VERSION'),
                    ('Domain', 'DOMAIN'))
 
 MAX_OCCUR = 3 # maximum number of occurrences listed
+# Set it to None to list all occurences
+
 
 ORIGINAL_COMMENT = 'Original: '
 DEFAULT_COMMENT = 'Default: '
@@ -537,7 +539,8 @@ class POWriter:
         for ac in automatic_comments:
             self._printToFile(f, '#. %s' % ac)
 
-        no = 0
+        # key is the filename, value is the filename or filename:lineno
+        refs = {}
         for ref in entry.references:
             pparts = ref.split('Products%s' % os.sep)
             p2parts = ref.split('products%s' % os.sep)
@@ -550,11 +553,23 @@ class POWriter:
                 ref = sparts[1]
             # Normalize path separators to unix-style
             ref.replace(os.sep, '/')
-            self._printToFile(f, '#: %s' % ref)
-            # Support for max number of references
-            no += 1
-            if no >= MAX_OCCUR:
-                break
+
+            # We can have two references to the same file
+            # but with different line number. We only include
+            # the reference once.
+            filename = ref.split(':')[0]
+            if filename not in refs:
+                refs[filename] = ref
+        
+        # Support for max number of references
+        refs_values = sorted(refs.values())
+        include_ellipsis = MAX_OCCUR is not None and \
+                           len(refs_values[MAX_OCCUR:])
+        for idx, ref in enumerate(refs_values[:MAX_OCCUR]):
+            if include_ellipsis and idx == MAX_OCCUR - 1:
+                self._printToFile(f, '#: %s, ...' % ref)
+            else:
+                self._printToFile(f, '#: %s' % ref)
 
         if msgstr and (msg_changed or fuzzy):
             self._printToFile(f, '#, fuzzy')
@@ -599,7 +614,7 @@ class PTReader:
                 self._add_msg(msgid,
                               msgstr,
                               [],
-                              [tal[msgid][0][0]+':'+str(tal[msgid][0][1])],
+                              [l[0]+':'+str(l[1]) for l in tal[msgid]],
                               [],
                               self.domain)
 
@@ -650,7 +665,7 @@ class PYReader:
             self._add_msg(msgid,
                           msgid.default or '',
                           [],
-                          [py[msgid][0][0]+':'+str(py[msgid][0][1])],
+                          [l[0]+':'+str(l[1]) for l in py[msgid]],
                           [],
                           self.domain)
         return []

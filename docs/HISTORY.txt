@@ -4,6 +4,14 @@ Changelog
 3.0.1 (unreleased)
 ------------------
 
+- Better handling of msgid references. Keep all the references in PTReader
+  and PYReader. In POWriter, normalize and sort the references, write only
+  MAX_OCCUR (default is 3) references. Add an ellipsis if there is more.
+  You can set MAX_OCCUR=None if you want all references to be written to
+  the generated POT file. Only the first reference is written in case of
+  several references to the same file but with different line number.
+  [vincentfretin]
+
 - Depend now on zope.tal 3.5.2 to print a warning when msgid already exists
   in catalog with a different default message. Simplified PTReader code.
   [vincentfretin]
