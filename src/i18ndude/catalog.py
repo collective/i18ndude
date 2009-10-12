@@ -204,11 +204,6 @@ class MessageCatalog(odict):
         if not isinstance(msgstr, unicode):
             msgstr = msgstr.decode(self.encoding)
         if msgid not in self:
-            # if msgid is equal to msgstr (only with Message from PTReader),
-            # we reset msgstr to empty string.
-            # in this case, we can look up for existing msgid with different msgstr
-            if msgid == msgstr:
-                msgstr = u""
             self[msgid] = MessageEntry(msgid, msgstr=msgstr, comments=comments,
                                        references=references,
                                        automatic_comments=automatic_comments)
