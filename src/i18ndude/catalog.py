@@ -571,13 +571,13 @@ class POWriter:
         
         # Support for max number of references
         refs_values = sorted(refs.values())
-        include_ellipsis = MAX_OCCUR is not None and \
-                           len(refs_values[MAX_OCCUR:])
+#        include_ellipsis = MAX_OCCUR is not None and \
+#                           len(refs_values[MAX_OCCUR:])
         for idx, ref in enumerate(refs_values[:MAX_OCCUR]):
-            if include_ellipsis and idx == MAX_OCCUR - 1:
-                self._printToFile(f, '#: %s, ...' % ref)
-            else:
-                self._printToFile(f, '#: %s' % ref)
+            self._printToFile(f, '#: %s' % ref)
+#            if include_ellipsis and idx == MAX_OCCUR - 1:
+#                self._printToFile(f, '#: %s' % ref)
+#                self._printToFile(f, '#: ...')
 
         if msgstr and (msg_changed or fuzzy):
             self._printToFile(f, '#, fuzzy')
