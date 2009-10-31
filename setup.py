@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '3.0.1'
+version = '3.1'
 
 setup(name='i18ndude',
       version=version,
@@ -30,7 +30,7 @@ setup(name='i18ndude',
       packages=find_packages('src', exclude=['ez_setup']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=['zope.tal > 3.5.1',
+      install_requires=['zope.tal >= 3.5.2',
                         'zope.interface >= 3.3',
                         'zope.i18nmessageid >= 3.3',
                         'zope.testing',
