@@ -552,7 +552,7 @@ class POWriter:
         for ref in entry.references:
             pparts = ref.split('Products%s' % os.sep)
             p2parts = ref.split('products%s' % os.sep)
-            sparts = ref.split('src%s' % os.sep)
+            sparts = ref.split('src%s' % os.sep, 1)
             if len(pparts) > 1:
                 ref = pparts[1]
             elif len(p2parts) > 1:

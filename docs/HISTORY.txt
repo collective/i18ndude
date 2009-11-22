@@ -4,7 +4,12 @@ Changelog
 3.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Strip "src" only once in the pathname for the comments.
+  Example: before it generated the following comment
+  "#: archetypes.referencebrowserwidget/"
+  which was not so useful. Now it generates
+  "archetypes.referencebrowserwidget/src/archetypes/referencebrowserwidget/..."
+  [vincentfretin]
 
 
 3.1 (2009-10-31)
