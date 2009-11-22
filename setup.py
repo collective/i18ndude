@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '3.1.1'
+version = '3.2dev'
 
 setup(name='i18ndude',
       version=version,
