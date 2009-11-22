@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.2 (unreleased)
-----------------
+3.1.1 (2009-11-22)
+------------------
 
 - Strip "src" only once in the pathname for the comments.
   Example: before it generated the following comment
