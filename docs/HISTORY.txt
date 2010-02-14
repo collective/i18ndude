@@ -4,6 +4,9 @@ Changelog
 3.1.2 (unreleased)
 ------------------
 
+- elementtree is only required for Python < 2.5.
+  [vincentfretin]
+
 - Fixed tests (patch provided by John Trammell).
   [vincentfretin]
 

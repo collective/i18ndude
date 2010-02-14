@@ -1,7 +1,17 @@
 from setuptools import setup, find_packages
-import sys, os
+import os, sys
 
-version = '3.2dev'
+version = '3.1.2dev'
+      
+install_requires = [
+  'zope.tal >= 3.5.2',
+  'zope.interface >= 3.3',
+  'zope.i18nmessageid >= 3.3',
+  'plone.i18n',
+]
+
+if sys.version_info < (2, 5):
+    install_requires.append('elementtree')
 
 setup(name='i18ndude',
       version=version,
@@ -26,19 +36,13 @@ setup(name='i18ndude',
       maintainer_email='hannosch@plone.org',
       url='http://pypi.python.org/pypi/i18ndude',
       license='GPL',
-      package_dir = {'':'src'},
+      package_dir={'': 'src'},
       packages=find_packages('src', exclude=['ez_setup']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=['zope.tal >= 3.5.2',
-                        'zope.interface >= 3.3',
-                        'zope.i18nmessageid >= 3.3',
-                        'elementtree',
-                        'plone.i18n',
-      ],
+      install_requires=install_requires,
       entry_points="""
       [console_scripts]
-          i18ndude=i18ndude.script:main
+      i18ndude=i18ndude.script:main
       """,
-      scripts=[],
       )
