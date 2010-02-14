@@ -2,7 +2,7 @@
 """
 
 import unittest
-from zope.testing.doctestunit import DocTestSuite
+from doctest import DocTestSuite
 
 def test_suite():
     return unittest.TestSuite((

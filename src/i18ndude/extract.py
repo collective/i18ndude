@@ -100,8 +100,8 @@ class POTEntry(object):
 
     >>> entry.write(FakeFile())
     # Some comment
-    #. Default: "default"
     #: path/file:10
+    #. Default: "default"
     msgid "test"
     msgstr ""
     <BLANKLINE>

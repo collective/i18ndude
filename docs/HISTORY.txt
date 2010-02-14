@@ -1,10 +1,11 @@
 Changelog
 =========
 
-3.2 (unreleased)
-----------------
+3.1.2 (unreleased)
+------------------
 
-- Nothing changed yet.
+- Fixed tests (patch provided by John Trammell).
+  [vincentfretin]
 
 
 3.1.1 (2009-11-22)
