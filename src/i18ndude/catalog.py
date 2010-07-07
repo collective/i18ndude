@@ -211,12 +211,16 @@ class MessageCatalog(odict):
             # We can have a msgid with an associated default in a page template,
             # and the same msgid with a different default in a Python file
             if msgstr != self[msgid].msgstr:
-                print >> sys.stderr, "Warning: msgid '%s' in %s already exists " \
-                         "with a different default (bad: %s, should be: %s)\n" \
-                         "The references for the existent value are:\n%s\n" % \
-                         (msgid, '\n'.join(references), msgstr, self[msgid].msgstr,
-                          '\n'.join(self[msgid].references))
-
+                msg = u"Warning: msgid '%s' in %s already exists " \
+                      u"with a different default (bad: %s, should be: %s)\n" \
+                      u"The references for the existent value are:\n%s\n"
+                refs = u'\n'.join(references)
+                msg = msg % (msgid,
+                             u'\n'.join(references),
+                             msgstr,
+                             self[msgid].msgstr,
+                             u'\n'.join(self[msgid].references))
+                print >> sys.stderr, msg.encode('utf-8')
             if comments:
                 comments = [c for c in comments if c not in self[msgid].comments]
                 self[msgid].comments.extend(comments)
