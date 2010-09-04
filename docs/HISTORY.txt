@@ -1,10 +1,12 @@
 Changelog
 =========
 
-3.1.4 (unreleased)
-------------------
+3.2 (unreleased)
+----------------
 
-- Nothing changed yet.
+- Replaced internal odict implementation by the ordereddict package.
+  (implementation backported from Python 2.7)
+  [vincentfretin]
 
 
 3.1.3 (2010-09-04)

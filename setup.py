@@ -8,6 +8,7 @@ install_requires = [
   'zope.interface >= 3.3',
   'zope.i18nmessageid >= 3.3',
   'plone.i18n',
+  'ordereddict',
 ]
 
 if sys.version_info < (2, 5):

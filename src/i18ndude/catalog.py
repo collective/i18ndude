@@ -5,7 +5,7 @@ import os, re, sys, time
 from zope.i18nmessageid import Message
 
 from i18ndude import common
-from i18ndude.odict import odict
+from ordereddict import OrderedDict
 
 DEFAULT_PO_HEADER = [
     '--- PLEASE EDIT THE LINES BELOW CORRECTLY ---',
@@ -121,7 +121,7 @@ class MessageEntry:
         return None
 
 
-class MessageCatalog(odict):
+class MessageCatalog(OrderedDict):
     """MessageCatalog is a collection of MessageEntries
 
     If we're reading in from a .po-file, MessageCatalog also contains an
@@ -135,14 +135,14 @@ class MessageCatalog(odict):
     def __init__(self, filename=None, domain=None):
         """Build a MessageCatalog, either by reading from a .po-file or
         specifying a domain."""
-        odict.__init__(self)
+        OrderedDict.__init__(self, None)
 
         # XOR
         assert not (filename and domain)
         assert filename or domain
 
         self.commentary_header = DEFAULT_PO_HEADER
-        self.mime_header = odict()
+        self.mime_header = OrderedDict()
         for key, value in DEFAULT_PO_MIME:
             self.mime_header[key] = value
 
@@ -180,12 +180,14 @@ class MessageCatalog(odict):
         assert msgid in self
         return self[msgid].getDefault()
 
-    def update(self, dict):
+    def update(self, dict=None):
+        if dict is None:
+            return
         for (key, val) in dict.items():
             if getattr(val, 'msgid', None) is not None:
                 val.msgid = val.msgid.decode(self.encoding)
             if getattr(val, 'msgstr', None) is not None:
-                val.msgstr = val.msgstr.decode(self.encoding)                
+                val.msgstr = val.msgstr.decode(self.encoding)
             self[key.decode(self.encoding)] = val
 
     def add(self, msgid, msgstr='', comments=[], references=[], automatic_comments=[]):
@@ -346,7 +348,7 @@ class POParser:
     def __init__(self, file):
         self._file = file
         self._in_paren = re.compile(r'"(.*)"')
-        self.msgdict = odict() # see MessageCatalog for structure
+        self.msgdict = OrderedDict() # see MessageCatalog for structure
         self.line = ''
         self.sameMessageEntry = True
         self.msgid = ''
