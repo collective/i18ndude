@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.2 (unreleased)
+3.2 (2010-09-04)
 ----------------
 
 - Replaced internal odict implementation by the ordereddict package.
