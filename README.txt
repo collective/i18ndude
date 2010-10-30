@@ -24,7 +24,7 @@ Usage Examples
 Commands
 ========
 
-See also the output of i18ndude --help
+See also the output of i18ndude --help 
 
 rebuild-pot --pot <filename> [--create <domain> [--merge <filename>] -s] directory
 ---------------------------------------------------------------------
