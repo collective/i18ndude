@@ -4,7 +4,8 @@ Changelog
 3.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed making POT file for DOUBLE BYTE strings on default.
+  [terapyon]
 
 
 3.2 (2010-09-04)

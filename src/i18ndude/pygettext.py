@@ -1,11 +1,11 @@
 #! /usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 # Originally written by Barry Warsaw <barry@zope.com>
 #
 # Minimally patched to make it even more xgettext compatible
 # by Peter Funk <pf@artcom-gmbh.de>
 #
-# 2002-11-22 Jürgen Hermann <jh@web.de>
+# 2002-11-22 JÃ¼rgen Hermann <jh@web.de>
 # Added checks that _() only contains string literals, and
 # command line args are resolved to module lists, i.e. you
 # can now pass a filename, a module or package name, or a
@@ -209,7 +209,7 @@ def make_escapes(pass_iso8859):
     global escapes
     if pass_iso8859:
         # Allow iso-8859 characters to pass through so that e.g. 'msgid
-        # "Höhe"' would result not result in 'msgid "H\366he"'.  Otherwise we
+        # "HÃ¶he"' would result not result in 'msgid "H\366he"'.  Otherwise we
         # escape any character outside the 32..126 range.
         mod = 128
     else:
@@ -230,7 +230,10 @@ def escape(s):
     global escapes
     s = list(s)
     for i in range(len(s)):
-        s[i] = escapes[ord(s[i])]
+        try:
+            s[i] = escapes[ord(s[i])]
+        except IndexError:
+            s[i] = s[i]
     return EMPTYSTRING.join(s)
 
 
@@ -253,6 +256,8 @@ def normalize(s):
             lines[i] = escape(lines[i])
         lineterm = '\\n"\n"'
         s = '""\n"' + lineterm.join(lines) + '"'
+    if not isinstance(s, str):
+        s = s.encode('utf-8')
     return s
 
 def containsAny(str, set):

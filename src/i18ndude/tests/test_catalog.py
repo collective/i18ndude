@@ -345,13 +345,14 @@ class TestMessagePYReader(unittest.TestCase):
         dirpath = os.path.join(PACKAGE_HOME, 'input')
         filepath = os.path.join(dirpath, 'test2.py')
         self.input = dirpath
-        self.output = {u'Zero': self.me(u'Zero', references=[filepath+':3']),
-                       u'One': self.me(u'One', references=[filepath+':4']),
-                       u'msgid_three': self.me(u'msgid_three', msgstr='Three', references=[filepath+':9']),
-                       u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath+':12']),
+        self.output = {u'Zero': self.me(u'Zero', references=[filepath+':4']),
+                       u'One': self.me(u'One', references=[filepath+':5']),
+                       u'msgid_three': self.me(u'msgid_three', msgstr='Three', references=[filepath+':10']),
+                       u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath+':13']),
+                       u'msgid_five': self.me(u'msgid_five', msgstr=u"五番目", references=[filepath+':17']),
                        # XXX This should not be found as it's in a different domain
                        # instead it recognizes the domain as a msgstr now
-                       u'Out1': self.me(u'Out1', msgstr='running', references=[filepath+':6'])
+                       u'Out1': self.me(u'Out1', msgstr='running', references=[filepath+':7'])
                       }
 
     def test_read(self):

@@ -1,4 +1,5 @@
 #!/usr/bin/env python2.4
+# -*- coding: utf-8 -*-
 ##############################################################################
 #
 # Copyright (c) 2003 Zope Corporation and Contributors.
@@ -20,6 +21,7 @@ __docformat__ = 'restructuredtext'
 # INFO: This is a modified copy of zope3's zope.app.locales.extract (r71023).
 
 import os, sys, fnmatch
+import codecs
 import time
 import tokenize
 import traceback
@@ -114,6 +116,14 @@ class POTEntry(object):
     #.  "line1\n"
     #.  "\tline2"
     msgid "test"
+    msgstr ""
+    <BLANKLINE>
+    
+    
+    >>> entry = POTEntry(Message(u"send", default=u'\u9001\u4fe1'))
+    >>> entry.write(FakeFile())
+    #. Default: "送信"
+    msgid "send"
     msgstr ""
     <BLANKLINE>
     """
@@ -428,7 +438,7 @@ def py_strings(dir, domain="none", exclude=()):
             # We want to include cpy and vpy scripts as well
             # dir, '*.py', exclude=('extract.py', 'pygettext.py')+tuple(exclude)):
             dir, '*.*py', exclude=('extract.py', 'pygettext.py')+tuple(exclude)):
-        fp = open(filename)
+        fp = codecs.open(filename, 'r', DEFAULT_CHARSET)
         try:
             eater.set_filename(filename)
             try:
