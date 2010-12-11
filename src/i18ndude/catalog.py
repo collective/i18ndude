@@ -253,7 +253,7 @@ class MessageCatalog(OrderedDict):
                 ids.append(key)
             elif mergewarn:
                 print >> sys.stderr, \
-                    'Merge-Warning: Key is already in target-catalog: %s' % key
+                    'Merge-Warning: Key is already in target-catalog: %s' % key.encode('utf-8')
 
         return ids
 

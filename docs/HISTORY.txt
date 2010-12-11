@@ -4,7 +4,9 @@ Changelog
 3.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Encode key to utf-8 for the Merge-Warning message to avoid a
+  UnicodeEncodeError.
+  [mikerhodes]
 
 
 3.2.1 (2010-10-31)
