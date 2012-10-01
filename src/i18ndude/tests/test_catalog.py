@@ -21,7 +21,7 @@ class TestGlobal(unittest.TestCase):
 
     def test_originalComment(self):
         self.assertEquals(catalog.ORIGINAL_COMMENT, 'Original: ', 'Wrong original comment constant')
-        
+
     def test_defaultComment(self):
         self.assertEquals(catalog.DEFAULT_COMMENT, 'Default: ', 'Wrong default comment constant')
 

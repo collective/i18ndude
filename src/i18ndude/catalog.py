@@ -45,7 +45,7 @@ class MessageEntry:
     """ MessageEntry is class representing one msgid with its accompanying
     msgstr and optional positional information and comments.
     """
-    
+
     def __init__(self, msgid, msgstr='', references=[], automatic_comments=[], comments=[]):
         """ Build a MessageEntry"""
         self.msgid = msgid
@@ -452,11 +452,11 @@ class POWriter:
                 # get input encoding from message catalog
                 input_encoding = encoding
             line = unicode(line, input_encoding)
-        
+
         if output_encoding is None:
             # get output encoding from message catalog
             output_encoding = encoding
-        
+
         return line.encode(output_encoding)
 
     def _printToFile(self, file, string):
@@ -574,7 +574,7 @@ class POWriter:
             filename = ref.split(':')[0]
             if filename not in refs:
                 refs[filename] = ref
-        
+
         # Support for max number of references
         refs_values = sorted(refs.values())
 #        include_ellipsis = MAX_OCCUR is not None and \

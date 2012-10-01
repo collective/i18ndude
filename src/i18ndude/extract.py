@@ -64,7 +64,7 @@ DEFAULT_ENCODING = '8bit'
 # "Content-Type: text/plain; charset=%(charset)s\\n"
 # "Content-Transfer-Encoding: %(encoding)s\\n"
 # "Generated-By: zope/app/locales/extract.py\\n"
-# 
+#
 # '''
 
 pot_header = '''\
@@ -118,8 +118,8 @@ class POTEntry(object):
     msgid "test"
     msgstr ""
     <BLANKLINE>
-    
-    
+
+
     >>> entry = POTEntry(Message(u"send", default=u'\u9001\u4fe1'))
     >>> entry.write(FakeFile())
     #. Default: "送信"
@@ -189,7 +189,7 @@ class POTMaker(object):
 
         # Do not fall back to the Zope version, as this makes no sense for the
         # general project.
-        
+
         # # Second, try to find a Zope version
         # from zope.app.applicationcontrol.zopeversion import ZopeVersionUtility
         # return ZopeVersionUtility.getZopeVersion()
@@ -484,7 +484,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
 
     for filename in (find_files(dir, '*.*pt', exclude=tuple(exclude)) +
                      find_files(dir, '*.html', exclude=tuple(exclude)) +
-                     find_files(dir, '*.kupu', exclude=tuple(exclude)) + 
+                     find_files(dir, '*.kupu', exclude=tuple(exclude)) +
                      find_files(dir, '*.pox', exclude=tuple(exclude)) +
                      find_files(dir, '*.xsl', exclude=tuple(exclude))):
         try:

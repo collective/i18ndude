@@ -39,7 +39,7 @@ class IPOTEntry(Interface):
 class IPOTMaker(Interface):
     """Writes POT entries to a POT file
     """
-    
+
     def add(strings, base_dir=None):
         """Add `strings` to the internal catalog.
         """
@@ -51,7 +51,7 @@ class IPOTMaker(Interface):
 class ITokenEater(Interface):
     """Eats tokens from the python tokenizer
     """
-    
+
     def getCatalog():
         """Return the catalog of collected message ids as keys of a
         dictionary. The values are a tuple consisting the of the
