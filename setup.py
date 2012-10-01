@@ -1,4 +1,3 @@
-import os
 import sys
 
 from setuptools import setup, find_packages
@@ -20,7 +19,7 @@ setup(name='i18ndude',
       version=version,
       description="i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.",
       long_description=(open("README.txt").read() + "\n" +
-                        open(os.path.join("docs", "HISTORY.txt")).read()),
+                        open("CHANGES.rst").read()),
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Framework :: Plone',
