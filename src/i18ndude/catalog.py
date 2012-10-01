@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 import os, re, sys, time
 
@@ -216,7 +216,6 @@ class MessageCatalog(OrderedDict):
                 msg = u"Warning: msgid '%s' in %s already exists " \
                       u"with a different default (bad: %s, should be: %s)\n" \
                       u"The references for the existent value are:\n%s\n"
-                refs = u'\n'.join(references)
                 msg = msg % (msgid,
                              u'\n'.join(references),
                              msgstr,
@@ -325,7 +324,7 @@ class MessageCatalog(OrderedDict):
             self.commentary_header = header.comments
             self._parse_mime_header(header.msgstr)
             del parser.msgdict['']
-        except KeyError, e:
+        except KeyError:
             print >> sys.stderr, "%s lacks MIME header." % filename
         # Update the file after the header has been read.
         self.update(parser.msgdict)
@@ -667,9 +666,6 @@ class PYReader:
         is the name of the file that could not be read and errormsg a human
         readable error message.
         """
-
-        include_default_domain = False
-        python_only = True
 
         from extract import py_strings
         py = py_strings(self.path, self.domain,

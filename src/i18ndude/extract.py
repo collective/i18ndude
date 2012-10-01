@@ -34,7 +34,7 @@ from zope.i18nmessageid import Message
 # from zope.app.locales.interfaces import IPOTEntry, IPOTMaker, ITokenEater
 from i18ndude.interfaces import IPOTEntry, IPOTMaker, ITokenEater
 
-DEFAULT_CHARSET = 'UTF-8'
+DEFAULT_CHARSET = 'utf-8'
 DEFAULT_ENCODING = '8bit'
 
 # Modified header, which is more suitable for any project

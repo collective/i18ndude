@@ -88,11 +88,13 @@ present:
           from the directory containing the pot-files.
 """
 
-import os, sys
 import getopt
+import os
+import sys
 import xml.sax
 
 from i18ndude import common, untranslated, catalog, visualisation, utils
+
 
 def usage(code, msg=''):
     print >> sys.stderr, __doc__
@@ -100,17 +102,19 @@ def usage(code, msg=''):
         print >> sys.stderr, msg
     sys.exit(code)
 
+
 def short_usage(code, msg=''):
     if msg:
         print >> sys.stderr, msg
     print >> sys.stderr, u"Type i18ndude<Enter> to see the help."
     sys.exit(code)
 
+
 def filter_isfile(files):
     result = []
-    for name in files: # parse file by file
+    for name in files:  # parse file by file
         name = name.strip()
-        if os.path.isdir(name): # descend recursively
+        if os.path.isdir(name):  # descend recursively
             join = lambda file: os.path.join(name, file)
             subdirs = filter_isfile([path for path in
                                      map(join, os.listdir(name))
@@ -125,9 +129,10 @@ def filter_isfile(files):
             result.append(name)
     return result
 
+
 def find_untranslated():
     try:
-        opts, files = getopt.getopt(sys.argv[2:], 'sn', ('silent','nosummary',))
+        opts, files = getopt.getopt(sys.argv[2:], 'sn', ('silent', 'nosummary',))
     except getopt.GetoptError, e:
         usage(1)
 
@@ -135,7 +140,7 @@ def find_untranslated():
     # disable external validation to make it work without network access
     parser.setFeature(xml.sax.handler.feature_external_ges, False)
     parser.setFeature(xml.sax.handler.feature_external_pes, False)
-    handler = untranslated.VerboseHandler(parser, sys.stdout) # default
+    handler = untranslated.VerboseHandler(parser, sys.stdout)  # default
 
     for opt, arg in opts:
         if opt in ('-s', '--silent'):
@@ -147,7 +152,7 @@ def find_untranslated():
 
     parser.setContentHandler(handler)
 
-    for filename in filter_isfile(files): # parse file by file
+    for filename in filter_isfile(files):  # parse file by file
         handler.set_filename(filename)
         content = common.prepare_xml(open(filename))
 
@@ -210,16 +215,16 @@ def rebuild_pot():
     except IOError, e:
         short_usage(0, 'I/O Error: %s' % e)
 
-    ptresult = ptreader.read()
-    pyresult = pyreader.read()
-    gsresult = gsreader.read()
+    # Read the data.
+    ptreader.read()
+    pyreader.read()
+    gsreader.read()
 
     domain = orig_ctl.domain
 
     ptctl = pyctl = gsctl = {}
     if domain in ptreader.catalogs:
         ptctl = ptreader.catalogs[domain]
-        comments = {} # keyed by msgid
         for key in orig_ctl.keys():
             if key in ptctl:
                 # preserve comments
@@ -227,7 +232,6 @@ def rebuild_pot():
 
     if domain in pyreader.catalogs:
         pyctl = pyreader.catalogs[domain]
-        comments = {} # keyed by msgid
         for key in orig_ctl.keys():
             if key in pyctl:
                 # preserve comments
@@ -246,26 +250,25 @@ def rebuild_pot():
     if gsctl and gsctl is not ctl:
         ctl.merge(gsctl)
 
-    added_by_merge = []
     if merge_ctl is not None:
         # use headers from merge-catalog
         ctl.commentary_header = merge_ctl.commentary_header
         ctl.mime_header = merge_ctl.mime_header
         # merge
-        added_by_merge = ctl.add_missing(merge_ctl, mergewarn=True)
+        ctl.add_missing(merge_ctl, mergewarn=True)
     else:
         # use headers from orig-catalog
         ctl.commentary_header = orig_ctl.commentary_header
         ctl.mime_header = orig_ctl.mime_header
 
-    added_by_merge2 = []
     if merge2_fn:
-        added_by_merge2 = ctl.add_missing(merge2_ctl, mergewarn=True)
+        ctl.add_missing(merge2_ctl, mergewarn=True)
 
     ctl.mime_header['POT-Creation-Date'] = catalog.now()
     file = open(pot_fn, 'w')
     writer = catalog.POWriter(file, ctl)
     writer.write(msgstrToComment=True)
+
 
 def merge():
     try:
@@ -276,7 +279,6 @@ def merge():
 
     pot_fn = None
     merge_fn = None
-    create_domain = None
     for opt, arg in opts:
         if opt in ('-p', '--pot'):
             pot_fn = arg
@@ -299,13 +301,14 @@ def merge():
         short_usage(0, 'I/O Error: %s' % e)
 
     # merge
-    added_by_merge = orig_ctl.add_missing(merge_ctl, '', 1)
+    orig_ctl.add_missing(merge_ctl, '', 1)
     if merge2_fn:
-        added_by_merge2 = orig_ctl.add_missing(merge2_ctl, '', 1)
+        orig_ctl.add_missing(merge2_ctl, '', 1)
     orig_ctl.mime_header['POT-Creation-Date'] = catalog.now()
     file = open(pot_fn, 'w')
     writer = catalog.POWriter(file, orig_ctl)
     writer.write(msgstrToComment=True)
+
 
 def sync():
     try:
@@ -341,6 +344,7 @@ def sync():
                                             len(removed_msgids))
         file.close()
 
+
 def filter():
     if len(sys.argv[2:]) != 2:
         usage(1)
@@ -357,6 +361,7 @@ def filter():
 
     writer = catalog.POWriter(sys.stdout, f1_ctl)
     writer.write(sort=False, msgstrToComment=True)
+
 
 def admix():
     if len(sys.argv) != 4:
@@ -378,6 +383,7 @@ def admix():
 
     writer = catalog.POWriter(sys.stdout, base_ctl)
     writer.write(sort=False)
+
 
 def list():
     try:

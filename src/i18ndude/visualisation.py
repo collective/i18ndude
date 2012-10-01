@@ -39,7 +39,7 @@ def print_row(percentage, desc):
     width = percentage * 2
     if width == 0:
         width = 1
-    color = '#0d0' # some kind og green
+    color = '#0d0'  # some kind of green
     if percentage < 90:
         color = 'yellow'
     if percentage < 50:
@@ -145,7 +145,6 @@ def make_listing(pot, pos, table=False):
 
     msgids = pot.keys()
     total = len(msgids)
-    names = [pot.mime_header['Language-Code']]
     values = {}
 
     for po in [p for p in pos if p.mime_header['Language-Code'] != 'en']:
@@ -161,7 +160,7 @@ def make_listing(pot, pos, table=False):
 
         value = 0
         for msgid in msgids:
-            if msgid in po and po[msgid].msgstr: # translated
+            if msgid in po and po[msgid].msgstr:  # translated
                 if not [1 for fuzzy in po[msgid].comments if 'fuzzy' in fuzzy]:
                     value += 1
 

@@ -1,11 +1,12 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
-import os, unittest
-from unittest import makeSuite
+import os
+import unittest
 
 from utils import PACKAGE_HOME
 
 from i18ndude import catalog
+
 
 class TestGlobal(unittest.TestCase):
 
@@ -57,18 +58,18 @@ class TestMessageEntry(unittest.TestCase):
         self.assertEquals(me1.msgid, self.msgid, 'msgid not set correctly')
         self.assertEquals(me1.msgstr, self.msgstr, 'msgstr not set correctly')
         self.assertEquals(me1.comments, self.comments, 'comments not set correctly')
-        self.assertEquals(me1.getOriginalComment(), self.orig_comment, \
+        self.assertEquals(me1.getOriginalComment(), self.orig_comment,
                           'Original comment not set correctly')
-        self.assertEquals(me1.getOriginal(), self.orig_text, \
+        self.assertEquals(me1.getOriginal(), self.orig_text,
                           'Original text not set correctly')
 
         me2 = me(self.msgid, msgstr=self.msgstr, automatic_comments=self.automatic_comments)
         self.assertEquals(me2.msgid, self.msgid, 'msgid not set correctly')
         self.assertEquals(me2.msgstr, self.msgstr, 'msgstr not set correctly')
         self.assertEquals(me2.automatic_comments, self.automatic_comments, 'comments not set correctly')
-        self.assertEquals(me2.getDefaultComment(), self.default_comment, \
+        self.assertEquals(me2.getDefaultComment(), self.default_comment,
                           'Default comment not set correctly')
-        self.assertEquals(me2.getDefault(), self.default_text, \
+        self.assertEquals(me2.getDefault(), self.default_text,
                           'Default text not set correctly')
 
 
@@ -94,7 +95,7 @@ class TestMessageCatalogInit(unittest.TestCase):
                            'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
                            'POT-Creation-Date': '2005-08-01 12:00+0000',
                            'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
-                          }
+                           }
 
         self.msgids = {u'msgid1' : self.me('msgid1', msgstr='msgstr1', references=['file1','file2'], automatic_comments=['Default: "msgstr1"'], comments=['comment1']),
                        u'msgid2' : self.me('msgid2', msgstr='msgstr2', references=['file2']),
@@ -111,12 +112,12 @@ class TestMessageCatalogInit(unittest.TestCase):
                        u'msgid for unicode text with comment' : self.me('msgid for unicode text with comment', msgstr=u'unicode msgstr \xb7\xb7\xb7', references=['./folder/file_unicode'], automatic_comments=['Default: [···]']),
                        u'msgid for text with german umlaut' : self.me('msgid for text with german umlaut', msgstr=u'\xe4\xf6\xfc\xdf text'),
                        u'msgid for text with html-entity' : self.me('msgid for text with html-entity', msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;')
-                      }
+                       }
 
     def test_init(self):
         failing = False
         try:
-            test = catalog.MessageCatalog()
+            catalog.MessageCatalog()
         except AssertionError:
             failing = True
         self.failUnless(failing, 'Init without parameters should not be allowed.')
@@ -142,7 +143,7 @@ class TestMessageCatalogInit(unittest.TestCase):
     def test_initWithEmptyFileAndDomain(self):
         failing = False
         try:
-            test = self.mc(domain='testing', filename=self.emptyfile)
+            self.mc(domain='testing', filename=self.emptyfile)
         except AssertionError:
             failing = True
         self.failUnless(failing, 'Init with filename and domain parameters is not allowed.')
@@ -373,14 +374,14 @@ class TestMessagePYReader(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(makeSuite(TestGlobal))
-    suite.addTest(makeSuite(TestMessageEntry))
-    suite.addTest(makeSuite(TestMessageCatalogInit))
-    suite.addTest(makeSuite(TestMessageCatalog))
-    suite.addTest(makeSuite(TestMessageCatalogSync))
-    suite.addTest(makeSuite(TestMessagePoWriter))
-    suite.addTest(makeSuite(TestMessagePTReader))
-    suite.addTest(makeSuite(TestMessagePYReader))
+    suite.addTest(unittest.makeSuite(TestGlobal))
+    suite.addTest(unittest.makeSuite(TestMessageEntry))
+    suite.addTest(unittest.makeSuite(TestMessageCatalogInit))
+    suite.addTest(unittest.makeSuite(TestMessageCatalog))
+    suite.addTest(unittest.makeSuite(TestMessageCatalogSync))
+    suite.addTest(unittest.makeSuite(TestMessagePoWriter))
+    suite.addTest(unittest.makeSuite(TestMessagePTReader))
+    suite.addTest(unittest.makeSuite(TestMessagePYReader))
     return suite
 
 if __name__ == '__main__':

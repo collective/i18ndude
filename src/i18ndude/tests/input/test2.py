@@ -1,6 +1,6 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 # bla
-
+_ = lambda x: x
 zero = _('Zero')
 one = _('One')
 

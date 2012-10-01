@@ -1,10 +1,12 @@
+import sys
+
 try:
     from xml.etree.ElementTree import ElementTree
+    ElementTree  # pyflakes
 except ImportError:
     from elementtree.ElementTree import ElementTree
 
 from i18ndude.extract import find_files
-import sys
 
 I18N_NS = 'http://xml.zope.org/namespaces/i18n'
 I18N_DOMAIN = '{%s}domain' % I18N_NS
