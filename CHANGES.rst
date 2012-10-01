@@ -4,7 +4,8 @@ Changelog
 3.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Moved code to https://github.com/collective/i18ndude
+  [maurits]
 
 
 3.2.2 (2010-12-11)
