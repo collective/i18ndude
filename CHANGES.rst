@@ -7,6 +7,9 @@ Changelog
 - Moved code to https://github.com/collective/i18ndude
   [maurits]
 
+- Backslash escape added to msgid when it includes double quotes.
+  [taito]
+
 
 3.2.2 (2010-12-11)
 ------------------

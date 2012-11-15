@@ -587,6 +587,10 @@ class POWriter:
         if msgstr and (msg_changed or fuzzy):
             self._printToFile(f, '#, fuzzy')
 
+        # Add backslash escape to id.
+        if '"' in id and u'\\"' not in id:
+            id = id.replace('"', '\\"')
+
         self._printToFile(f, 'msgid "%s"' % id)
         if not '\\n' in msgstr:
             self._printToFile(f, 'msgstr "%s"' % msgstr)
