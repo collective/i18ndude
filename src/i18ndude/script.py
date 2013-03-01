@@ -152,6 +152,7 @@ def find_untranslated():
 
     parser.setContentHandler(handler)
 
+    errors = 0
     for filename in filter_isfile(files):  # parse file by file
         handler.set_filename(filename)
         content = common.prepare_xml(open(filename))
@@ -160,11 +161,19 @@ def find_untranslated():
             parser.parse(content)
         except xml.sax.SAXException, e:
             handler.log('ERROR in document:\n%s' % e, 'FATAL')
+            errors += 1
         except KeyboardInterrupt:
             print >> sys.stderr, 'Interrupted by user.'
             sys.exit(0)
         except Exception, e:
             handler.log('ERROR in document:\n%s' % e, 'FATAL')
+            errors += 1
+        # Note that the error stats of the handler get reset to zero
+        # when starting on a new document, so we ask about errors
+        # after each document.
+        if handler.has_errors():
+            errors += 1
+    return errors
 
 
 def rebuild_pot():
@@ -476,7 +485,9 @@ def main():
             print >> sys.stderr, 'Unknown command %s' % command
             sys.exit(1)
 
-    fun()
+    errors = fun()
+    if errors:
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()

@@ -4,6 +4,11 @@ Changelog
 3.2.3 (unreleased)
 ------------------
 
+- Return exit code 1 when the called function gives an error.  This
+  currently only has an effect when calling ``find-untranslated``.
+  https://github.com/collective/i18ndude/issues/1
+  [maurits]
+
 - Moved code to https://github.com/collective/i18ndude
   [maurits]
 

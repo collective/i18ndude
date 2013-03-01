@@ -98,6 +98,9 @@ class Handler(xml.sax.ContentHandler):
         assert(severity in self._stats.keys())
         self._stats[severity] += 1
 
+    def has_errors(self):
+        return self._stats['ERROR'] or self._stats['FATAL']
+
     def set_filename(self, filename):
         self._filename = filename
 
