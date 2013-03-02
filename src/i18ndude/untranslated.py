@@ -34,6 +34,21 @@ def _severity(tag, attrs):
         return 'ERROR'
 
 
+def _tal_replaced_content(tag, attrs):
+    # Will the data get replaced by tal?  So: is there a
+    # tal:content or tal:replace?
+    if 'tal:content' in attrs:
+        return True
+    if 'tal:replace' in attrs:
+        return True
+    if tag.startswith('tal:'):
+        if 'content' in attrs:
+            return True
+        if 'replace' in attrs:
+            return True
+    return False
+
+
 def _valid_i18ned_attr(attr, attrs):
     """This returns 1 for attributes attr that are part of attrs and are
     translated using i18n:attributes. It also returns 1 for any attr that does
@@ -127,7 +142,7 @@ class Handler(xml.sax.ContentHandler):
         tag, attrs, data = self._history.pop()
         data = data.strip()
 
-        if _translatable(data):
+        if _translatable(data) and not _tal_replaced_content(tag, attrs):
             if (self._i18nlevel == 0) and not tag in ['script', 'style']: # not enclosed
                 severity = _severity(tag, attrs) or ''
                 if severity:
