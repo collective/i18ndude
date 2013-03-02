@@ -1,11 +1,14 @@
 import xml.sax
 
+
 def _translatable(data):
     """Returns 1 for strings that contain alphanumeric characters."""
 
     for ch in data:
-        if ch.isalpha(): return 1
+        if ch.isalpha():
+            return 1
     return 0
+
 
 def _severity(tag, attrs):
     """Returns empty string if the case may be ignored.
@@ -51,7 +54,7 @@ def _tal_replaced_content(tag, attrs):
 
 def _tal_replaced_attr(attrs, attr):
     # Is the attribute replaced by tal?
-    talattrs = [talattr.strip().split()[0] for talattr in \
+    talattrs = [talattr.strip().split()[0] for talattr in
                 attrs['tal:attributes'].split(';') if talattr]
     if attr in talattrs:
         return True
@@ -66,20 +69,21 @@ def _valid_i18ned_attr(attr, attrs):
     When the attr gets replaced by tal, all is fine so we return 1 as well.
     """
 
-    if attrs.has_key(attr) and _translatable(attrs[attr]):
-        if attrs.has_key('i18n:attributes'):
-            if attrs['i18n:attributes'].find(';') == -1: # old syntax
-                i18nattrs = [i18nattr.strip() for i18nattr in \
+    if attr in attrs and _translatable(attrs[attr]):
+        if 'i18n:attributes' in attrs:
+            # First check old syntax, or the simple case of one single
+            # i18n:attribute.
+            if attrs['i18n:attributes'].find(';') == -1:
+                i18nattrs = [i18nattr.strip() for i18nattr in
                              attrs['i18n:attributes'].split()]
-            else:                                        # new syntax
-                i18nattrs = [i18nattr.strip().split()[0] for i18nattr in \
+            else:  # new syntax
+                i18nattrs = [i18nattr.strip().split()[0] for i18nattr in
                              attrs['i18n:attributes'].split(';') if i18nattr]
-            if not (attr in i18nattrs):
-                if _tal_replaced_attr(attrs, attr):
-                    return 1
-                return 0
-            else:
+            if attr in i18nattrs:
                 return 1
+            if _tal_replaced_attr(attrs, attr):
+                return 1
+            return 0
         else:
             if _tal_replaced_attr(attrs, attr):
                 return 1
@@ -113,7 +117,7 @@ def attr_validator(tag, attrs, logfct):
               'type' in attrs.keys() and \
               attrs['type'] in ('submit', 'button'):
         if not _valid_i18ned_attr('value', attrs):
-            logfct('value attribute of <... submit/button> lacks ' \
+            logfct('value attribute of <... submit/button> lacks '
                    'i18n:attribute', 'ERROR')
 
 
@@ -136,10 +140,10 @@ class Handler(xml.sax.ContentHandler):
         self._filename = filename
 
     def startDocument(self):
-        self._history = [] # history contains 3-tuples in the form
-                           # (tag, attrs, characterdata)
-        self._i18nlevel = 0 # 0 means not inside i18n:translate area
-        self._stats = {'WARNING':0, 'ERROR':0, 'FATAL':0}
+        self._history = []  # history contains 3-tuples in the form
+                            # (tag, attrs, characterdata)
+        self._i18nlevel = 0  # 0 means not inside i18n:translate area
+        self._stats = {'WARNING': 0, 'ERROR': 0, 'FATAL': 0}
 
     def endDocument(self):
         pass
@@ -159,10 +163,10 @@ class Handler(xml.sax.ContentHandler):
         data = data.strip()
 
         if _translatable(data) and not _tal_replaced_content(tag, attrs):
-            if (self._i18nlevel == 0) and not tag in ['script', 'style']: # not enclosed
+            if (self._i18nlevel == 0) and not tag in ['script', 'style']:  # not enclosed
                 severity = _severity(tag, attrs) or ''
                 if severity:
-                    self.log('i18n:translate missing for this:\n' \
+                    self.log('i18n:translate missing for this:\n'
                              '"""\n%s\n"""' % (data,), severity)
 
         if self._i18nlevel != 0:
@@ -186,7 +190,7 @@ class SilentHandler(Handler):
             return
 
         print >> self._out, '%s: %s warnings, %s errors' \
-              % (self._filename, self._stats['WARNING'], self._stats['ERROR'])
+            % (self._filename, self._stats['WARNING'], self._stats['ERROR'])
         print >> self._out
 
 
@@ -196,20 +200,22 @@ class VerboseHandler(Handler):
         Handler.log(self, msg, severity)
 
         print >> self._out, \
-              '%s:%s:%s:\n-%s- - %s' % (self._filename,
-                                        self._parser.getLineNumber(),
-                                        self._parser.getColumnNumber(),
-                                        severity,
-                                        msg)
+            '%s:%s:%s:\n-%s- - %s' % (self._filename,
+                                      self._parser.getLineNumber(),
+                                      self._parser.getColumnNumber(),
+                                      severity,
+                                      msg)
 
-        if severity == 'FATAL': char = '='
-        else: char = '-'
+        if severity == 'FATAL':
+            char = '='
+        else:
+            char = '-'
         print >> self._out, char * 79
 
     def endDocument(self):
         print >> self._out, \
-              'Processing of %s finished. (%s warnings, %s errors)' \
-              % (self._filename, self._stats['WARNING'], self._stats['ERROR'])
+            'Processing of %s finished. (%s warnings, %s errors)' \
+            % (self._filename, self._stats['WARNING'], self._stats['ERROR'])
         print >> self._out, '=' * 79
 
 
@@ -220,25 +226,24 @@ class NoSummaryVerboseHandler(Handler):
         data = data.strip()
 
         if _translatable(data):
-            if (self._i18nlevel == 0) and not tag in ['script', 'style']: # not enclosed
+            if (self._i18nlevel == 0) and not tag in ['script', 'style']:  # not enclosed
                 severity = _severity(tag, attrs) or ''
                 if severity and severity != 'WARNING':
-                    self.log('i18n:translate missing for this:\n' \
+                    self.log('i18n:translate missing for this:\n'
                              '"""\n%s\n"""' % (data,), severity)
 
         if self._i18nlevel != 0:
             self._i18nlevel -= 1
 
-
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
         print >> self._out, \
-              '%s:%s:%s:\n-%s- - %s' % (self._filename,
-                                        self._parser.getLineNumber(),
-                                        self._parser.getColumnNumber(),
-                                        severity,
-                                        msg)
+            '%s:%s:%s:\n-%s- - %s' % (self._filename,
+                                      self._parser.getLineNumber(),
+                                      self._parser.getColumnNumber(),
+                                      severity,
+                                      msg)
         print >> self._out
 
     def endDocument(self):
