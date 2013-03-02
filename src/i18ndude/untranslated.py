@@ -49,10 +49,22 @@ def _tal_replaced_content(tag, attrs):
     return False
 
 
+def _tal_replaced_attr(attrs, attr):
+    # Is the attribute replaced by tal?
+    talattrs = [talattr.strip().split()[0] for talattr in \
+                attrs['tal:attributes'].split(';') if talattr]
+    if attr in talattrs:
+        return True
+    return False
+
+
 def _valid_i18ned_attr(attr, attrs):
     """This returns 1 for attributes attr that are part of attrs and are
     translated using i18n:attributes. It also returns 1 for any attr that does
-    not exist at all in attrs."""
+    not exist at all in attrs.
+
+    When the attr gets replaced by tal, all is fine so we return 1 as well.
+    """
 
     if attrs.has_key(attr) and _translatable(attrs[attr]):
         if attrs.has_key('i18n:attributes'):
@@ -63,10 +75,14 @@ def _valid_i18ned_attr(attr, attrs):
                 i18nattrs = [i18nattr.strip().split()[0] for i18nattr in \
                              attrs['i18n:attributes'].split(';') if i18nattr]
             if not (attr in i18nattrs):
+                if _tal_replaced_attr(attrs, attr):
+                    return 1
                 return 0
             else:
                 return 1
         else:
+            if _tal_replaced_attr(attrs, attr):
+                return 1
             return 0
 
     return 1
