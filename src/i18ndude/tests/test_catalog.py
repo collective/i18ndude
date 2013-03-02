@@ -97,21 +97,21 @@ class TestMessageCatalogInit(unittest.TestCase):
                            'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
                            }
 
-        self.msgids = {u'msgid1' : self.me('msgid1', msgstr='msgstr1', references=['file1','file2'], automatic_comments=['Default: "msgstr1"'], comments=['comment1']),
-                       u'msgid2' : self.me('msgid2', msgstr='msgstr2', references=['file2']),
-                       u'msgid3' : self.me('msgid3', msgstr='\\n\\nmsgstr\\n3', references=['file3'], comments=['comment3']),
-                       u'msgid4' : self.me('msgid4', msgstr='msgstr4', references=['file4']),
-                       u'msgid5' : self.me('msgid5', msgstr='msgstr5', comments=['comment5']),
-                       u'msgid6' : self.me('msgid6', msgstr='msgstr6'),
-                       u'msgid7' : self.me('msgid7', msgstr='msgstr7', comments=[', fuzzy']),
-                       u'msgid8' : self.me('msgid8'),
-                       u'msgid has spaces' : self.me('msgid has spaces', msgstr='msgstr has spaces', comments=['# I am a dead comment']),
-                       u'msgid_has_underlines' : self.me('msgid_has_underlines', msgstr='msgstr_has_underlines'),
-                       u'msgid_has_underlines and spaces' : self.me('msgid_has_underlines and spaces', msgstr='msgstr_has_underlines and spaces'),
-                       u'msgid for unicode text' : self.me('msgid for unicode text', msgstr=u'unicode msgstr \xb7\xb7\xb7'),
-                       u'msgid for unicode text with comment' : self.me('msgid for unicode text with comment', msgstr=u'unicode msgstr \xb7\xb7\xb7', references=['./folder/file_unicode'], automatic_comments=['Default: [···]']),
-                       u'msgid for text with german umlaut' : self.me('msgid for text with german umlaut', msgstr=u'\xe4\xf6\xfc\xdf text'),
-                       u'msgid for text with html-entity' : self.me('msgid for text with html-entity', msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;')
+        self.msgids = {u'msgid1': self.me('msgid1', msgstr='msgstr1', references=['file1', 'file2'], automatic_comments=['Default: "msgstr1"'], comments=['comment1']),
+                       u'msgid2': self.me('msgid2', msgstr='msgstr2', references=['file2']),
+                       u'msgid3': self.me('msgid3', msgstr='\\n\\nmsgstr\\n3', references=['file3'], comments=['comment3']),
+                       u'msgid4': self.me('msgid4', msgstr='msgstr4', references=['file4']),
+                       u'msgid5': self.me('msgid5', msgstr='msgstr5', comments=['comment5']),
+                       u'msgid6': self.me('msgid6', msgstr='msgstr6'),
+                       u'msgid7': self.me('msgid7', msgstr='msgstr7', comments=[', fuzzy']),
+                       u'msgid8': self.me('msgid8'),
+                       u'msgid has spaces': self.me('msgid has spaces', msgstr='msgstr has spaces', comments=['# I am a dead comment']),
+                       u'msgid_has_underlines': self.me('msgid_has_underlines', msgstr='msgstr_has_underlines'),
+                       u'msgid_has_underlines and spaces': self.me('msgid_has_underlines and spaces', msgstr='msgstr_has_underlines and spaces'),
+                       u'msgid for unicode text': self.me('msgid for unicode text', msgstr=u'unicode msgstr \xb7\xb7\xb7'),
+                       u'msgid for unicode text with comment': self.me('msgid for unicode text with comment', msgstr=u'unicode msgstr \xb7\xb7\xb7', references=['./folder/file_unicode'], automatic_comments=['Default: [···]']),
+                       u'msgid for text with german umlaut': self.me('msgid for text with german umlaut', msgstr=u'\xe4\xf6\xfc\xdf text'),
+                       u'msgid for text with html-entity': self.me('msgid for text with html-entity', msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;')
                        }
 
     def test_init(self):
@@ -126,7 +126,7 @@ class TestMessageCatalogInit(unittest.TestCase):
         domain = 'testing'
         test = self.mc(domain=domain)
         mime = catalog.DEFAULT_PO_MIME
-        for key,value in mime:
+        for key, value in mime:
             if key != 'Domain':
                 self.assertEquals(value, test.mime_header[key], 'header mismatch on %s' % key)
             else:
@@ -137,7 +137,7 @@ class TestMessageCatalogInit(unittest.TestCase):
     def test_initWithEmptyFile(self):
         test = self.mc(filename=self.emptyfile)
         mime = catalog.DEFAULT_PO_MIME
-        for key,value in mime:
+        for key, value in mime:
             self.assertEquals(value, test.mime_header[key], 'header mismatch on %s' % key)
 
     def test_initWithEmptyFileAndDomain(self):
@@ -157,6 +157,7 @@ class TestMessageCatalogInit(unittest.TestCase):
         if not test == self.msgids:
             for key in test:
                 self.failUnless(test[key] == self.msgids[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.msgids[key]))
+
 
 class TestMessageCatalog(unittest.TestCase):
 
@@ -220,6 +221,7 @@ class TestMessageCatalog(unittest.TestCase):
         self.assertEquals(self.mc.getDefaultComment(self.msgid), self.default_comment, 'wrong default comment line')
         self.assertEquals(self.mc.getDefault(self.msgid), self.default_text, 'wrong default comment text')
 
+
 class TestMessageCatalogSync(unittest.TestCase):
 
     def setUp(self):
@@ -243,6 +245,7 @@ class TestMessageCatalogSync(unittest.TestCase):
                 for dc in defaults:
                     self.failUnless(dc == self.pot[msgid].getDefault() or
                                     dc == old_defaults[msgid], 'Either old or new default comment is missing on msgid: %s' % msgid)
+
 
 class TestMessagePoWriter(unittest.TestCase):
 
@@ -316,14 +319,14 @@ class TestMessagePTReader(unittest.TestCase):
         self.output = {u'Buzz': self.me(u'Buzz', references=[filename+':18']),
                        u'${foo} ${bar}': self.me(u'${foo} ${bar}', references=[filename+':23']),
                        u'dig_this': self.me(u'dig_this', msgstr=u'Dig this', references=[filename+':49']),
-                       u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=[filename+':26',filename+':28']),
+                       u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=[filename+':26', filename+':28']),
                        u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=[filename+':12']),
                        u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=[filename+':12']),
                        u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', references=[filename+':43']),
                        u'spacing': self.me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename+':34']),
                        u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename+':38']),
                        u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename+':46'])
-                      }
+                       }
 
     def test_read(self):
         ptr = catalog.PTReader(self.input, domain='testing')
@@ -334,8 +337,8 @@ class TestMessagePTReader(unittest.TestCase):
                             'Failure in pt parsing.\nUnexpected msgid: %s' % key)
         for key in self.output:
             self.failUnless(out[key] == self.output[key],
-                              'Failure in pt parsing.\nGot:%s\nExpected:%s' %
-                              (out[key], self.output[key]))
+                            'Failure in pt parsing.\nGot:%s\nExpected:%s' %
+                            (out[key], self.output[key]))
         self.assertEqual(len(out), len(self.output))
 
 
@@ -354,7 +357,7 @@ class TestMessagePYReader(unittest.TestCase):
                        # XXX This should not be found as it's in a different domain
                        # instead it recognizes the domain as a msgstr now
                        u'Out1': self.me(u'Out1', msgstr='running', references=[filepath+':7'])
-                      }
+                       }
 
     def test_read(self):
         pyr = catalog.PYReader(self.input, 'testing')

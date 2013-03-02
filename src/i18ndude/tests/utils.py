@@ -1,10 +1,11 @@
 import os
 import sys
 
+
 def package_home(globals_dict):
-    __name__=globals_dict['__name__']
-    m=sys.modules[__name__]
-    if hasattr(m,'__path__'):
+    __name__ = globals_dict['__name__']
+    m = sys.modules[__name__]
+    if hasattr(m, '__path__'):
         r=m.__path__[0]
     elif "." in __name__:
         r=sys.modules[__name__[:__name__.rfind('.')]].__path__[0]

@@ -20,7 +20,9 @@ __docformat__ = 'restructuredtext'
 
 # INFO: This is a modified copy of zope3's zope.app.locales.extract (r71023).
 
-import os, sys, fnmatch
+import os
+import sys
+import fnmatch
 import codecs
 import time
 import tokenize
@@ -145,7 +147,7 @@ class POTEntry(object):
         if self.comments:
             file.write(self.comments)
         if (isinstance(self.msgid, Message) and
-            self.msgid.default is not None):
+                self.msgid.default is not None):
             default = self.msgid.default.strip()
             lines = normalize(default).split("\n")
             lines[0] = "#. Default: %s\n" % lines[0]
@@ -159,12 +161,13 @@ class POTEntry(object):
     def __cmp__(self, other):
         return cmp(self.comments, other.comments)
 
+
 class POTMaker(object):
     """This class inserts sets of strings into a POT file.
     """
     implements(IPOTMaker)
 
-    def __init__ (self, output_fn, path):
+    def __init__(self, output_fn, path):
         self._output_filename = output_fn
         self.path = path
         self.catalog = {}
@@ -197,9 +200,9 @@ class POTMaker(object):
 
     def write(self):
         file = open(self._output_filename, 'w')
-        file.write(pot_header % {'time':     time.ctime(),
-                                 'version':  self._getProductVersion(),
-                                 'charset':  DEFAULT_CHARSET,
+        file.write(pot_header % {'time': time.ctime(),
+                                 'version': self._getProductVersion(),
+                                 'charset': DEFAULT_CHARSET,
                                  'encoding': DEFAULT_ENCODING})
 
         # Sort the catalog entries by filename
@@ -211,6 +214,7 @@ class POTMaker(object):
             entry.write(file)
 
         file.close()
+
 
 class TokenEater(object):
     """This is almost 100% taken from `pygettext.py`, except that I
@@ -358,7 +362,6 @@ class TokenEater(object):
     #         print >> sys.stderr, '* %(file)s:%(lineno)s: Seen unexpected token "%(typ)s %(token)s"' % {'token': tstring, 'typ': ttype, 'file': self.__curfile, 'lineno': self.__lineno}
     #         self.__state = self.__waiting
 
-
     def __addentry(self, msg, default=None, lineno=None, isdocstring=0):
         if lineno is None:
             lineno = self.__lineno
@@ -374,9 +377,10 @@ class TokenEater(object):
                 references = '\n'.join([location[0]+':'+str(location[1])
                     for location in self.__messages[msg].keys()])
                 print >> sys.stderr, "Warning: msgid '%s' in %s already exists " \
-                         "with a different default (bad: %s, should be: %s)\n" \
-                         "The references for the existent value are:\n%s\n" % \
-                         (msg, self.__curfile+':'+str(lineno), msg.default, existing_msg.default, references)
+                    "with a different default (bad: %s, should be: %s)\n" \
+                    "The references for the existent value are:\n%s\n" % \
+                    (msg, self.__curfile+':'+str(lineno),
+                     msg.default, existing_msg.default, references)
         entry = (self.__curfile, lineno)
         self.__messages.setdefault(msg, {})[entry] = isdocstring
 
@@ -409,6 +413,7 @@ class TokenEater(object):
 
         return catalog
 
+
 def find_files(dir, pattern, exclude=()):
     files = []
     folders = dir
@@ -417,7 +422,7 @@ def find_files(dir, pattern, exclude=()):
         folders = (dir, )
 
     def visit(files, dirname, names):
-        names[:] = filter(lambda x:x not in exclude, names)
+        names[:] = filter(lambda x: x not in exclude, names)
         files += [os.path.join(dirname, name)
                   for name in fnmatch.filter(names, pattern)
                   if name not in exclude]
@@ -428,6 +433,7 @@ def find_files(dir, pattern, exclude=()):
 
 # We don't want to assume a default domain of Zope
 # def py_strings(dir, domain="zope", exclude=()):
+
 
 def py_strings(dir, domain="none", exclude=()):
     """Retrieve all Python messages from `dir` that are in the `domain`.
@@ -455,6 +461,7 @@ def py_strings(dir, domain="none", exclude=()):
     # strings have the domain the user specified.
     return eater.getCatalog()
 
+
 def zcml_strings(dir, domain="zope", site_zcml=None):
     """Retrieve all ZCML messages from `dir` that are in the `domain`.
     """
@@ -467,6 +474,7 @@ def zcml_strings(dir, domain="zope", site_zcml=None):
                                  "site.zcml")
     context = config(site_zcml, features=("devmode",), execute=False)
     return context.i18n_strings.get(domain, {})
+
 
 def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
     """Retrieve all TAL messages from `dir` that are in the `domain`.
@@ -498,12 +506,12 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
             program, macros = p.getCode()
             POTALInterpreter(program, macros, engine, stream=Devnull(),
                              metal=False)()
-        except: # Hee hee, I love bare excepts!
+        except:  # Hee hee, I love bare excepts!
             print 'There was an error processing', filename
             traceback.print_exc()
 
     # See whether anything in the domain was found
-    if not engine.catalog.has_key(domain):
+    if not domain in engine.catalog:
         return {}
     # We do not want column numbers.
     catalog = engine.catalog[domain].copy()

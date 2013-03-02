@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import os, re, sys, time
+import os
+import re
+import sys
+import time
 
 from zope.i18nmessageid import Message
 
@@ -26,20 +29,25 @@ DEFAULT_PO_MIME = (('Project-Id-Version', 'PACKAGE VERSION'),
                    ('Preferred-Encodings', 'utf-8 latin1'),
                    ('Domain', 'DOMAIN'))
 
-MAX_OCCUR = 3 # maximum number of occurrences listed
+MAX_OCCUR = 3  # maximum number of occurrences listed
 # Set it to None to list all occurences
 
 
 ORIGINAL_COMMENT = 'Original: '
 DEFAULT_COMMENT = 'Default: '
 
+
 def now():
     fmt = '%Y-%m-%d %H:%M+0000'
     return time.strftime(fmt, time.gmtime())
 
+
 def is_literal_id(msgid):
-    if '_' in msgid and not ' ' in msgid: return False
-    else: return True
+    if '_' in msgid and not ' ' in msgid:
+        return False
+    else:
+        return True
+
 
 class MessageEntry:
     """ MessageEntry is class representing one msgid with its accompanying
@@ -62,16 +70,16 @@ class MessageEntry:
         """ Compare a MessageEntry to another one"""
         assert isinstance(other, MessageEntry)
         if self.msgid == other.msgid and self.msgstr == other.msgstr and \
-           self.references == other.references and self.automatic_comments == \
-           other.automatic_comments and self.comments == other.comments:
-           return True
+                self.references == other.references and self.automatic_comments == \
+                other.automatic_comments and self.comments == other.comments:
+            return True
         return False
 
     def __ne__(self, other):
         """ Compare a MessageEntry to another one"""
         assert isinstance(other, MessageEntry)
         if self.__eq__(other):
-           return False
+            return False
         return True
 
     def getDefaultComment(self, multiple=False):
@@ -90,7 +98,7 @@ class MessageEntry:
         """Returns the text of the default comment"""
         comment = self.getDefaultComment()
         if comment is not None:
-            default = comment.replace(DEFAULT_COMMENT+'\"','')
+            default = comment.replace(DEFAULT_COMMENT + '\"', '')
             return default[:-1]
         return None
 
@@ -101,7 +109,7 @@ class MessageEntry:
         if comments is None:
             return None
         for dc in comments:
-            default = dc.replace(DEFAULT_COMMENT+'\"','')
+            default = dc.replace(DEFAULT_COMMENT + '\"', '')
             defaults.append(default[:-1])
         return defaults
 
@@ -116,7 +124,7 @@ class MessageEntry:
         """Returns the text of the original comment"""
         comment = self.getOriginalComment()
         if comment is not None:
-            orig = comment.replace(ORIGINAL_COMMENT+'\"','')
+            orig = comment.replace(ORIGINAL_COMMENT + '\"', '')
             return orig[:-1]
         return None
 
@@ -262,8 +270,8 @@ class MessageCatalog(OrderedDict):
         for key in msgctl:
             entry = msgctl[key]
             self.add(key, msgstr=entry.msgstr, comments=entry.comments,
-                          references=entry.references,
-                          automatic_comments=entry.automatic_comments)
+                     references=entry.references,
+                     automatic_comments=entry.automatic_comments)
 
     def sync(self, msgctl):
         """Syncronize the catalog with the given one. This removes all messages
@@ -286,7 +294,7 @@ class MessageCatalog(OrderedDict):
         I will overwrite my contextual information with the given catalog's
         one."""
         for key in msgctl.keys():
-            if self.has_key(key):
+            if key in self:
                 self[key].references = msgctl[key].references
                 for ac in msgctl[key].automatic_comments:
                     if ac not in self[key].automatic_comments:
@@ -347,7 +355,7 @@ class POParser:
     def __init__(self, file):
         self._file = file
         self._in_paren = re.compile(r'"(.*)"')
-        self.msgdict = OrderedDict() # see MessageCatalog for structure
+        self.msgdict = OrderedDict()  # see MessageCatalog for structure
         self.line = ''
         self.sameMessageEntry = True
         self.msgid = ''
@@ -380,7 +388,7 @@ class POParser:
                     self._readNewMessage()
 
         # last msg
-        if not self.msgdict.has_key(self.msgid):
+        if not self.msgid in self.msgdict:
             self.line = '#:'
             self._readNewMessage()
 
@@ -417,11 +425,9 @@ class POParser:
         sw = self.line.startswith
         if sw('#') or sw('msgid'):
             self.sameMessageEntry = True
-            self.msgdict[self.msgid] = MessageEntry(self.msgid,\
-                                               msgstr=self.msgstr,\
-                                               references=self.references,\
-                                               automatic_comments=self.automatic_comments,\
-                                               comments=self.comments)
+            self.msgdict[self.msgid] = MessageEntry(
+                self.msgid, msgstr=self.msgstr, references=self.references,
+                automatic_comments=self.automatic_comments, comments=self.comments)
             # reset variables
             self.msgid = self.msgstr = ''
             self.references = []
@@ -432,6 +438,7 @@ class POParser:
             if search:
                 self.msgstr += search.groups()[0]
 
+
 class POWriter:
 
     def __init__(self, file, catalog):
@@ -440,8 +447,11 @@ class POWriter:
         self._msgctl = catalog
 
     def _encode(self, line, input_encoding=None, output_encoding=None):
-        """encode a given unicode type or string type to string type in encoding output_encoding"""
-        content_type = self._msgctl.mime_header.get('Content-Type', 'text/plain; charset=utf-8')
+        """encode a given unicode type or string type to string type
+        in encoding output_encoding
+        """
+        content_type = self._msgctl.mime_header.get(
+            'Content-Type', 'text/plain; charset=utf-8')
         charset = content_type.split('=')
         encoding = charset[-1]
 
@@ -479,7 +489,7 @@ class POWriter:
         for line in ctl.commentary_header:
             self._printToFile(f, '# %s' % line)
 
-        if not ctl.mime_header: # mime-header n/a
+        if not ctl.mime_header:  # mime-header n/a
             self._printToFile(f, False)
             return
 
@@ -501,11 +511,11 @@ class POWriter:
             self._print_entry(f, id, entry, msgstrToComment=msgstrToComment, sync=sync)
 
         # File should end with a blank line
-        self._printToFile(f,False)
+        self._printToFile(f, False)
 
     def _print_entry(self, f, id, entry, msgstrToComment, sync):
         """Writes a MessageEntry to file."""
-        self._printToFile(f,False)
+        self._printToFile(f, False)
 
         msgstr = entry.msgstr
         comments = entry.comments
@@ -527,17 +537,17 @@ class POWriter:
         if msgstrToComment and msgstr:
             # no html markup in the default comments as these are not
             # allowed in msgstr's either
-            msgstr = msgstr.replace('"','\\\"')
-            msgstr = msgstr.replace('\n','\\n')
-            msgstr = msgstr.replace('&quot;','\\\"')
-            msgstr = msgstr.replace('&#xa0;',' ')
-            msgstr = msgstr.replace('&amp;','&')
-            msgstr = msgstr.replace('&hellip;',u'\u2026')
-            msgstr = msgstr.replace('&#8230;',u'\u2026')
-            msgstr = msgstr.replace('&mdash;',u'\u2014')
-            msgstr = msgstr.replace('&#9632;',u'\u25A0')
-            msgstr = msgstr.replace('&#9675;',u'\u25CB')
-            msgstr = msgstr.replace('&#9679;',u'\u25CF')
+            msgstr = msgstr.replace('"', '\\\"')
+            msgstr = msgstr.replace('\n', '\\n')
+            msgstr = msgstr.replace('&quot;', '\\\"')
+            msgstr = msgstr.replace('&#xa0;', ' ')
+            msgstr = msgstr.replace('&amp;', '&')
+            msgstr = msgstr.replace('&hellip;', u'\u2026')
+            msgstr = msgstr.replace('&#8230;', u'\u2026')
+            msgstr = msgstr.replace('&mdash;', u'\u2014')
+            msgstr = msgstr.replace('&#9632;', u'\u25A0')
+            msgstr = msgstr.replace('&#9675;', u'\u25CB')
+            msgstr = msgstr.replace('&#9679;', u'\u25CF')
             self._printToFile(f, '#. %s"%s"' % (DEFAULT_COMMENT, msgstr))
             msgstr = ''
 
@@ -609,7 +619,7 @@ class PTReader:
     def __init__(self, path, domain='none', exclude=()):
 
         self.domain = domain
-        self.catalogs = {} # keyed by domain name
+        self.catalogs = {}  # keyed by domain name
         self.path = path
         self.exclude = exclude
 
@@ -627,7 +637,7 @@ class PTReader:
 
             msgstr = msgid.default or ''
 
-            if msgid and msgid <> '${DYNAMIC_CONTENT}':
+            if msgid and msgid != '${DYNAMIC_CONTENT}':
                 self._add_msg(msgid,
                               msgstr,
                               [],
@@ -640,13 +650,15 @@ class PTReader:
     def _add_msg(self, msgid, msgstr, comments, filename, automatic_comments, domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
-                  (msgid, filename)
+                (msgid, filename)
             return
 
-        if not self.catalogs.has_key(domain):
+        if not domain in self.catalogs:
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=filename, automatic_comments=automatic_comments)
+        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments,
+                                  references=filename,
+                                  automatic_comments=automatic_comments)
 
 
 class PYReader:
@@ -655,7 +667,7 @@ class PYReader:
     def __init__(self, path, domain, exclude=()):
 
         self.domain = domain
-        self.catalogs = {} # keyed by domain name
+        self.catalogs = {}  # keyed by domain name
         self.path = path
         self.exclude = exclude
 
@@ -687,13 +699,15 @@ class PYReader:
     def _add_msg(self, msgid, msgstr, comments, references, automatic_comments, domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
-                  (msgid, references)
+                (msgid, references)
             return
 
-        if not self.catalogs.has_key(domain):
+        if not domain in self.catalogs:
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=references, automatic_comments=automatic_comments)
+        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments,
+                                  references=references,
+                                  automatic_comments=automatic_comments)
 
 
 class GSReader(object):
@@ -701,7 +715,7 @@ class GSReader(object):
 
     def __init__(self, path, domain, exclude=()):
         self.domain = domain
-        self.catalogs = {} # keyed by domain name
+        self.catalogs = {}  # keyed by domain name
         self.path = path
         self.exclude = exclude
 
@@ -734,11 +748,12 @@ class GSReader(object):
     def _add_msg(self, msgid, msgstr, comments, references, automatic_comments, domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
-                  (msgid, references)
+                (msgid, references)
             return
 
-        if not self.catalogs.has_key(domain):
+        if not domain in self.catalogs:
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
-        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments, references=references, automatic_comments=automatic_comments)
-
+        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments,
+                                  references=references,
+                                  automatic_comments=automatic_comments)

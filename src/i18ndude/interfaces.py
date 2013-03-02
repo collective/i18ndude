@@ -19,6 +19,7 @@ __docformat__ = 'restructuredtext'
 
 from zope.interface import Interface
 
+
 class IPOTEntry(Interface):
     """Represents a single message entry in a POT file
     """
@@ -36,6 +37,7 @@ class IPOTEntry(Interface):
         """Write the entry to the file
         """
 
+
 class IPOTMaker(Interface):
     """Writes POT entries to a POT file
     """
@@ -47,6 +49,7 @@ class IPOTMaker(Interface):
     def write():
         """Write strings to the POT file
         """
+
 
 class ITokenEater(Interface):
     """Eats tokens from the python tokenizer

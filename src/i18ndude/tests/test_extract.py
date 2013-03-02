@@ -4,6 +4,7 @@
 import unittest
 from doctest import DocTestSuite
 
+
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('i18ndude.extract'),

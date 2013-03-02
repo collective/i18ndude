@@ -3,12 +3,13 @@ import re
 
 # These are included in the file if missing.
 DEFAULT_DECL = {
-   '<!DOCTYPE':
-   '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" ' \
-   '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+    '<!DOCTYPE':
+    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
+    '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
 
-   '<?xml': '<?xml version="1.0" encoding="utf-8"?>'
-   }
+    '<?xml': '<?xml version="1.0" encoding="utf-8"?>'
+    }
+
 
 def prepare_xml(file):
     """Tidies up things within the zpts."""
@@ -23,7 +24,7 @@ def prepare_xml(file):
                 extraction = content[idx:idx2+1]
                 content = extraction + content[:idx] + content[idx2+1:]
                 # mispositioned element fixed at this point
-        else: # element was not found, replace with default
+        else:  # element was not found, replace with default
             content = DEFAULT_DECL[el] + content
 
     # We want namespace declarations for tal, metal and i18n.
@@ -33,13 +34,13 @@ def prepare_xml(file):
         if mobj.group(1) == 'html':
             m = mobj.end()
             content = content[:m] + \
-            'xmlns:tal="tal" xmlns:i18n="i18n" ' + \
-            'xmlns:metal="metal" ' + content[m:]
+                'xmlns:tal="tal" xmlns:i18n="i18n" ' + \
+                'xmlns:metal="metal" ' + content[m:]
         else:
             m = mobj.start()
             content = content[:m] + \
-            '<html xmlns:tal="tal" xmlns:i18n="i18n" ' + \
-            'xmlns:metal="metal">' + content[m:] + '</html>'
+                '<html xmlns:tal="tal" xmlns:i18n="i18n" ' + \
+                'xmlns:metal="metal">' + content[m:] + '</html>'
 
     return StringIO(content.strip())
 
