@@ -15,6 +15,9 @@ Changelog
 - Backslash escape added to msgid when it includes double quotes.
   [taito]
 
+- Add trmerge command to merge po files. Custom tailored for transifex.
+  [do3cc]
+
 
 3.2.2 (2010-12-11)
 ------------------

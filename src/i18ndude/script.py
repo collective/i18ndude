@@ -82,6 +82,11 @@ present:
           are untranslated in file1. I add these translations (msgstrs) to
           file1. Note that this will not affect the number of entries in file1.
 
+   trmerge <file1> <file2>
+          Given two po-files I will look update all translations from file2 into
+          file1. Missing translations are added.
+          I add these translations to file1.
+
    list --products <product1> [<product2> ...]
           This will create a simple listing that displays how much of the
           combined products pot's is translated for each language. Run this
@@ -393,6 +398,27 @@ def admix():
     writer = catalog.POWriter(sys.stdout, base_ctl)
     writer.write(sort=False)
 
+def trmerge():
+    if len(sys.argv) != 4:
+        usage(1)
+
+    fn = sys.argv[2]
+    base_ctl = catalog.MessageCatalog(filename=fn)
+
+    fn = sys.argv[3]
+    mixin_ctl = catalog.MessageCatalog(filename=fn)
+
+    for msgid in mixin_ctl:
+        mixin_msgstr = mixin_ctl[msgid].msgstr
+
+        if mixin_msgstr:
+            entry = base_ctl.get(msgid, mixin_ctl[msgid])
+            entry.msgstr = mixin_msgstr
+            base_ctl[msgid] = entry
+
+    writer = catalog.POWriter(sys.stdout, base_ctl)
+    writer.write(sort=False)
+
 
 def list():
     try:
@@ -472,7 +498,8 @@ def main():
                 'sync': sync,
                 'filter': filter,
                 'admix': admix,
-                'list': list}
+                'list': list,
+                'trmerge': trmerge}
 
     command = sys.argv[1]
 
