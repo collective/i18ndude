@@ -85,7 +85,9 @@ present:
    trmerge <file1> <file2>
           Given two po-files I will look update all translations from file2 into
           file1. Missing translations are added.
-          I add these translations to file1.
+          If a translation was fuzzy in file1, and there is a nonempty translation
+          in file2, the fuzzy marker is removed.
+          The result will be on stdout.
 
    list --products <product1> [<product2> ...]
           This will create a simple listing that displays how much of the
@@ -414,6 +416,8 @@ def trmerge():
         if mixin_msgstr:
             entry = base_ctl.get(msgid, mixin_ctl[msgid])
             entry.msgstr = mixin_msgstr
+            if ', fuzzy' in entry.comments:
+                entry.comments.remove(', fuzzy')
             base_ctl[msgid] = entry
 
     writer = catalog.POWriter(sys.stdout, base_ctl)
