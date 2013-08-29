@@ -54,6 +54,8 @@ def _tal_replaced_content(tag, attrs):
 
 def _tal_replaced_attr(attrs, attr):
     # Is the attribute replaced by tal?
+    if not 'tal:attributes' in attrs:
+        return False
     talattrs = [talattr.strip().split()[0] for talattr in
                 attrs['tal:attributes'].split(';') if talattr]
     if attr in talattrs:
