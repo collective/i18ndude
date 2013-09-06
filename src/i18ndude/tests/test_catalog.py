@@ -81,38 +81,115 @@ class TestMessageCatalogInit(unittest.TestCase):
         self.file = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.emptyfile = os.path.join(PACKAGE_HOME, 'input', 'empty-en.po')
 
-        self.commentary_header = ['Translation of test.pot to English', 'Hanno Schlichting <schlichting@bakb.net>, 2005']
+        self.commentary_header = [
+            'Translation of test.pot to English',
+            'Hanno Schlichting <schlichting@bakb.net>, 2005']
 
-        self.mimeheader = {'Language-Code': 'en',
-                           'Domain': 'testing',
-                           'PO-Revision-Date': '2005-08-10 21:15+0000',
-                           'Content-Transfer-Encoding': '8bit',
-                           'Language-Name': 'English',
-                           'Plural-Forms': 'nplurals=1; plural=0;',
-                           'Project-Id-Version': 'i18ndude',
-                           'Preferred-Encodings': 'utf-8 latin1',
-                           'Last-Translator': 'Unicödé Guy',
-                           'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
-                           'POT-Creation-Date': '2005-08-01 12:00+0000',
-                           'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
-                           }
+        self.mimeheader = {
+            'Language-Code': 'en',
+            'Domain': 'testing',
+            'PO-Revision-Date': '2005-08-10 21:15+0000',
+            'Content-Transfer-Encoding': '8bit',
+            'Language-Name': 'English',
+            'Plural-Forms': 'nplurals=1; plural=0;',
+            'Project-Id-Version': 'i18ndude',
+            'Preferred-Encodings': 'utf-8 latin1',
+            'Last-Translator': 'Unicödé Guy',
+            'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
+            'POT-Creation-Date': '2005-08-01 12:00+0000',
+            'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
+            }
 
-        self.msgids = {u'msgid1': self.me('msgid1', msgstr='msgstr1', references=['file1', 'file2'], automatic_comments=['Default: "msgstr1"'], comments=['comment1']),
-                       u'msgid2': self.me('msgid2', msgstr='msgstr2', references=['file2']),
-                       u'msgid3': self.me('msgid3', msgstr='\\n\\nmsgstr\\n3', references=['file3'], comments=['comment3']),
-                       u'msgid4': self.me('msgid4', msgstr='msgstr4', references=['file4']),
-                       u'msgid5': self.me('msgid5', msgstr='msgstr5', comments=['comment5']),
-                       u'msgid6': self.me('msgid6', msgstr='msgstr6'),
-                       u'msgid7': self.me('msgid7', msgstr='msgstr7', comments=[', fuzzy']),
-                       u'msgid8': self.me('msgid8'),
-                       u'msgid has spaces': self.me('msgid has spaces', msgstr='msgstr has spaces', comments=['# I am a dead comment']),
-                       u'msgid_has_underlines': self.me('msgid_has_underlines', msgstr='msgstr_has_underlines'),
-                       u'msgid_has_underlines and spaces': self.me('msgid_has_underlines and spaces', msgstr='msgstr_has_underlines and spaces'),
-                       u'msgid for unicode text': self.me('msgid for unicode text', msgstr=u'unicode msgstr \xb7\xb7\xb7'),
-                       u'msgid for unicode text with comment': self.me('msgid for unicode text with comment', msgstr=u'unicode msgstr \xb7\xb7\xb7', references=['./folder/file_unicode'], automatic_comments=['Default: [···]']),
-                       u'msgid for text with german umlaut': self.me('msgid for text with german umlaut', msgstr=u'\xe4\xf6\xfc\xdf text'),
-                       u'msgid for text with html-entity': self.me('msgid for text with html-entity', msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;')
-                       }
+        self.msgids = {
+            u'msgid1': self.me(
+                'msgid1',
+                msgstr='msgstr1',
+                references=['file1', 'file2'],
+                automatic_comments=['Default: "msgstr1"'],
+                comments=['comment1']),
+
+            u'msgid2': self.me(
+                'msgid2',
+                msgstr='msgstr2',
+                references=['file2']),
+
+            u'msgid3': self.me(
+                'msgid3',
+                msgstr='\\n\\nmsgstr\\n3',
+                references=['file3'],
+                comments=['comment3']),
+
+            u'msgid4': self.me(
+                'msgid4',
+                msgstr='msgstr4',
+                references=['file4']),
+
+            u'msgid5': self.me(
+                'msgid5',
+                msgstr='msgstr5',
+                comments=['comment5']),
+
+            u'msgid6': self.me(
+                'msgid6',
+                msgstr='msgstr6'),
+
+            u'msgid7': self.me(
+                'msgid7',
+                msgstr='msgstr7',
+                comments=[', fuzzy']),
+
+            u'msgid8': self.me(
+                'msgid8'),
+
+            u'msgid has spaces': self.me(
+                'msgid has spaces',
+                msgstr='msgstr has spaces',
+                comments=['# I am a dead comment']),
+
+            u'msgid_has_underlines': self.me(
+                'msgid_has_underlines',
+                msgstr='msgstr_has_underlines'),
+
+            u'msgid_has_underlines and spaces': self.me(
+                'msgid_has_underlines and spaces',
+                msgstr='msgstr_has_underlines and spaces'),
+
+            u'msgid for unicode text': self.me(
+                'msgid for unicode text',
+                msgstr=u'unicode msgstr \xb7\xb7\xb7'),
+
+            u'msgid for unicode text with comment': self.me(
+                'msgid for unicode text with comment',
+                msgstr=u'unicode msgstr \xb7\xb7\xb7',
+                references=['./folder/file_unicode'],
+                automatic_comments=['Default: [···]']),
+
+            u'msgid for text with german umlaut': self.me(
+                'msgid for text with german umlaut',
+                msgstr=u'\xe4\xf6\xfc\xdf text'),
+
+            u'msgid for text with html-entity': self.me(
+                'msgid for text with html-entity',
+                msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;'),
+
+            (u"Its quite annoying that all translation editors wrap "
+             "translations strings at 80 characters, but then when you "
+             "update the po files with i18ndude they are unwrapped and "
+             "kept as huge lines. Can we fix that?"): self.me(
+                 u"Its quite annoying that all translation editors wrap "
+                 "translations strings at 80 characters, but then when you "
+                 "update the po files with i18ndude they are unwrapped and "
+                 "kept as huge lines. Can we fix that?",
+                 msgstr=("Of course we can fix that. After all: i18ndude is "
+                         "awesome, as I am sure you all agree."),
+                 comments=[
+                     ("https://github.com/collective/i18ndude/issues/3 "
+                      "complains about long lines. But long comment lines "
+                      "should be left intact."),
+                     ("Note that the unix msgattrib command can wrap or "
+                      "unwrap long lines in po files.")]),
+
+                      }
 
     def test_init(self):
         failing = False
@@ -156,7 +233,7 @@ class TestMessageCatalogInit(unittest.TestCase):
             self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
         if not test == self.msgids:
             for key in test:
-                self.failUnless(test[key] == self.msgids[key], 'error in po parsing:\n Got: %s !=\nExpected: %s' % (test[key], self.msgids[key]))
+                self.failUnless(test[key] == self.msgids[key], 'error in po parsing:\nGot:      %s !=\nExpected: %s' % (test[key], self.msgids[key]))
 
 
 class TestMessageCatalog(unittest.TestCase):

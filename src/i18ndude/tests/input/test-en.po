@@ -16,6 +16,16 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: testing\n"
 
+# https://github.com/collective/i18ndude/issues/3 complains about long lines. But long comment lines should be left intact.
+# Note that the unix msgattrib command can wrap or unwrap long lines in po files.
+msgid ""
+"Its quite annoying that all translation editors wrap translations strings at "
+"80 characters, but then when you update the po files with i18ndude they are "
+"unwrapped and kept as huge lines. Can we fix that?"
+msgstr ""
+"Of course we can fix that. After all: i18ndude is awesome, as I am sure you "
+"all agree."
+
 msgid "msgid for text with german umlaut"
 msgstr "äöüß text"
 

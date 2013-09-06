@@ -1,5 +1,8 @@
 import os
 
+# Max line width for msgid and msgstr lines.
+MAX_WIDTH = 79
+
 
 def getPoFiles(product, all=False):
     """ Returns all product*.po files in the current folder """
@@ -59,3 +62,55 @@ def getProduct(file):
     file = file.split('-')[0]  # only take product
 
     return file
+
+
+def wrapString(value):
+    """Wrap a string in multiple lines.
+
+    They should have a length of at most MAX_WIDTH, minus 3 for the
+    start quote, end quote and a space before the end quote, although
+    that last one should not be needed for the last word.
+
+    Returns a list of strings.  All but the last will have a space at
+    the end.
+    """
+    # Determine the maximum line length.  At first we only reserve
+    # room for the two enclosing quotes.
+    max_len = MAX_WIDTH - 2
+    # Maybe we have it easy.
+    if len(value) <= max_len:
+        return [value]
+    # No, the value does not fit on one line.  This means we need to
+    # reserve room for a space at the end of all but the last line.
+    max_len -= 1
+    words = value.split(' ')
+    len_words = len(words)
+    # We always start with an empty first line
+    lines = ['']
+    line = ''
+    for index, word in enumerate(words):
+        if index == len_words -1:
+            # This is the last word.  The last line needs no space at
+            # the end, so we are allowed to use one more character.
+            max_len += 1
+        if not line:
+            new_line = word
+        else:
+            new_line = '%s %s' %(line, word)
+        if len(new_line) <= max_len or not line:
+            # There is room or we had an empty line and the current
+            # single word is already too large so we accept it as a
+            # line anyway.  Use the new line and continue with the
+            # next word.
+            line = new_line
+            continue
+        # There is no more room so we store the line.  If it is not
+        # empty it should end with a space.
+        if line:
+            line += ' '
+        lines.append(line)
+        # Start a fresh line with the current word.
+        line = word
+    # The last line has not been added yet.
+    lines.append(line)
+    return lines

@@ -8,6 +8,7 @@ import time
 from zope.i18nmessageid import Message
 
 from i18ndude import common
+from i18ndude.utils import wrapString
 from ordereddict import OrderedDict
 
 DEFAULT_PO_HEADER = [
@@ -472,8 +473,9 @@ class POWriter:
         """ Print wrapper which allows to specifiy an output encoding"""
         if not string:
             print >> file
-        else:
-            print >> file, self._encode(string)
+            return
+        string = string.strip()
+        print >> file, self._encode(string)
 
     def write(self, sort=True, msgstrToComment=False, sync=False):
         """Start writing to file."""
@@ -512,6 +514,18 @@ class POWriter:
 
         # File should end with a blank line
         self._printToFile(f, False)
+
+    def _create_msgid(self, value):
+        # Wrap over multiple lines if needed.
+        values = wrapString(value)
+        # Quote all lines and separate them by newlines.
+        return 'msgid "%s"' % '"\n"'.join(values)
+
+    def _create_msgstr(self, value):
+        # Wrap over multiple lines if needed.
+        values = wrapString(value)
+        # Quote all lines and separate them by newlines.
+        return 'msgstr "%s"' % '"\n"'.join(values)
 
     def _print_entry(self, f, id, entry, msgstrToComment, sync):
         """Writes a MessageEntry to file."""
@@ -601,9 +615,9 @@ class POWriter:
         if '"' in id and u'\\"' not in id:
             id = id.replace('"', '\\"')
 
-        self._printToFile(f, 'msgid "%s"' % id)
+        self._printToFile(f, self._create_msgid(id))
         if not '\\n' in msgstr:
-            self._printToFile(f, 'msgstr "%s"' % msgstr)
+            self._printToFile(f, self._create_msgstr(msgstr))
         else:
             self._printToFile(f, 'msgstr ""')
             lines = msgstr.split('\\n')
