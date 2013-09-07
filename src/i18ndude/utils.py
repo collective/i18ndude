@@ -1,7 +1,17 @@
 import os
+import sys
 
 # Max line width for msgid and msgstr lines.
-MAX_WIDTH = 79
+DEFAULT_MAX_WIDTH = 79
+MAX_WIDTH = os.environ.get('PO_MAX_WIDTH', '')
+if MAX_WIDTH:
+    try:
+        MAX_WIDTH = int(MAX_WIDTH)
+    except ValueError:
+        print >> sys.stderr, "PO_MAX_WIDTH ignored, as it is no integer."
+        MAX_WIDTH = DEFAULT_MAX_WIDTH
+else:
+    MAX_WIDTH = DEFAULT_MAX_WIDTH
 
 
 def getPoFiles(product, all=False):
@@ -78,7 +88,7 @@ def wrapString(value):
     # room for the two enclosing quotes.
     max_len = MAX_WIDTH - 2
     # Maybe we have it easy.
-    if len(value) <= max_len:
+    if len(value) <= max_len or max_len <= 0:
         return [value]
     # No, the value does not fit on one line.  This means we need to
     # reserve room for a space at the end of all but the last line.

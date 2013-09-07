@@ -43,6 +43,23 @@ class TestUtils(unittest.TestCase):
         line = ' '.join((A, B, C))
         self.assertEqual(wrapString(line), ['', A + ' ', B + ' ', C])
 
+        # We can change the MAX_WIDTH by setting an environment
+        # variable.
+        import i18ndude.utils
+        orig_max_width = i18ndude.utils.MAX_WIDTH
+        # Accept a line of 5: 3 characters plus 2 quotes.
+        i18ndude.utils.MAX_WIDTH = 5
+        self.assertEqual(wrapString('aaa'), ['aaa'])
+        self.assertEqual(wrapString('aaaa'), ['', 'aaaa'])
+        self.assertEqual(wrapString('aaa aaaaa'), ['', 'aaa ', 'aaaaa'])
+
+        # If this is 2 or less, we do not wrap lines.
+        i18ndude.utils.MAX_WIDTH = 2
+        self.assertEqual(wrapString('aaa aaaaa'), ['aaa aaaaa'])
+
+        # Restory the original setting.
+        i18ndude.utils.MAX_WIDTH = orig_max_width
+
 
 def test_suite():
     suite = unittest.TestSuite()
