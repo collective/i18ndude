@@ -4,6 +4,13 @@ Changelog
 3.2.3 (unreleased)
 ------------------
 
+- Wrap msgid and msgstr lines at 79 characters, as most PO editors do
+  that.  Set an environment variable ``PO_MAX_WIDTH`` to choose a
+  different length.  If this is two or less, we do no wrapping,
+  because all lines must be enclosed in quotes.
+  https://github.com/collective/i18ndude/issues/3
+  [maurits]
+
 - Return exit code 1 when the called function gives an error.  This
   currently only has an effect when calling ``find-untranslated``.
   https://github.com/collective/i18ndude/issues/1

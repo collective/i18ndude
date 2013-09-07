@@ -93,6 +93,11 @@ present:
           This will create a simple listing that displays how much of the
           combined products pot's is translated for each language. Run this
           from the directory containing the pot-files.
+
+When writing files the script wraps msgid and msgstr lines at 79
+characters, as most PO editors do that.  You can set an environment
+variable PO_MAX_WIDTH to choose a different length.  If this is two or
+less, we do no wrapping, because all lines must be enclosed in quotes.
 """
 
 import getopt
