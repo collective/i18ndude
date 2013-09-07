@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.2.3 (unreleased)
+3.3.0 (unreleased)
 ------------------
 
 - Wrap msgid and msgstr lines at 79 characters, as most PO editors do
