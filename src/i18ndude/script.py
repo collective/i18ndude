@@ -100,6 +100,7 @@ variable PO_MAX_WIDTH to choose a different length.  If this is two or
 less, we do no wrapping, because all lines must be enclosed in quotes.
 """
 
+import argparse
 import getopt
 import os
 import sys
@@ -142,11 +143,20 @@ def filter_isfile(files):
     return result
 
 
+def find_untranslated_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--silent', action='store_true', help=(
+        "The report will only contain a summary of errors and warnings for "
+        "each file (or no output if there are no errors or warnings)."))
+    parser.add_argument('-n', '--nosummary', action='store_true', help=(
+        "The report will contain only the errors for each file."))
+    parser.add_argument('files', nargs='*', help="list of ZPT filenames")
+    return parser
+
+
 def find_untranslated():
-    try:
-        opts, files = getopt.getopt(sys.argv[2:], 'sn', ('silent', 'nosummary',))
-    except getopt.GetoptError, e:
-        usage(1)
+    argparser = find_untranslated_parser()
+    arguments = argparser.parse_args(sys.argv[2:])
 
     parser = xml.sax.make_parser(['expat'])
     # disable external validation to make it work without network access
@@ -154,18 +164,15 @@ def find_untranslated():
     parser.setFeature(xml.sax.handler.feature_external_pes, False)
     handler = untranslated.VerboseHandler(parser, sys.stdout)  # default
 
-    for opt, arg in opts:
-        if opt in ('-s', '--silent'):
-            handler = untranslated.SilentHandler(parser, sys.stdout)
-        elif opt in ('-n', '--nosummary'):
-            handler = untranslated.NoSummaryVerboseHandler(parser, sys.stdout)
-        elif opt in ('-h', '--help'):
-            usage(0)
+    if arguments.silent:
+        handler = untranslated.SilentHandler(parser, sys.stdout)
+    elif arguments.nosummary:
+        handler = untranslated.NoSummaryVerboseHandler(parser, sys.stdout)
 
     parser.setContentHandler(handler)
 
     errors = 0
-    for filename in filter_isfile(files):  # parse file by file
+    for filename in filter_isfile(arguments.files):  # parse file by file
         handler.set_filename(filename)
         content = common.prepare_xml(open(filename))
 
@@ -404,6 +411,7 @@ def admix():
 
     writer = catalog.POWriter(sys.stdout, base_ctl)
     writer.write(sort=False)
+
 
 def trmerge():
     if len(sys.argv) != 4:

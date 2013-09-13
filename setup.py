@@ -14,6 +14,10 @@ install_requires = [
 
 if sys.version_info < (2, 5):
     install_requires.append('elementtree')
+if sys.version_info < (2, 7):
+    # Python 2.7 contains argparse.  For earlier versions we need to
+    # add it as a dependency.
+    install_requires.append('argparse')
 
 setup(name='i18ndude',
       version=version,
