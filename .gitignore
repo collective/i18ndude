@@ -12,4 +12,5 @@ download
 eggs
 fake-eggs
 parts
+src/zope.tal
 var
