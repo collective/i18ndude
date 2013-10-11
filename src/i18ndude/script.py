@@ -144,7 +144,25 @@ def filter_isfile(files):
 
 
 def find_untranslated_parser():
-    parser = argparse.ArgumentParser(prog="%s find-untranslated" % sys.argv[0])
+    """Argument parser for rebuild-pot command.
+
+    find-untranslated [-s|-n] [file1 [file2 ...]]
+    """
+
+    description = """
+    Provide a list of ZPT filenames and I will output a report of places
+    where I suspect untranslated messages, i.e. tags for which
+    "i18n:translate" or "i18n:attributes" are missing.
+
+    If you provide the -s option, the report will only contain a summary
+    of errors and warnings for each file (or no output if there are no
+    errors or warnings). If you provide the -n option, the report will
+    contain only the errors for each file.
+    """
+    parser = argparse.ArgumentParser(
+        prog="%s find-untranslated" % sys.argv[0],
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description)
     parser.add_argument('-s', '--silent', action='store_true', help=(
         "The report will only contain a summary of errors and warnings for "
         "each file (or no output if there are no errors or warnings)."))
