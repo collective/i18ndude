@@ -579,7 +579,8 @@ def list_parser():
     description = """
     This will create a simple listing that displays how much of the
     combined products pot's is translated for each language. Run this
-    from the directory containing the pot-files.
+    from the directory containing the pot-files. The product name is
+    normally a domain name.
     """
     parser = argparse.ArgumentParser(
         prog="%s list" % sys.argv[0],
