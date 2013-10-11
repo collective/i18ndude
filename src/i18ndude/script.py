@@ -457,15 +457,31 @@ def sync():
         file.close()
 
 
+def filter_parser():
+    """Argument parser for filter command.
+
+    filter <file1> <file2>
+    """
+
+    description = """
+    Given two pot-files I will write a copy of file1 to stdout with all
+    messages removed that are also in file2, i.e. where msgids match.
+    """
+    parser = argparse.ArgumentParser(
+        prog="%s filter" % sys.argv[0],
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description)
+    parser.add_argument('file1')
+    parser.add_argument('file2')
+    return parser
+
+
 def filter():
-    if len(sys.argv[2:]) != 2:
-        usage(1)
+    argparser = filter_parser()
+    arguments = argparser.parse_args(sys.argv[2:])
 
-    file1 = sys.argv[2]
-    file2 = sys.argv[3]
-
-    f1_ctl = catalog.MessageCatalog(filename=file1)
-    f2_ctl = catalog.MessageCatalog(filename=file2)
+    f1_ctl = catalog.MessageCatalog(filename=arguments.file1)
+    f2_ctl = catalog.MessageCatalog(filename=arguments.file2)
 
     for msgid in f1_ctl.keys():
         if msgid in f2_ctl:
