@@ -327,22 +327,43 @@ def rebuild_pot():
     writer.write(msgstrToComment=True)
 
 
-def merge():
-    try:
-        opts, files = getopt.getopt(sys.argv[2:], 'sm:p:',
-                                   ('pot=', 'merge=', 'merge2='))
-    except:
-        usage(1)
+def merge_parser():
+    """Argument parser for merge command.
 
-    pot_fn = None
-    merge_fn = None
-    for opt, arg in opts:
-        if opt in ('-p', '--pot'):
-            pot_fn = arg
-        if opt in ('-m', '--merge'):
-            merge_fn = arg
-        if opt in ('--merge2'):
-            merge2_fn = arg
+    merge --pot <filename> --merge <filename> [--merge2 <filename>]
+    """
+
+    description = """
+    Given a pot-file via the --pot option and a second
+    pot-file with the --merge <filename> option, I try to merge
+    these msgids into the target-pot file. If a msgid already
+    exists, I'll warn you and ignore that msgid.
+
+    If you provide a --merge2 <filename> I'll first merge this one
+    in addition to the first one.
+    """
+    parser = argparse.ArgumentParser(
+        prog="%s merge" % sys.argv[0],
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description)
+    parser.add_argument('-p', '--pot', metavar='filename',
+                        dest='pot_fn', required=True)
+    parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn',
+                        required=True)
+    parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
+    return parser
+
+
+def merge():
+    argparser = merge_parser()
+    arguments = argparser.parse_args(sys.argv[2:])
+
+    # Determine final argument values.
+    pot_fn = arguments.pot_fn
+    merge_fn = arguments.merge_fn
+    merge2_fn = arguments.merge2_fn
+    if merge2_fn == merge_fn:
+        merge2_fn = False
 
     if not pot_fn:
         short_usage(1, u"No pot file specified as target with --pot.")
