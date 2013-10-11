@@ -534,15 +534,28 @@ def admix():
     writer.write(sort=False)
 
 
+def trmerge_parser():
+    """Argument parser for trmerge command.
+
+    trmerge <file1> <file2>
+    """
+
+    description = """
+    Given two po-files I will update all translations from file2 into
+    file1. Missing translations are added.
+    If a translation was fuzzy in file1, and there is a nonempty translation
+    in file2, the fuzzy marker is removed.
+    The result will be on stdout.
+    """
+    return two_file_parser('trmerge', description)
+
+
 def trmerge():
-    if len(sys.argv) != 4:
-        usage(1)
+    argparser = trmerge_parser()
+    arguments = argparser.parse_args(sys.argv[2:])
 
-    fn = sys.argv[2]
-    base_ctl = catalog.MessageCatalog(filename=fn)
-
-    fn = sys.argv[3]
-    mixin_ctl = catalog.MessageCatalog(filename=fn)
+    base_ctl = catalog.MessageCatalog(filename=arguments.file1)
+    mixin_ctl = catalog.MessageCatalog(filename=arguments.file2)
 
     for msgid in mixin_ctl:
         mixin_msgstr = mixin_ctl[msgid].msgstr
