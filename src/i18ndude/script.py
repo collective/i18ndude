@@ -388,21 +388,37 @@ def merge():
     writer.write(msgstrToComment=True)
 
 
+def sync_parser():
+    """Argument parser for sync command.
+
+    sync --pot <filename> file1 [file2 ...]
+    """
+
+    description = """
+    Given a pot-file with the --pot option and a list of po-files I'll
+    remove from the po files those message translations of which the
+    msgids are not in the pot-file and add messages that the pot-file has
+    but the po-file doesn't.
+    """
+    parser = argparse.ArgumentParser(
+        prog="%s sync" % sys.argv[0],
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description)
+    parser.add_argument('-p', '--pot', metavar='potfilename',
+                        dest='pot_fn', required=True)
+    parser.add_argument('files', nargs='+', metavar='pofilename')
+    return parser
+
+
 def sync():
-    try:
-        opts, files = getopt.getopt(sys.argv[2:], 'p:', ('pot='))
-    except getopt.GetoptError, e:
-        usage(1)
+    argparser = sync_parser()
+    arguments = argparser.parse_args(sys.argv[2:])
 
-    pot_fn = None
-    for opt, arg in opts:
-        if opt in ('-p', '--pot'):
-            pot_fn = arg
-
+    pot_fn = arguments.pot_fn
     if not pot_fn:
         short_usage(1, u"No pot file specified as target with --pot.")
 
-    files = filter_isfile(files)
+    files = filter_isfile(arguments.files)
 
     try:
         pot_ctl = catalog.MessageCatalog(filename=pot_fn)
