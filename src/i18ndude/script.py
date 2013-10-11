@@ -500,15 +500,27 @@ def filter():
     writer.write(sort=False, msgstrToComment=True)
 
 
+def admix_parser():
+    """Argument parser for admix command.
+
+    admix <file1> <file2>
+    """
+
+    description = """
+    Given two po-files I will look for translated entries in file2 that
+    are untranslated in file1. I add these translations (msgstrs) to
+    file1. Note that this will not affect the number of entries in file1.
+    The result will be on stdout.
+    """
+    return two_file_parser('admix', description)
+
+
 def admix():
-    if len(sys.argv) != 4:
-        usage(1)
+    argparser = admix_parser()
+    arguments = argparser.parse_args(sys.argv[2:])
 
-    fn = sys.argv[2]
-    base_ctl = catalog.MessageCatalog(filename=fn)
-
-    fn = sys.argv[3]
-    mixin_ctl = catalog.MessageCatalog(filename=fn)
+    base_ctl = catalog.MessageCatalog(filename=arguments.file1)
+    mixin_ctl = catalog.MessageCatalog(filename=arguments.file2)
 
     for msgid in mixin_ctl:
         mixin_msgstr = mixin_ctl[msgid].msgstr
