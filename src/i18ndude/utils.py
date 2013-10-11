@@ -16,11 +16,25 @@ else:
 
 def getPoFiles(product, all=False):
     """ Returns all product*.po files in the current folder """
+    # First try old style i18n directory that has all .pot and .po files in one directory.
     files = os.listdir(os.curdir)
     if all:
-        files = [file for file in files if file.startswith('%s-' % product) and file.endswith('.po')]
+        files = [file for file in files if file.startswith('%s-' % product)
+                 and file.endswith('.po')]
     else:
-        files = [file for file in files if file.startswith('%s-' % product) and file.endswith('.po') and file != '%s-en.po' % product]
+        files = [file for file in files if file.startswith('%s-' % product)
+                 and file.endswith('.po') and file != '%s-en.po' % product]
+    if files:
+        return files
+    # We may be in a locales directory.
+    po_name = '%s.po' % product
+    files = []
+    for dirpath, dirnames, filenames in os.walk('.'):
+        # Look for LC_MESSAGES directories
+        if dirpath.split(os.path.sep)[-1] != 'LC_MESSAGES':
+            continue
+        if po_name in filenames:
+            files.append(os.path.join(dirpath, po_name))
     return files
 
 
@@ -59,6 +73,17 @@ def getLanguage(product, file):
     if file.endswith('.po'):
         if file.startswith(product):
             lang = '-'.join(file.split('-')[1:])[:-3]
+        else:
+            # Get directory name in case of locales structure:
+            # lang/LC_MESSAGES/product.po
+            lc_found = False
+            for part in reversed(file.split(os.path.sep)):
+                if lc_found:
+                    lang = part
+                    break
+                if part == 'LC_MESSAGES':
+                    lc_found = True
+            print lang
     return lang
 
 
