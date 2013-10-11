@@ -144,7 +144,7 @@ def filter_isfile(files):
 
 
 def find_untranslated_parser():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog="%s find-untranslated" % sys.argv[0])
     parser.add_argument('-s', '--silent', action='store_true', help=(
         "The report will only contain a summary of errors and warnings for "
         "each file (or no output if there are no errors or warnings)."))
@@ -195,44 +195,73 @@ def find_untranslated():
     return errors
 
 
+def rebuild_pot_parser():
+    """Argument parser for rebuild-pot command.
+
+    rebuild-pot --pot <filename> --create <domain> [--merge <filename>
+    [--merge2 <filename>]] [--exclude="<ignore1> <ignore2> ..."] path [path2 ...]
+    """
+
+    description = """
+    Given a pot-file via the --pot option you can specify one or more
+    directories which including all sub-folders will be searched for
+    PageTemplates (*.*pt) and Python scripts (*.*py).
+
+    Make sure you have a backup copy of the original pot-file in case
+    you need to fill back in ids by hand.
+
+    If you specify a domain in --create I will create the pot file and
+    look for messages for that domain.  Otherwise I will take the
+    domain from the Domain header in the given pot file and keep the
+    headers from the file as base for a new pot file.
+
+    If you give me an additional pot-file with the --merge <filename>
+    option, I try to merge these msgids into the target-pot file
+    afterwards. If a msgid already exists in the ones I found in the
+    ZPTs, I'll warn you and ignore that msgid. I take the mime-header
+    from this additional pot-file. If you provide a second pot-file via
+    --merge2 <filename> I'll merge this into the first merge's result
+
+    You can also provide a list of filenames which should not be included
+    by using the --exclude argument, which takes a whitespace delimited
+    list of files.
+    """
+    parser = argparse.ArgumentParser(
+        prog="%s rebuild-pot" % sys.argv[0],
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description)
+    parser.add_argument('-p', '--pot', metavar='filename',
+                        dest='pot_fn', required=True)
+    parser.add_argument('-c', '--create', metavar='domain',
+                        dest='create_domain', required=False)
+    parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn')
+    parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
+    parser.add_argument('--exclude', metavar='"<ignore1> <ignore2> ..."')
+    parser.add_argument('path', nargs='*')
+    return parser
+
+
 def rebuild_pot():
-    try:
-        opts, files = getopt.getopt(sys.argv[2:], 'mp:c:',
-                                   ('pot=', 'create=', 'merge=', 'merge2=', 'exclude='))
-    except:
-        usage(1)
+    argparser = rebuild_pot_parser()
+    arguments = argparser.parse_args(sys.argv[2:])
+    merge_ctl = None
 
-    pot_fn = None
-    merge_fn = None
-    merge2_fn = None
-    create_domain = None
-    exclude = ()
-    for opt, arg in opts:
-        if opt in ('-p', '--pot'):
-            pot_fn = arg
-        if opt in ('-c', '--create'):
-            create_domain = arg
-        if opt in ('-m', '--merge'):
-            merge_fn = arg
-        if opt in ('--merge2'):
-            merge2_fn = arg
-        if opt in ('--exclude'):
-            exclude = tuple(arg.split())
-
-    if not pot_fn:
-        short_usage(1, u"No pot file specified as target with --pot.")
-
+    # Determine final argument values.
+    create_domain = arguments.create_domain
+    exclude = tuple(arguments.exclude.split())
+    pot_fn = arguments.pot_fn
+    merge_fn = arguments.merge_fn
+    merge2_fn = arguments.merge2_fn
     if merge2_fn == merge_fn:
         merge2_fn = False
-
-    path = files
-    merge_ctl = None
+    path = arguments.path
 
     try:
         if create_domain is not None:
             orig_ctl = catalog.MessageCatalog(domain=create_domain)
         else:
             orig_ctl = catalog.MessageCatalog(filename=pot_fn)
+            create_domain = orig_ctl.domain
         if merge_fn:
             merge_ctl = catalog.MessageCatalog(filename=merge_fn)
         if merge2_fn:
