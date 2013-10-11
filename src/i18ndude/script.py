@@ -457,6 +457,21 @@ def sync():
         file.close()
 
 
+def two_file_parser(cmd, description):
+    """Argument parser for command that takes two files.
+
+    filter, admix and trmerge all accept two files as arguments.
+    """
+
+    parser = argparse.ArgumentParser(
+        prog="%s %s" % (sys.argv[0], cmd),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description)
+    parser.add_argument('file1')
+    parser.add_argument('file2')
+    return parser
+
+
 def filter_parser():
     """Argument parser for filter command.
 
@@ -467,13 +482,7 @@ def filter_parser():
     Given two pot-files I will write a copy of file1 to stdout with all
     messages removed that are also in file2, i.e. where msgids match.
     """
-    parser = argparse.ArgumentParser(
-        prog="%s filter" % sys.argv[0],
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description)
-    parser.add_argument('file1')
-    parser.add_argument('file2')
-    return parser
+    return two_file_parser('filter', description)
 
 
 def filter():
