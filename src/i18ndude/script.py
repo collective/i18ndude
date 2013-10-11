@@ -101,7 +101,6 @@ less, we do no wrapping, because all lines must be enclosed in quotes.
 """
 
 import argparse
-import getopt
 import os
 import sys
 import xml.sax
@@ -571,25 +570,33 @@ def trmerge():
     writer.write(sort=False)
 
 
+def list_parser():
+    """Argument parser for list command.
+
+    list --products <product1> [<product2> ...]
+    """
+
+    description = """
+    This will create a simple listing that displays how much of the
+    combined products pot's is translated for each language. Run this
+    from the directory containing the pot-files.
+    """
+    parser = argparse.ArgumentParser(
+        prog="%s list" % sys.argv[0],
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description)
+    parser.add_argument('-p', '--products', metavar='product', nargs='+',
+                        required=True)
+    parser.add_argument('-t', '--table', action='store_true')
+    return parser
+
+
 def list():
-    try:
-        opts, files = getopt.getopt(sys.argv[2:], 'tp:',
-                                    ('products=', 'table='))
-    except:
-        usage(1)
+    argparser = list_parser()
+    arguments = argparser.parse_args(sys.argv[2:])
 
-    table = False
-    products = []
-    for opt, arg in opts:
-        if opt in ('-p', '--products'):
-            products.append(arg)
-        if opt in ('-t', '--table'):
-            table = True
-
-    if not products:
-        short_usage(1, u"No products specified with --products.")
-
-    products.extend(files)
+    table = arguments.table
+    products = arguments.products
 
     # get all the files
     pos = {}
