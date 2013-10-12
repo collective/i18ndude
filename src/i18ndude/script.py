@@ -132,11 +132,11 @@ def parse_wrapping_arguments(arguments):
     and utils.WRAP.  If the arguments are not set, we do nothing: the
     default values of those variables are used.
     """
-    if arguments.width:
+    if 'width' in arguments and arguments.width:
         utils.MAX_WIDTH = arguments.width
-    if arguments.wrap:
+    if 'wrap' in arguments and arguments.wrap:
         utils.WRAP = True
-    elif arguments.no_wrap:
+    elif 'no_wrap' in arguments and arguments.no_wrap:
         utils.WRAP = False
 
 
@@ -300,7 +300,6 @@ def rebuild_pot(arguments):
     if merge2_fn == merge_fn:
         merge2_fn = False
     path = arguments.path
-    parse_wrapping_arguments(arguments)
 
     try:
         if create_domain is not None:
@@ -408,7 +407,6 @@ def merge(arguments):
     merge2_fn = arguments.merge2_fn
     if merge2_fn == merge_fn:
         merge2_fn = False
-    parse_wrapping_arguments(arguments)
 
     if not pot_fn:
         short_usage(1, u"No pot file specified as target with --pot.")
@@ -462,7 +460,6 @@ def sync(arguments):
         short_usage(1, u"No pot file specified as target with --pot.")
 
     files = filter_isfile(arguments.files)
-    parse_wrapping_arguments(arguments)
 
     try:
         pot_ctl = catalog.MessageCatalog(filename=pot_fn)
@@ -514,8 +511,6 @@ def filter_parser(subparsers):
 
 
 def filter(arguments):
-    parse_wrapping_arguments(arguments)
-
     f1_ctl = catalog.MessageCatalog(filename=arguments.file1)
     f2_ctl = catalog.MessageCatalog(filename=arguments.file2)
 
@@ -545,8 +540,6 @@ def admix_parser(subparsers):
 
 
 def admix(arguments):
-    parse_wrapping_arguments(arguments)
-
     base_ctl = catalog.MessageCatalog(filename=arguments.file1)
     mixin_ctl = catalog.MessageCatalog(filename=arguments.file2)
 
@@ -581,8 +574,6 @@ def trmerge_parser(subparsers):
 
 
 def trmerge(arguments):
-    parse_wrapping_arguments(arguments)
-
     base_ctl = catalog.MessageCatalog(filename=arguments.file1)
     mixin_ctl = catalog.MessageCatalog(filename=arguments.file2)
 
@@ -701,6 +692,8 @@ def main():
     trmerge_parser(subparsers)
     # Parse the arguments.
     arguments = parser.parse_args(sys.argv[1:])
+    # Special handling for the wrapping arguments, if any.
+    parse_wrapping_arguments(arguments)
     # Call the function of the chosen command with the arguments.
     errors = arguments.func(arguments)
     if errors:
