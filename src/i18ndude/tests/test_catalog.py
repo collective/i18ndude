@@ -13,18 +13,18 @@ class TestGlobal(unittest.TestCase):
     def test_isLiteralId(self):
         i = catalog.is_literal_id
         errortext = 'False literal msgid recognition'
-        self.failIf(i('label_yes'), errortext)
-        self.failIf(i('_'), errortext)
-        self.failUnless(i(' '), errortext)
-        self.failUnless(i(' _'), errortext)
-        self.failUnless(i('text'), errortext)
-        self.failUnless(i('This is a text.'), errortext)
+        self.assertFalse(i('label_yes'), errortext)
+        self.assertFalse(i('_'), errortext)
+        self.assertTrue(i(' '), errortext)
+        self.assertTrue(i(' _'), errortext)
+        self.assertTrue(i('text'), errortext)
+        self.assertTrue(i('This is a text.'), errortext)
 
     def test_originalComment(self):
-        self.assertEquals(catalog.ORIGINAL_COMMENT, 'Original: ', 'Wrong original comment constant')
+        self.assertEqual(catalog.ORIGINAL_COMMENT, 'Original: ', 'Wrong original comment constant')
 
     def test_defaultComment(self):
-        self.assertEquals(catalog.DEFAULT_COMMENT, 'Default: ', 'Wrong default comment constant')
+        self.assertEqual(catalog.DEFAULT_COMMENT, 'Default: ', 'Wrong default comment constant')
 
 
 class TestMessageEntry(unittest.TestCase):
@@ -44,32 +44,32 @@ class TestMessageEntry(unittest.TestCase):
     def test_init(self):
         me = self.me
         me1 = me(self.msgid)
-        self.assertEquals(me1.msgid, self.msgid, 'msgid not set correctly')
+        self.assertEqual(me1.msgid, self.msgid, 'msgid not set correctly')
         me1 = me(self.msgid, msgstr=self.msgstr)
-        self.assertEquals(me1.msgid, self.msgid, 'msgid not set correctly')
-        self.assertEquals(me1.msgstr, self.msgstr, 'msgstr not set correctly')
+        self.assertEqual(me1.msgid, self.msgid, 'msgid not set correctly')
+        self.assertEqual(me1.msgstr, self.msgstr, 'msgstr not set correctly')
 
         me1 = me(self.msgid, msgstr=self.msgstr, references=self.references)
-        self.assertEquals(me1.msgid, self.msgid, 'msgid not set correctly')
-        self.assertEquals(me1.msgstr, self.msgstr, 'msgstr not set correctly')
-        self.assertEquals(me1.references, self.references, 'references not set correctly')
+        self.assertEqual(me1.msgid, self.msgid, 'msgid not set correctly')
+        self.assertEqual(me1.msgstr, self.msgstr, 'msgstr not set correctly')
+        self.assertEqual(me1.references, self.references, 'references not set correctly')
 
         me1 = me(self.msgid, msgstr=self.msgstr, comments=self.comments)
-        self.assertEquals(me1.msgid, self.msgid, 'msgid not set correctly')
-        self.assertEquals(me1.msgstr, self.msgstr, 'msgstr not set correctly')
-        self.assertEquals(me1.comments, self.comments, 'comments not set correctly')
-        self.assertEquals(me1.getOriginalComment(), self.orig_comment,
+        self.assertEqual(me1.msgid, self.msgid, 'msgid not set correctly')
+        self.assertEqual(me1.msgstr, self.msgstr, 'msgstr not set correctly')
+        self.assertEqual(me1.comments, self.comments, 'comments not set correctly')
+        self.assertEqual(me1.getOriginalComment(), self.orig_comment,
                           'Original comment not set correctly')
-        self.assertEquals(me1.getOriginal(), self.orig_text,
+        self.assertEqual(me1.getOriginal(), self.orig_text,
                           'Original text not set correctly')
 
         me2 = me(self.msgid, msgstr=self.msgstr, automatic_comments=self.automatic_comments)
-        self.assertEquals(me2.msgid, self.msgid, 'msgid not set correctly')
-        self.assertEquals(me2.msgstr, self.msgstr, 'msgstr not set correctly')
-        self.assertEquals(me2.automatic_comments, self.automatic_comments, 'comments not set correctly')
-        self.assertEquals(me2.getDefaultComment(), self.default_comment,
+        self.assertEqual(me2.msgid, self.msgid, 'msgid not set correctly')
+        self.assertEqual(me2.msgstr, self.msgstr, 'msgstr not set correctly')
+        self.assertEqual(me2.automatic_comments, self.automatic_comments, 'comments not set correctly')
+        self.assertEqual(me2.getDefaultComment(), self.default_comment,
                           'Default comment not set correctly')
-        self.assertEquals(me2.getDefault(), self.default_text,
+        self.assertEqual(me2.getDefault(), self.default_text,
                           'Default text not set correctly')
 
 
@@ -197,7 +197,7 @@ class TestMessageCatalogInit(unittest.TestCase):
             catalog.MessageCatalog()
         except AssertionError:
             failing = True
-        self.failUnless(failing, 'Init without parameters should not be allowed.')
+        self.assertTrue(failing, 'Init without parameters should not be allowed.')
 
     def test_initWithDomain(self):
         domain = 'testing'
@@ -205,17 +205,17 @@ class TestMessageCatalogInit(unittest.TestCase):
         mime = catalog.DEFAULT_PO_MIME
         for key, value in mime:
             if key != 'Domain':
-                self.assertEquals(value, test.mime_header[key], 'header mismatch on %s' % key)
+                self.assertEqual(value, test.mime_header[key], 'header mismatch on %s' % key)
             else:
-                self.assertEquals(domain, test.mime_header['Domain'], 'Domain mismatch')
-        self.assertEquals(catalog.DEFAULT_PO_HEADER, test.commentary_header, 'commentary header mismatch')
-        self.assertEquals(len(test), 0, 'Non-empty catalog')
+                self.assertEqual(domain, test.mime_header['Domain'], 'Domain mismatch')
+        self.assertEqual(catalog.DEFAULT_PO_HEADER, test.commentary_header, 'commentary header mismatch')
+        self.assertEqual(len(test), 0, 'Non-empty catalog')
 
     def test_initWithEmptyFile(self):
         test = self.mc(filename=self.emptyfile)
         mime = catalog.DEFAULT_PO_MIME
         for key, value in mime:
-            self.assertEquals(value, test.mime_header[key], 'header mismatch on %s' % key)
+            self.assertEqual(value, test.mime_header[key], 'header mismatch on %s' % key)
 
     def test_initWithEmptyFileAndDomain(self):
         failing = False
@@ -223,17 +223,17 @@ class TestMessageCatalogInit(unittest.TestCase):
             self.mc(domain='testing', filename=self.emptyfile)
         except AssertionError:
             failing = True
-        self.failUnless(failing, 'Init with filename and domain parameters is not allowed.')
+        self.assertTrue(failing, 'Init with filename and domain parameters is not allowed.')
 
     def test_initWithFile(self):
         test = self.mc(filename=self.file)
         for key in test.mime_header:
-            self.assertEquals(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
+            self.assertEqual(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
         for value in test.commentary_header:
-            self.failUnless(value in self.commentary_header, 'wrong commentary header parsing')
+            self.assertTrue(value in self.commentary_header, 'wrong commentary header parsing')
         if not test == self.msgids:
             for key in test:
-                self.failUnless(test[key] == self.msgids[key], 'error in po parsing:\nGot:      %s !=\nExpected: %s' % (test[key], self.msgids[key]))
+                self.assertTrue(test[key] == self.msgids[key], 'error in po parsing:\nGot:      %s !=\nExpected: %s' % (test[key], self.msgids[key]))
 
 
 class TestMessageCatalog(unittest.TestCase):
@@ -259,24 +259,24 @@ class TestMessageCatalog(unittest.TestCase):
 
         # add with msgid
         self.mc.add(msgid)
-        self.failUnless(msgid in self.mc, 'msgid not found in catalog')
+        self.assertTrue(msgid in self.mc, 'msgid not found in catalog')
         del self.mc[msgid]
-        self.failIf(msgid in self.mc, 'msgid found in catalog')
+        self.assertFalse(msgid in self.mc, 'msgid found in catalog')
         # add with msgid and msgstr
         self.mc.add(msgid, msgstr=msgstr)
-        self.assertEquals(self.mc[msgid].msgstr, msgstr, 'msgstr not found in catalog.')
+        self.assertEqual(self.mc[msgid].msgstr, msgstr, 'msgstr not found in catalog.')
         del self.mc[msgid]
-        self.failIf(msgid in self.mc, 'msgid found in catalog')
+        self.assertFalse(msgid in self.mc, 'msgid found in catalog')
         # add with msgid, msgstr and filename
         self.mc.add(msgid, msgstr=msgstr, references=references)
-        self.assertEquals(self.mc[msgid].references, references, 'references not found in catalog.')
+        self.assertEqual(self.mc[msgid].references, references, 'references not found in catalog.')
         del self.mc[msgid]
-        self.failIf(msgid in self.mc, 'msgid found in catalog')
+        self.assertFalse(msgid in self.mc, 'msgid found in catalog')
         # add with msgid, msgstr, filename and excerpt
         self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
-        self.assertEquals(self.mc[msgid].automatic_comments, automatic_comments, 'automatic_comments not found in catalog.')
+        self.assertEqual(self.mc[msgid].automatic_comments, automatic_comments, 'automatic_comments not found in catalog.')
         del self.mc[msgid]
-        self.failIf(msgid in self.mc, 'msgid found in catalog')
+        self.assertFalse(msgid in self.mc, 'msgid found in catalog')
 
     def test_multipleAdd(self):
         msgid = self.msgid
@@ -286,17 +286,17 @@ class TestMessageCatalog(unittest.TestCase):
 
         self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
         self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
-        self.failUnless(len(self.mc)==1, 'duplicate msgid')
-        self.failUnless(len(self.mc[msgid].references)==2, 'references missing')
+        self.assertTrue(len(self.mc)==1, 'duplicate msgid')
+        self.assertTrue(len(self.mc[msgid].references)==2, 'references missing')
 
     def test_originalComment(self):
         self.mc.add(self.msgid, msgstr=self.msgstr, references=self.references, automatic_comments=self.automatic_comments)
         self.mc[self.msgid].comments.extend(self.comments)
-        self.assertEquals(self.mc.getComments(self.msgid), self.comments, 'wrong comments')
-        self.assertEquals(self.mc.getOriginalComment(self.msgid), self.orig_comment, 'wrong original comment line')
-        self.assertEquals(self.mc.getOriginal(self.msgid), self.orig_text, 'wrong original comment text')
-        self.assertEquals(self.mc.getDefaultComment(self.msgid), self.default_comment, 'wrong default comment line')
-        self.assertEquals(self.mc.getDefault(self.msgid), self.default_text, 'wrong default comment text')
+        self.assertEqual(self.mc.getComments(self.msgid), self.comments, 'wrong comments')
+        self.assertEqual(self.mc.getOriginalComment(self.msgid), self.orig_comment, 'wrong original comment line')
+        self.assertEqual(self.mc.getOriginal(self.msgid), self.orig_text, 'wrong original comment text')
+        self.assertEqual(self.mc.getDefaultComment(self.msgid), self.default_comment, 'wrong default comment line')
+        self.assertEqual(self.mc.getDefault(self.msgid), self.default_text, 'wrong default comment text')
 
 
 class TestMessageCatalogSync(unittest.TestCase):
@@ -313,14 +313,14 @@ class TestMessageCatalogSync(unittest.TestCase):
         for id in self.po:
             old_defaults[id] = self.po[id].getDefault()
         self.po.sync(self.pot)
-        self.failUnless(len(self.pot)==len(self.po), 'number of messages does not match')
+        self.assertTrue(len(self.pot)==len(self.po), 'number of messages does not match')
         for msgid in self.pot:
-            self.failUnless(msgid in self.po, 'msgid %s could not be found' % self.pot[msgid])
-            self.failUnless(self.po[msgid].references == self.pot[msgid].references)
+            self.assertTrue(msgid in self.po, 'msgid %s could not be found' % self.pot[msgid])
+            self.assertTrue(self.po[msgid].references == self.pot[msgid].references)
             defaults = self.po[msgid].getDefaults()
             if defaults is not None:
                 for dc in defaults:
-                    self.failUnless(dc == self.pot[msgid].getDefault() or
+                    self.assertTrue(dc == self.pot[msgid].getDefault() or
                                     dc == old_defaults[msgid], 'Either old or new default comment is missing on msgid: %s' % msgid)
 
 
@@ -358,7 +358,7 @@ class TestMessagePoWriter(unittest.TestCase):
 
         for i, result in outlines:
             orig = inlines[i]
-            self.failUnlessEqual(orig, result, 'difference in line %s, \'%s\' != \'%s\'' % (i, orig, result))
+            self.assertEqual(orig, result, 'difference in line %s, \'%s\' != \'%s\'' % (i, orig, result))
 
     def test_writeSpecialComments(self):
         fd = open(self.output2, 'wb')
@@ -378,7 +378,7 @@ class TestMessagePoWriter(unittest.TestCase):
 
         for i, result in explines:
             orig = outlines[i]
-            self.failUnlessEqual(orig, result, 'difference in line %s, Got: \'%s\' != Expected: \'%s\'' % (i, orig, result))
+            self.assertEqual(orig, result, 'difference in line %s, Got: \'%s\' != Expected: \'%s\'' % (i, orig, result))
 
     def tearDown(self):
         if os.path.exists(self.output):
@@ -410,10 +410,10 @@ class TestMessagePTReader(unittest.TestCase):
         ptr.read()
         out = ptr.catalogs['testing']
         for key in out:
-            self.failUnless(key in self.output,
+            self.assertTrue(key in self.output,
                             'Failure in pt parsing.\nUnexpected msgid: %s' % key)
         for key in self.output:
-            self.failUnless(out[key] == self.output[key],
+            self.assertTrue(out[key] == self.output[key],
                             'Failure in pt parsing.\nGot:%s\nExpected:%s' %
                             (out[key], self.output[key]))
         self.assertEqual(len(out), len(self.output))
@@ -441,12 +441,12 @@ class TestMessagePYReader(unittest.TestCase):
         pyr.read()
         out = pyr.catalogs['testing']
         for key in out:
-            self.failUnless(key in self.output,
+            self.assertTrue(key in self.output,
                             'Failure in py parsing.\nUnexpected msgid: %s' % key)
         for key in self.output:
-            self.failUnless(out.get(key, False),
+            self.assertTrue(out.get(key, False),
                             'Failure in py parsing.\nMissing:%s' % self.output.get(key))
-            self.failUnless(out.get(key) == self.output.get(key),
+            self.assertTrue(out.get(key) == self.output.get(key),
                             'Failure in py parsing.\nGot:%s\nExpected:%s' %
                             (out.get(key), self.output.get(key)))
         self.assertEqual(len(out), len(self.output))
