@@ -21,85 +21,6 @@
 
 # -----------------------------------------------------------------------------
 
-"""Usage: i18ndude command [options] [path | file1 file2 ...]]
-
-i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
-
-Unless the -h, or --help option is given one of the commands below must be
-present:
-
-   find-untranslated [-s|-n] [file1 [file2 ...]]
-          Provide a list of ZPT filenames and I will output a report of places
-          where I suspect untranslated messages, i.e. tags for which
-          "i18n:translate" or "i18n:attributes" are missing.
-
-          If you provide the -s option, the report will only contain a summary
-          of errors and warnings for each file (or no output if there are no
-          errors or warnings). If you provide the -n option, the report will
-          contain only the errors for each file.
-
-   rebuild-pot --pot <filename> --create <domain> [--merge <filename>
-   [--merge2 <filename>]] [--exclude="<ignore1> <ignore2> ..."] path [path2 ...]
-          Given a pot-file via the --pot option you can specify one or more
-          directories which including all sub-folders will be searched for
-          PageTemplates (*.*pt) and Python scripts (*.*py).
-
-          Make sure you have a backup copy of the original pot-file in case
-          you need to fill back in ids by hand.
-
-          If you give me an additional pot-file with the --merge <filename>
-          option, I try to merge these msgids into the target-pot file
-          afterwards. If a msgid already exists in the ones I found in the
-          ZPTs, I'll warn you and ignore that msgid. I take the mime-header
-          from this additional pot-file. If you provide a second pot-file via
-          --merge2 <filename> I'll merge this into the first merge's result
-
-          You can also provide a list of filenames which should not be included
-          by using the --exclude argument, which takes a whitespace delimited
-          list of files.
-
-   merge --pot <filename> --merge <filename> [--merge2 <filename>]
-          Given a pot-file via the --pot option and a second
-          pot-file with the --merge <filename> option, I try to merge
-          these msgids into the target-pot file. If a msgid already
-          exists, I'll warn you and ignore that msgid.
-
-          If you provide a --merge2 <filename> I'll first merge this one
-          in addition to the first one.
-
-   sync --pot <filename> file1 [file2 ...]
-          Given a pot-file with the --pot option and a list of po-files I'll
-          remove from the po files those message translations of which the
-          msgids are not in the pot-file and add messages that the pot-file has
-          but the po-file doesn't.
-
-   filter <file1> <file2>
-          Given two pot-files I will write a copy of file1 to stdout with all
-          messages removed that are also in file2, i.e. where msgids match.
-
-   admix <file1> <file2>
-          Given two po-files I will look for translated entries in file2 that
-          are untranslated in file1. I add these translations (msgstrs) to
-          file1. Note that this will not affect the number of entries in file1.
-
-   trmerge <file1> <file2>
-          Given two po-files I will look update all translations from file2 into
-          file1. Missing translations are added.
-          If a translation was fuzzy in file1, and there is a nonempty translation
-          in file2, the fuzzy marker is removed.
-          The result will be on stdout.
-
-   list --products <product1> [<product2> ...]
-          This will create a simple listing that displays how much of the
-          combined products pot's is translated for each language. Run this
-          from the directory containing the pot-files.
-
-When writing files the script wraps msgid and msgstr lines at 79
-characters, as most PO editors do that.  You can set an environment
-variable PO_MAX_WIDTH to choose a different length.  If this is two or
-less, we do no wrapping, because all lines must be enclosed in quotes.
-"""
-
 import argparse
 import os
 import sys
@@ -140,17 +61,10 @@ def parse_wrapping_arguments(arguments):
         utils.WRAP = False
 
 
-def usage(code, msg=''):
-    print >> sys.stderr, __doc__
-    if msg:
-        print >> sys.stderr, msg
-    sys.exit(code)
-
-
 def short_usage(code, msg=''):
     if msg:
         print >> sys.stderr, msg
-    print >> sys.stderr, u"Type i18ndude<Enter> to see the help."
+    print >> sys.stderr, u"Type i18ndude -h<Enter> to see the help."
     sys.exit(code)
 
 
