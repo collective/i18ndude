@@ -6,6 +6,7 @@ import unittest
 from utils import PACKAGE_HOME
 
 from i18ndude import catalog
+from i18ndude import utils
 
 
 class TestGlobal(unittest.TestCase):
@@ -341,10 +342,16 @@ class TestMessagePoWriter(unittest.TestCase):
             os.remove(self.output2)
 
     def test_write(self):
+        # Explicitly enable wrapping here, as that is what we did in
+        # the test po file.
+        orig_wrap = utils.WRAP
+        utils.WRAP = True
         fd = open(self.output, 'wb')
         pow = catalog.POWriter(fd, self.catalog)
         pow.write(sort=True)
         fd.close()
+        # Restore original value.
+        utils.WRAP = orig_wrap
 
         input = open(self.input, 'r')
         output = open(self.output, 'r')

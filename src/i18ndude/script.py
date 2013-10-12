@@ -108,6 +108,37 @@ import xml.sax
 from i18ndude import common, untranslated, catalog, visualisation, utils
 
 
+# Define a parent parser for the wrapping arguments.  This is shared
+# by a few commands.  Note: if you use this parser, you need to call
+# the parse_wrapping_arguments function somewhere in the handling of
+# your command.
+wrapper_parser = argparse.ArgumentParser(add_help=False)
+wrapping_group = wrapper_parser.add_mutually_exclusive_group()
+wrapping_group.add_argument(
+    '--wrap', action='store_true', help="Wrap long lines.")
+wrapping_group.add_argument(
+    '--no-wrap', action='store_true',
+    help="Do not wrap long lines. This is the default.")
+wrapper_parser.add_argument(
+    '--width', metavar='NUMBER', type=int,
+    help="Set output page width. Default is %d." % utils.MAX_WIDTH)
+
+
+def parse_wrapping_arguments(arguments):
+    """Parse the arguments that handle wrapping.
+
+    Based on the arguments we can store the result in utils.MAX_WIDTH
+    and utils.WRAP.  If the arguments are not set, we do nothing: the
+    default values of those variables are used.
+    """
+    if arguments.width:
+        utils.MAX_WIDTH = arguments.width
+    if arguments.wrap:
+        utils.WRAP = True
+    elif arguments.no_wrap:
+        utils.WRAP = False
+
+
 def usage(code, msg=''):
     print >> sys.stderr, __doc__
     if msg:
@@ -245,6 +276,7 @@ def rebuild_pot_parser():
     """
     parser = argparse.ArgumentParser(
         prog="%s rebuild-pot" % sys.argv[0],
+        parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-p', '--pot', metavar='filename',
@@ -272,6 +304,7 @@ def rebuild_pot():
     if merge2_fn == merge_fn:
         merge2_fn = False
     path = arguments.path
+    parse_wrapping_arguments(arguments)
 
     try:
         if create_domain is not None:
@@ -361,6 +394,7 @@ def merge_parser():
     """
     parser = argparse.ArgumentParser(
         prog="%s merge" % sys.argv[0],
+        parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-p', '--pot', metavar='filename',
@@ -381,6 +415,7 @@ def merge():
     merge2_fn = arguments.merge2_fn
     if merge2_fn == merge_fn:
         merge2_fn = False
+    parse_wrapping_arguments(arguments)
 
     if not pot_fn:
         short_usage(1, u"No pot file specified as target with --pot.")
@@ -419,6 +454,7 @@ def sync_parser():
     """
     parser = argparse.ArgumentParser(
         prog="%s sync" % sys.argv[0],
+        parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-p', '--pot', metavar='potfilename',
@@ -436,6 +472,7 @@ def sync():
         short_usage(1, u"No pot file specified as target with --pot.")
 
     files = filter_isfile(arguments.files)
+    parse_wrapping_arguments(arguments)
 
     try:
         pot_ctl = catalog.MessageCatalog(filename=pot_fn)
@@ -464,6 +501,7 @@ def two_file_parser(cmd, description):
 
     parser = argparse.ArgumentParser(
         prog="%s %s" % (sys.argv[0], cmd),
+        parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('file1')
@@ -487,6 +525,7 @@ def filter_parser():
 def filter():
     argparser = filter_parser()
     arguments = argparser.parse_args(sys.argv[2:])
+    parse_wrapping_arguments(arguments)
 
     f1_ctl = catalog.MessageCatalog(filename=arguments.file1)
     f2_ctl = catalog.MessageCatalog(filename=arguments.file2)
@@ -517,6 +556,7 @@ def admix_parser():
 def admix():
     argparser = admix_parser()
     arguments = argparser.parse_args(sys.argv[2:])
+    parse_wrapping_arguments(arguments)
 
     base_ctl = catalog.MessageCatalog(filename=arguments.file1)
     mixin_ctl = catalog.MessageCatalog(filename=arguments.file2)
@@ -552,6 +592,7 @@ def trmerge_parser():
 def trmerge():
     argparser = trmerge_parser()
     arguments = argparser.parse_args(sys.argv[2:])
+    parse_wrapping_arguments(arguments)
 
     base_ctl = catalog.MessageCatalog(filename=arguments.file1)
     mixin_ctl = catalog.MessageCatalog(filename=arguments.file2)

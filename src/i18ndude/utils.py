@@ -1,17 +1,14 @@
 import os
-import sys
 
-# Max line width for msgid and msgstr lines.
-DEFAULT_MAX_WIDTH = 79
-MAX_WIDTH = os.environ.get('PO_MAX_WIDTH', '')
-if MAX_WIDTH:
-    try:
-        MAX_WIDTH = int(MAX_WIDTH)
-    except ValueError:
-        print >> sys.stderr, "PO_MAX_WIDTH ignored, as it is no integer."
-        MAX_WIDTH = DEFAULT_MAX_WIDTH
-else:
-    MAX_WIDTH = DEFAULT_MAX_WIDTH
+# Two parameters determine the wrapping of lines.  If WRAP is False,
+# no wrapping is done.  If WRAP is True, the lines will be wrapped at
+# MAX_WIDTH characters.  Both values can be changed by the script,
+# based on command line arguments.
+#
+# By default no wrapping is done, as that has always been the default
+# and only behaviour.  This may change in the future.
+MAX_WIDTH = 79
+WRAP = False
 
 
 def getPoFiles(product, all=False):
@@ -109,6 +106,8 @@ def wrapString(value):
     Returns a list of strings.  All but the last will have a space at
     the end.
     """
+    if not WRAP:
+        return [value]
     # Determine the maximum line length.  At first we only reserve
     # room for the two enclosing quotes.
     max_len = MAX_WIDTH - 2

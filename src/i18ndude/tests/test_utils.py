@@ -7,6 +7,21 @@ from i18ndude.utils import wrapString, MAX_WIDTH
 class TestUtils(unittest.TestCase):
 
     def test_wrapString(self):
+        # We can change the WRAP and MAX_WIDTH settings by using
+        # command line options.  We save the original here.
+        import i18ndude.utils
+        orig_max_width = i18ndude.utils.MAX_WIDTH
+        orig_wrap = i18ndude.utils.WRAP
+
+        # By default we do not wrap.
+        line = 'a'*50 + ' ' + 'b'*50
+        self.assertEqual(wrapString(line),
+                         ['a'*50 + ' ' + 'b'*50])
+
+        # That is not very interesting, so we enable wrapping for the
+        # rest of the test.
+        i18ndude.utils.WRAP = True
+
         # This all fits on one line.
         self.assertEqual(wrapString(''), [''])
         self.assertEqual(wrapString('a'), ['a'])
@@ -43,10 +58,6 @@ class TestUtils(unittest.TestCase):
         line = ' '.join((A, B, C))
         self.assertEqual(wrapString(line), ['', A + ' ', B + ' ', C])
 
-        # We can change the MAX_WIDTH by setting an environment
-        # variable.
-        import i18ndude.utils
-        orig_max_width = i18ndude.utils.MAX_WIDTH
         # Accept a line of 5: 3 characters plus 2 quotes.
         i18ndude.utils.MAX_WIDTH = 5
         self.assertEqual(wrapString('aaa'), ['aaa'])
@@ -57,8 +68,9 @@ class TestUtils(unittest.TestCase):
         i18ndude.utils.MAX_WIDTH = 2
         self.assertEqual(wrapString('aaa aaaaa'), ['aaa aaaaa'])
 
-        # Restory the original setting.
+        # Restory the original settings.
         i18ndude.utils.MAX_WIDTH = orig_max_width
+        i18ndude.utils.WRAP = orig_wrap
 
 
 def test_suite():
