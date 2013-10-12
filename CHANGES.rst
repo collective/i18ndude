@@ -7,11 +7,32 @@ Changelog
 - Add command line documentation to long description of package.
   [maurits]
 
-- Wrap msgid and msgstr lines at 79 characters, as most PO editors do
-  that.  Set an environment variable ``PO_MAX_WIDTH`` to choose a
-  different length.  If this is two or less, we do no wrapping,
-  because all lines must be enclosed in quotes.
+- Add options ``--wrap``, ``--no-wrap`` and ``--width=NUMBER`` to all
+  commands that write files.  Use these to determine whether long
+  lines are wrapped and at which width.  Default width is 79.  By
+  default we do NOT wrap, because we have never wrapped before.  This
+  may change in the future, so if you *really* want to be sure to not
+  wrap when using a future i18ndude version, you can add ``--no-wrap``
+  now.
   https://github.com/collective/i18ndude/issues/3
+  [maurits]
+
+- Fix the ``list`` command to also work in a ``locales`` structure.
+  [maurits]
+
+- Fix an error in the ``merge`` command where the ``--merge`` option
+  would be used as value for the ``--merge2`` option as well, if that
+  option itself was unused.  This led to unneeded warnings.
+  [maurits]
+
+- The ``--create domain`` option of ``rebuild-pot`` is now optional.
+  If not given, i18ndude reads the domain from the given ``.pot``
+  file.  It was always optional, but the documentation did not show it
+  and it did not work.
+  [maurits]
+
+- Update the command line options handling.  You can now get the help
+  for individual commands by calling them with the ``--help`` option.
   [maurits]
 
 - Return exit code 1 when the called function gives an error.  This
