@@ -4,6 +4,9 @@ Changelog
 3.3.0 (unreleased)
 ------------------
 
+- Add command line documentation to long description of package.
+  [maurits]
+
 - Wrap msgid and msgstr lines at 79 characters, as most PO editors do
   that.  Set an environment variable ``PO_MAX_WIDTH`` to choose a
   different length.  If this is two or less, we do no wrapping,

@@ -1,3 +1,4 @@
+import os
 import sys
 
 from setuptools import setup, find_packages
@@ -23,6 +24,7 @@ setup(name='i18ndude',
       version=version,
       description="i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.",
       long_description=(open("README.txt").read() + "\n" +
+                        open(os.path.join("docs", "command.rst")).read() + "\n" +
                         open("CHANGES.rst").read()),
       classifiers=[
           'Development Status :: 5 - Production/Stable',
@@ -49,8 +51,13 @@ setup(name='i18ndude',
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
-      entry_points="""
-      [console_scripts]
-      i18ndude=i18ndude.script:main
-      """,
+      entry_points={
+          'console_scripts': [
+              'i18ndude=i18ndude.script:main',
+              ],
+          # Documentation generation
+          'zest.releaser.prereleaser.before': [
+              'i18ndude_cli = i18ndude.utils:prepare_cli_documentation',
+              ],
+          },
       )
