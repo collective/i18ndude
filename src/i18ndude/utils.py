@@ -80,7 +80,6 @@ def getLanguage(product, file):
                     break
                 if part == 'LC_MESSAGES':
                     lc_found = True
-            print lang
     return lang
 
 
