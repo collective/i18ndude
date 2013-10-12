@@ -103,6 +103,7 @@ less, we do no wrapping, because all lines must be enclosed in quotes.
 import argparse
 import os
 import sys
+import textwrap
 import xml.sax
 
 from i18ndude import common, untranslated, catalog, visualisation, utils
@@ -173,8 +174,8 @@ def filter_isfile(files):
     return result
 
 
-def find_untranslated_parser():
-    """Argument parser for rebuild-pot command.
+def find_untranslated_parser(subparsers):
+    """Argument parser for find-untranslated command.
 
     find-untranslated [-s|-n] [file1 [file2 ...]]
     """
@@ -189,8 +190,7 @@ def find_untranslated_parser():
     errors or warnings). If you provide the -n option, the report will
     contain only the errors for each file.
     """
-    parser = argparse.ArgumentParser(
-        prog="%s find-untranslated" % sys.argv[0],
+    parser = subparsers.add_parser('find-untranslated',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-s', '--silent', action='store_true', help=(
@@ -199,13 +199,11 @@ def find_untranslated_parser():
     parser.add_argument('-n', '--nosummary', action='store_true', help=(
         "The report will contain only the errors for each file."))
     parser.add_argument('files', nargs='*', help="list of ZPT filenames")
+    parser.set_defaults(func=find_untranslated)
     return parser
 
 
-def find_untranslated():
-    argparser = find_untranslated_parser()
-    arguments = argparser.parse_args(sys.argv[2:])
-
+def find_untranslated(arguments):
     parser = xml.sax.make_parser(['expat'])
     # disable external validation to make it work without network access
     parser.setFeature(xml.sax.handler.feature_external_ges, False)
@@ -243,7 +241,7 @@ def find_untranslated():
     return errors
 
 
-def rebuild_pot_parser():
+def rebuild_pot_parser(subparsers):
     """Argument parser for rebuild-pot command.
 
     rebuild-pot --pot <filename> --create <domain> [--merge <filename>
@@ -274,8 +272,7 @@ def rebuild_pot_parser():
     by using the --exclude argument, which takes a whitespace delimited
     list of files.
     """
-    parser = argparse.ArgumentParser(
-        prog="%s rebuild-pot" % sys.argv[0],
+    parser = subparsers.add_parser('rebuild-pot',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -287,12 +284,11 @@ def rebuild_pot_parser():
     parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
     parser.add_argument('--exclude', metavar='"<ignore1> <ignore2> ..."')
     parser.add_argument('path', nargs='*')
+    parser.set_defaults(func=rebuild_pot)
     return parser
 
 
-def rebuild_pot():
-    argparser = rebuild_pot_parser()
-    arguments = argparser.parse_args(sys.argv[2:])
+def rebuild_pot(arguments):
     merge_ctl = None
 
     # Determine final argument values.
@@ -377,7 +373,7 @@ def rebuild_pot():
     writer.write(msgstrToComment=True)
 
 
-def merge_parser():
+def merge_parser(subparsers):
     """Argument parser for merge command.
 
     merge --pot <filename> --merge <filename> [--merge2 <filename>]
@@ -392,8 +388,7 @@ def merge_parser():
     If you provide a --merge2 <filename> I'll first merge this one
     in addition to the first one.
     """
-    parser = argparse.ArgumentParser(
-        prog="%s merge" % sys.argv[0],
+    parser = subparsers.add_parser('merge',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -402,13 +397,11 @@ def merge_parser():
     parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn',
                         required=True)
     parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
+    parser.set_defaults(func=merge)
     return parser
 
 
-def merge():
-    argparser = merge_parser()
-    arguments = argparser.parse_args(sys.argv[2:])
-
+def merge(arguments):
     # Determine final argument values.
     pot_fn = arguments.pot_fn
     merge_fn = arguments.merge_fn
@@ -440,7 +433,7 @@ def merge():
     writer.write(msgstrToComment=True)
 
 
-def sync_parser():
+def sync_parser(subparsers):
     """Argument parser for sync command.
 
     sync --pot <filename> file1 [file2 ...]
@@ -452,21 +445,18 @@ def sync_parser():
     msgids are not in the pot-file and add messages that the pot-file has
     but the po-file doesn't.
     """
-    parser = argparse.ArgumentParser(
-        prog="%s sync" % sys.argv[0],
+    parser = subparsers.add_parser('sync',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-p', '--pot', metavar='potfilename',
                         dest='pot_fn', required=True)
     parser.add_argument('files', nargs='+', metavar='pofilename')
+    parser.set_defaults(func=sync)
     return parser
 
 
-def sync():
-    argparser = sync_parser()
-    arguments = argparser.parse_args(sys.argv[2:])
-
+def sync(arguments):
     pot_fn = arguments.pot_fn
     if not pot_fn:
         short_usage(1, u"No pot file specified as target with --pot.")
@@ -493,14 +483,13 @@ def sync():
         file.close()
 
 
-def two_file_parser(cmd, description):
+def two_file_parser(subparsers, cmd, description):
     """Argument parser for command that takes two files.
 
     filter, admix and trmerge all accept two files as arguments.
     """
 
-    parser = argparse.ArgumentParser(
-        prog="%s %s" % (sys.argv[0], cmd),
+    parser = subparsers.add_parser(cmd,
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -509,7 +498,7 @@ def two_file_parser(cmd, description):
     return parser
 
 
-def filter_parser():
+def filter_parser(subparsers):
     """Argument parser for filter command.
 
     filter <file1> <file2>
@@ -519,12 +508,12 @@ def filter_parser():
     Given two pot-files I will write a copy of file1 to stdout with all
     messages removed that are also in file2, i.e. where msgids match.
     """
-    return two_file_parser('filter', description)
+    parser = two_file_parser(subparsers, 'filter', description)
+    parser.set_defaults(func=filter)
+    return parser
 
 
-def filter():
-    argparser = filter_parser()
-    arguments = argparser.parse_args(sys.argv[2:])
+def filter(arguments):
     parse_wrapping_arguments(arguments)
 
     f1_ctl = catalog.MessageCatalog(filename=arguments.file1)
@@ -538,7 +527,7 @@ def filter():
     writer.write(sort=False, msgstrToComment=True)
 
 
-def admix_parser():
+def admix_parser(subparsers):
     """Argument parser for admix command.
 
     admix <file1> <file2>
@@ -550,12 +539,12 @@ def admix_parser():
     file1. Note that this will not affect the number of entries in file1.
     The result will be on stdout.
     """
-    return two_file_parser('admix', description)
+    parser = two_file_parser(subparsers, 'admix', description)
+    parser.set_defaults(func=admix)
+    return parser
 
 
-def admix():
-    argparser = admix_parser()
-    arguments = argparser.parse_args(sys.argv[2:])
+def admix(arguments):
     parse_wrapping_arguments(arguments)
 
     base_ctl = catalog.MessageCatalog(filename=arguments.file1)
@@ -573,7 +562,7 @@ def admix():
     writer.write(sort=False)
 
 
-def trmerge_parser():
+def trmerge_parser(subparsers):
     """Argument parser for trmerge command.
 
     trmerge <file1> <file2>
@@ -586,12 +575,12 @@ def trmerge_parser():
     in file2, the fuzzy marker is removed.
     The result will be on stdout.
     """
-    return two_file_parser('trmerge', description)
+    parser = two_file_parser(subparsers, 'trmerge', description)
+    parser.set_defaults(func=trmerge)
+    return parser
 
 
-def trmerge():
-    argparser = trmerge_parser()
-    arguments = argparser.parse_args(sys.argv[2:])
+def trmerge(arguments):
     parse_wrapping_arguments(arguments)
 
     base_ctl = catalog.MessageCatalog(filename=arguments.file1)
@@ -611,7 +600,7 @@ def trmerge():
     writer.write(sort=False)
 
 
-def list_parser():
+def list_parser(subparsers):
     """Argument parser for list command.
 
     list --products <product1> [<product2> ...]
@@ -623,20 +612,17 @@ def list_parser():
     from the directory containing the pot-files. The product name is
     normally a domain name.
     """
-    parser = argparse.ArgumentParser(
-        prog="%s list" % sys.argv[0],
+    parser = subparsers.add_parser('list',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-p', '--products', metavar='product', nargs='+',
                         required=True)
     parser.add_argument('-t', '--table', action='store_true')
+    parser.set_defaults(func=list)
     return parser
 
 
-def list():
-    argparser = list_parser()
-    arguments = argparser.parse_args(sys.argv[2:])
-
+def list(arguments):
     table = arguments.table
     products = arguments.products
 
@@ -689,30 +675,34 @@ def list():
 
 
 def main():
-    if len(sys.argv) == 1:
-        usage(0)
+    description = """
+    i18ndude performs various tasks related to ZPT's, Python Scripts
+    and i18n.
 
-    commands = {'find-untranslated': find_untranslated,
-                'rebuild-pot': rebuild_pot,
-                'merge': merge,
-                'sync': sync,
-                'filter': filter,
-                'admix': admix,
-                'list': list,
-                'trmerge': trmerge}
+    Its main task is to extract translation strings (msgids) into a
+    .pot file (with the 'rebuild-pot' command), and sync the .pot file
+    with .po files (with the 'sync' command).
 
-    command = sys.argv[1]
-
-    try:
-        fun = commands[command]
-    except KeyError:
-        if command in ('-h', '--help'):
-            fun = lambda: usage(0)
-        else:
-            print >> sys.stderr, 'Unknown command %s' % command
-            sys.exit(1)
-
-    errors = fun()
+    Call i18ndude with one of the listed subcommands followed by
+    --help to get help for that subcommand.
+    """
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=textwrap.dedent(description))
+    subparsers = parser.add_subparsers(title='subcommands')
+    # Add subparsers.
+    find_untranslated_parser(subparsers)
+    rebuild_pot_parser(subparsers)
+    merge_parser(subparsers)
+    sync_parser(subparsers)
+    filter_parser(subparsers)
+    admix_parser(subparsers)
+    list_parser(subparsers)
+    trmerge_parser(subparsers)
+    # Parse the arguments.
+    arguments = parser.parse_args(sys.argv[1:])
+    # Call the function of the chosen command with the arguments.
+    errors = arguments.func(arguments)
     if errors:
         sys.exit(1)
 
