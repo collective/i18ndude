@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.3.0 (unreleased)
+3.3.0 (2013-10-13)
 ------------------
 
 - Add command line documentation to long description of package.
