@@ -196,7 +196,7 @@ def rebuild_pot_parser(subparsers):
                         dest='create_domain', required=False)
     parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn')
     parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
-    parser.add_argument('--exclude', metavar='"<ignore1> <ignore2> ..."')
+    parser.add_argument('--exclude', metavar='"<ignore1> <ignore2> ..."', default='')
     parser.add_argument('path', nargs='*')
     parser.set_defaults(func=rebuild_pot)
     return parser
