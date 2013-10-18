@@ -50,6 +50,7 @@ setup(name='i18ndude',
       packages=find_packages('src', exclude=['ez_setup']),
       include_package_data=True,
       zip_safe=False,
+      test_suite='i18ndude.tests',
       install_requires=install_requires,
       entry_points={
           'console_scripts': [
