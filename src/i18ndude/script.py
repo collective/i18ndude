@@ -207,7 +207,7 @@ def rebuild_pot(arguments):
 
     # Determine final argument values.
     create_domain = arguments.create_domain
-    exclude = tuple(arguments.exclude.split())
+    exclude = arguments.exclude and tuple(arguments.exclude.split()) or ()
     pot_fn = arguments.pot_fn
     merge_fn = arguments.merge_fn
     merge2_fn = arguments.merge2_fn
