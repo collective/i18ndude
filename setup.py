@@ -23,7 +23,7 @@ if sys.version_info < (2, 7):
 setup(name='i18ndude',
       version=version,
       description="i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.",
-      long_description=(open("README.txt").read() + "\n" +
+      long_description=(open("README.rst").read() + "\n" +
                         open(os.path.join("docs", "command.rst")).read() + "\n" +
                         open("CHANGES.rst").read()),
       classifiers=[
