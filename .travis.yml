@@ -1,0 +1,10 @@
+language: python
+python:
+  - 2.6
+  - 2.7
+install:
+  - python bootstrap.py
+  - bin/buildout -N -q
+script: bin/test
+after_failure:
+  - bin/buildout annotate

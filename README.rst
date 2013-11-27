@@ -4,6 +4,15 @@ i18ndude
 .. contents::
 
 
+Introduction
+------------
+
+i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
+
+.. image:: https://secure.travis-ci.org/collective/i18ndude.png?branch=master
+    :alt: Travis CI badge
+    :target: http://travis-ci.org/collective/i18ndude
+
 Compatibility
 -------------
 
