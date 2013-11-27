@@ -19,6 +19,9 @@ Changelog
 3.3.1 (2013-10-18)
 ------------------
 
+- Update script.py in some cases "arguments.exclude" is None.
+  [giacomos]
+
 - Fixed optional parameter exclude.
   [shylux]
 
