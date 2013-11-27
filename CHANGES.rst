@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.3.2 (unreleased)
+3.3.2 (2013-11-27)
 ------------------
 
 - ``trmerge``: do not override when the mixin translation is fuzzy.
