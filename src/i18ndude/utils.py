@@ -209,3 +209,16 @@ def prepare_cli_documentation(data):
     result.append('')
     open(target, 'wb').write('\n'.join(result))
     print "Wrote command line documentation to", target
+
+    # If there is a diff, we want to commit it.
+    from zest.releaser import choose
+    from zest.releaser.utils import ask, system
+    vcs = choose.version_control()
+    diff_cmd = vcs.cmd_diff()
+    diff = system(diff_cmd)
+    if diff.strip():
+        print "The %r:\n\n%s\n" % (diff_cmd, diff)
+        if ask("OK to commit this"):
+            msg = "Wrote command line documentation."
+            commit_cmd = vcs.cmd_commit(msg)
+            print system(commit_cmd)
