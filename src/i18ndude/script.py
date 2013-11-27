@@ -478,11 +478,23 @@ def trmerge_parser(subparsers):
     description = """
     Given two po-files I will update all translations from file2 into
     file1. Missing translations are added.
+
     If a translation was fuzzy in file1, and there is a nonempty translation
     in file2, the fuzzy marker is removed.
-    The result will be on stdout.
+
+    Fuzzy translations in file2 are ignored.
+
+    The result will be on stdout.  If you want to update the first
+    file in place, use a temporary file, something like this:
+
+      i18ndude trmerge file1.po file2.po > tmp_merge && mv tmp_merge file1.po
     """
     parser = two_file_parser(subparsers, 'trmerge', description)
+    parser.add_argument('-i', '--ignore-extra', action='store_true', help=(
+        "Ignore extra messages: do not add msgids that are not in the "
+        "original po-file. Only update translations for existing msgids."))
+    parser.add_argument('--no-override', action='store_true', help=(
+        "Do not override translations, only add missing translations."))
     parser.set_defaults(func=trmerge)
     return parser
 
@@ -492,14 +504,35 @@ def trmerge(arguments):
     mixin_ctl = catalog.MessageCatalog(filename=arguments.file2)
 
     for msgid in mixin_ctl:
-        mixin_msgstr = mixin_ctl[msgid].msgstr
-
-        if mixin_msgstr:
-            entry = base_ctl.get(msgid, mixin_ctl[msgid])
-            entry.msgstr = mixin_msgstr
-            if ', fuzzy' in entry.comments:
-                entry.comments.remove(', fuzzy')
-            base_ctl[msgid] = entry
+        base_entry = base_ctl.get(msgid)
+        if base_entry is None and arguments.ignore_extra:
+            # This msgid is not in the original po-file and the user
+            # has chosen to ignore it.
+            continue
+        mixin_entry = mixin_ctl[msgid]
+        mixin_msgstr = mixin_entry.msgstr
+        if not mixin_msgstr:
+            # The mixin translation is empty.
+            continue
+        if ', fuzzy' in mixin_entry.comments:
+            # The mixin translation is fuzzy.
+            continue
+        if (arguments.no_override
+                and base_entry is not None
+                and base_entry.msgstr
+                and ', fuzzy' not in base_entry.comments):
+            # The user does not want to override and we have an
+            # existing, non-fuzzy translation.
+            continue
+        # Okay, we have a fine new translation.
+        entry = base_entry or mixin_entry
+        entry.msgstr = mixin_msgstr
+        if ', fuzzy' in entry.comments:
+            # The base entry was fuzzy, but the mixin has a different
+            # or non-fuzzy translation.
+            entry.comments.remove(', fuzzy')
+        # Finally store the new entry
+        base_ctl[msgid] = entry
 
     writer = catalog.POWriter(sys.stdout, base_ctl)
     writer.write(sort=False)

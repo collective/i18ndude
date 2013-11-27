@@ -4,7 +4,16 @@ Changelog
 3.3.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- ``trmerge``: do not override when the mixin translation is fuzzy.
+  [maurits]
+
+- ``trmerge``: add ``--no-override`` argument.  This means: do not
+  override translations, only add missing translations.
+  [maurits]
+
+- ``trmerge``: add ``--ignore-extra`` option.  This ignores extra msgids
+  in the second po-file.
+  [maurits]
 
 
 3.3.1 (2013-10-18)
