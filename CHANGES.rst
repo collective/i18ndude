@@ -10,7 +10,8 @@ Changelog
 3.3.1 (2013-10-18)
 ------------------
 
-- Nothing changed yet.
+- Fixed optional parameter exclude.
+  [shylux]
 
 
 3.3.0 (2013-10-13)
