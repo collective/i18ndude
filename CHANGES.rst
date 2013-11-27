@@ -4,7 +4,8 @@ Changelog
 3.3.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Package housekeeping.
+  [hvelarde]
 
 
 3.3.2 (2013-11-27)
