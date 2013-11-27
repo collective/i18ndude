@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.3.3 (unreleased)
+3.3.3 (2013-11-27)
 ------------------
 
 - Package housekeeping.
