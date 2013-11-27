@@ -224,13 +224,22 @@ trmerge
 
 ::
 
-  usage: i18ndude trmerge [-h] [--wrap | --no-wrap] [--width NUMBER] file1 file2
+  usage: i18ndude trmerge [-h] [--wrap | --no-wrap] [--width NUMBER] [-i]
+                          [--no-override]
+                          file1 file2
 
       Given two po-files I will update all translations from file2 into
       file1. Missing translations are added.
+
       If a translation was fuzzy in file1, and there is a nonempty translation
       in file2, the fuzzy marker is removed.
-      The result will be on stdout.
+
+      Fuzzy translations in file2 are ignored.
+
+      The result will be on stdout.  If you want to update the first
+      file in place, use a temporary file, something like this:
+
+        i18ndude trmerge file1.po file2.po > tmp_merge && mv tmp_merge file1.po
       
 
   positional arguments:
@@ -238,7 +247,12 @@ trmerge
     file2
 
   optional arguments:
-    -h, --help      show this help message and exit
-    --wrap          Wrap long lines.
-    --no-wrap       Do not wrap long lines. This is the default.
-    --width NUMBER  Set output page width. Default is 79.
+    -h, --help          show this help message and exit
+    --wrap              Wrap long lines.
+    --no-wrap           Do not wrap long lines. This is the default.
+    --width NUMBER      Set output page width. Default is 79.
+    -i, --ignore-extra  Ignore extra messages: do not add msgids that are not in
+                        the original po-file. Only update translations for
+                        existing msgids.
+    --no-override       Do not override translations, only add missing
+                        translations.
