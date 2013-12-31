@@ -15,3 +15,9 @@ four = _(msgid='msgid_four',
         mapping={'map': zero})
 
 five = _(u"msgid_five", default=u"五番目")
+
+six = _(u"msgid_six", default=u"""
+Line 1
+Line 2
+Line 3
+""")

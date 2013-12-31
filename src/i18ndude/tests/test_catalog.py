@@ -438,6 +438,7 @@ class TestMessagePYReader(unittest.TestCase):
                        u'msgid_three': self.me(u'msgid_three', msgstr='Three', references=[filepath+':10']),
                        u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath+':13']),
                        u'msgid_five': self.me(u'msgid_five', msgstr=u"五番目", references=[filepath+':17']),
+                       u'msgid_six': self.me(u'msgid_six', msgstr=u"\nLine 1\nLine 2\nLine 3\n", references=[filepath+':19']),
                        # XXX This should not be found as it's in a different domain
                        # instead it recognizes the domain as a msgstr now
                        u'Out1': self.me(u'Out1', msgstr='running', references=[filepath+':7'])
