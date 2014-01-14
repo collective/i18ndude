@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import tempfile
 import unittest
+import warnings
 
 from utils import PACKAGE_HOME
 
@@ -414,7 +416,27 @@ class TestMessagePTReader(unittest.TestCase):
 
     def test_read(self):
         ptr = catalog.PTReader(self.input, domain='testing')
-        ptr.read()
+        with warnings.catch_warnings(record=True) as log:
+            warnings.simplefilter("always")
+            # This call will give a warning from zope.tal.
+            ptr.read()
+            # From zope.tal 4.0.0 onwards it is a proper warning that
+            # we can catch.  Before that, it was just a print
+            # statement.
+            if len(log) == 1:
+                message = log[0].message
+                with tempfile.TemporaryFile('w+') as printfile:
+                    print >> printfile, message
+                    printfile.seek(0)
+                    contents = printfile.read()
+                    # Check that a few key elements are in the
+                    # warning, without wanting to check the exact
+                    # wording, as this can easily change.
+                    self.assertTrue("already exists with a different default"
+                                    in contents)
+                    self.assertTrue("bad: Buzzer, should be: Buzz"
+                                    in contents)
+
         out = ptr.catalogs['testing']
         for key in out:
             self.assertTrue(key in self.output,
