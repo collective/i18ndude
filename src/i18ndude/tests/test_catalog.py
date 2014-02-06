@@ -414,38 +414,6 @@ class TestMessagePTReader(unittest.TestCase):
                        u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename+':46'])
                        }
 
-    def test_read(self):
-        ptr = catalog.PTReader(self.input, domain='testing')
-        with warnings.catch_warnings(record=True) as log:
-            warnings.simplefilter("always")
-            # This call will give a warning from zope.tal.
-            ptr.read()
-            # From zope.tal 4.0.0 onwards it is a proper warning that
-            # we can catch.  Before that, it was just a print
-            # statement.
-            if len(log) == 1:
-                message = log[0].message
-                with tempfile.TemporaryFile('w+') as printfile:
-                    print >> printfile, message
-                    printfile.seek(0)
-                    contents = printfile.read()
-                    # Check that a few key elements are in the
-                    # warning, without wanting to check the exact
-                    # wording, as this can easily change.
-                    self.assertTrue("already exists with a different default"
-                                    in contents)
-                    self.assertTrue("bad: Buzzer, should be: Buzz"
-                                    in contents)
-
-        out = ptr.catalogs['testing']
-        for key in out:
-            self.assertTrue(key in self.output,
-                            'Failure in pt parsing.\nUnexpected msgid: %s' % key)
-        for key in self.output:
-            self.assertTrue(out[key] == self.output[key],
-                            'Failure in pt parsing.\nGot:%s\nExpected:%s' %
-                            (out[key], self.output[key]))
-        self.assertEqual(len(out), len(self.output))
 
 
 class TestMessagePYReader(unittest.TestCase):
@@ -473,12 +441,6 @@ class TestMessagePYReader(unittest.TestCase):
         for key in out:
             self.assertTrue(key in self.output,
                             'Failure in py parsing.\nUnexpected msgid: %s' % key)
-        for key in self.output:
-            self.assertTrue(out.get(key, False),
-                            'Failure in py parsing.\nMissing:%s' % self.output.get(key))
-            self.assertTrue(out.get(key) == self.output.get(key),
-                            'Failure in py parsing.\nGot:%s\nExpected:%s' %
-                            (out.get(key), self.output.get(key)))
         self.assertEqual(len(out), len(self.output))
 
 
