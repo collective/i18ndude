@@ -30,7 +30,7 @@ DEFAULT_PO_MIME = (('Project-Id-Version', 'PACKAGE VERSION'),
                    ('Preferred-Encodings', 'utf-8 latin1'),
                    ('Domain', 'DOMAIN'))
 
-MAX_OCCUR = 3  # maximum number of occurrences listed
+MAX_OCCUR = 999  # maximum number of occurrences listed
 # Set it to None to list all occurences
 
 
@@ -260,8 +260,11 @@ class MessageCatalog(OrderedDict):
                          automatic_comments=entry.automatic_comments)
                 ids.append(key)
             elif mergewarn:
-                print >> sys.stderr, \
-                    'Merge-Warning: Key is already in target-catalog: %s' % key.encode('utf-8')
+                # Instread of just showing a warning, it is usefull to add
+                # other references
+                self[key].references.extend(msgctl[key].references)
+#                print >> sys.stderr, \
+#                    'Merge-Warning: Key is already in target-catalog: %s' % key.encode('utf-8')
 
         return ids
 
