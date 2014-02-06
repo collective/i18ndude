@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.3.3-arsia (unreleased)
-------------------
+3.3.3-arsia (2014-02-06)
+------------------------
 
 - Add possibility to choose max occurence of references in scripts options
 
