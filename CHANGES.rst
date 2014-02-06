@@ -4,7 +4,9 @@ Changelog
 3.3.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add possibility to choose max occurence of references in scripts options
+
+- Instead of just showing a warning, add other references while merging
 
 
 3.3.3 (2013-11-27)

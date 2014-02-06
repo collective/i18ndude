@@ -537,6 +537,7 @@ def main():
         excludefilename = ''
         docstrings = 0
         nodocstrings = {}
+        maxoccur = 3
 
     options = Options()
     locations = {'gnu' : options.GNU,
@@ -559,6 +560,11 @@ def main():
             options.keywords.append(arg)
         elif opt in ('-K', '--no-default-keywords'):
             default_keywords = []
+        elif opt in ('-m', '--max-occur'):
+            try:
+                options.maxoccur = int(arg)
+            except ValueError:
+                usage(1, _('--max-occur argument must be an integer: %s') % arg)
         elif opt in ('-n', '--add-location'):
             options.writelocations = 1
         elif opt in ('--no-location',):

@@ -30,7 +30,6 @@ DEFAULT_PO_MIME = (('Project-Id-Version', 'PACKAGE VERSION'),
                    ('Preferred-Encodings', 'utf-8 latin1'),
                    ('Domain', 'DOMAIN'))
 
-MAX_OCCUR = 999  # maximum number of occurrences listed
 # Set it to None to list all occurences
 
 
@@ -260,11 +259,8 @@ class MessageCatalog(OrderedDict):
                          automatic_comments=entry.automatic_comments)
                 ids.append(key)
             elif mergewarn:
-                # Instread of just showing a warning, it is usefull to add
-                # other references
+                # Instead of just showing a warning, it is usefull to add other references
                 self[key].references.extend(msgctl[key].references)
-#                print >> sys.stderr, \
-#                    'Merge-Warning: Key is already in target-catalog: %s' % key.encode('utf-8')
 
         return ids
 
@@ -445,10 +441,11 @@ class POParser:
 
 class POWriter:
 
-    def __init__(self, file, catalog):
+    def __init__(self, file, catalog, maxreferences=3):
         """Initialize a POWriter with a filelike object that I am to write to."""
         self._file = file
         self._msgctl = catalog
+        self._maxreferences = maxreferences
 
     def _encode(self, line, input_encoding=None, output_encoding=None):
         """encode a given unicode type or string type to string type
@@ -603,11 +600,11 @@ class POWriter:
 
         # Support for max number of references
         refs_values = sorted(refs.values())
-#        include_ellipsis = MAX_OCCUR is not None and \
-#                           len(refs_values[MAX_OCCUR:])
-        for idx, ref in enumerate(refs_values[:MAX_OCCUR]):
+#        include_ellipsis = self._maxreferences is not None and \
+#                           len(refs_values[self._maxreferences:])
+        for idx, ref in enumerate(refs_values[:self._maxreferences]):
             self._printToFile(f, '#: %s' % ref)
-#            if include_ellipsis and idx == MAX_OCCUR - 1:
+#            if include_ellipsis and idx == self._maxreferences - 1:
 #                self._printToFile(f, '#: %s' % ref)
 #                self._printToFile(f, '#: ...')
 
