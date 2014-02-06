@@ -645,7 +645,7 @@ class PTReader:
         """
         from extract import tal_strings
         tal = tal_strings(self.path, domain=self.domain,
-                          exclude=self.exclude+('tests', 'docs'))
+                          exclude=self.exclude + ('tests', 'docs'))
 
         for msgid in tal:
 
@@ -655,7 +655,7 @@ class PTReader:
                 self._add_msg(msgid,
                               msgstr,
                               [],
-                              [l[0]+':'+str(l[1]) for l in tal[msgid]],
+                              [l[0] + ':' + str(l[1]) for l in tal[msgid]],
                               [],
                               self.domain)
 
@@ -699,13 +699,13 @@ class PYReader:
 
         from extract import py_strings
         py = py_strings(self.path, self.domain,
-                        exclude=self.exclude+('tests', ))
+                        exclude=self.exclude + ('tests', ))
 
         for msgid in py:
             self._add_msg(msgid,
                           msgid.default or '',
                           [],
-                          [l[0]+':'+str(l[1]) for l in py[msgid]],
+                          [l[0] + ':' + str(l[1]) for l in py[msgid]],
                           [],
                           self.domain)
         return []
@@ -747,7 +747,7 @@ class GSReader(object):
 
         from gsextract import gs_strings
         gs = gs_strings(self.path, self.domain,
-                        exclude=self.exclude+('tests', ))
+                        exclude=self.exclude + ('tests', ))
 
         for domain in gs:
             for msgid in gs[domain]:

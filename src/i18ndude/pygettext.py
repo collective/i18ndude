@@ -172,8 +172,6 @@ DEFAULTKEYWORDS = ', '.join(default_keywords)
 
 EMPTYSTRING = ''
 
-
-
 # The normal pot-file header. msgmerge and Emacs's po-mode work better if it's
 # there.
 pot_header = _('''\
@@ -204,6 +202,7 @@ def usage(code, msg=''):
 
 
 escapes = []
+
 
 def make_escapes(pass_iso8859):
     global escapes
@@ -239,7 +238,7 @@ def escape(s):
 
 def safe_eval(s):
     # unwrap quotes, safely
-    return eval(s, {'__builtins__':{}}, {})
+    return eval(s, {'__builtins__': {}}, {})
 
 
 def normalize(s):
@@ -259,6 +258,7 @@ def normalize(s):
     if not isinstance(s, str):
         s = s.encode('utf-8')
     return s
+
 
 def containsAny(str, set):
     """Check whether 'str' contains ANY of the chars in 'set'"""
@@ -281,7 +281,7 @@ def _visit_pyfiles(list, dirname, names):
     list.extend(
         [os.path.join(dirname, file) for file in names
          if os.path.splitext(file)[1] == _py_ext]
-        )
+    )
 
 
 def _get_modpkg_path(dotted_name, pathlist=None):
@@ -298,7 +298,8 @@ def _get_modpkg_path(dotted_name, pathlist=None):
         # we have a dotted path, import top-level package
         try:
             file, pathname, description = imp.find_module(parts[0], pathlist)
-            if file: file.close()
+            if file:
+                file.close()
         except ImportError:
             return None
 
@@ -351,6 +352,7 @@ def getFilesForName(name):
         return [name]
 
     return []
+
 
 class TokenEater:
     def __init__(self, options):
@@ -427,11 +429,11 @@ class TokenEater:
             # warn if we see anything else than STRING or whitespace
             print >> sys.stderr, _(
                 '*** %(file)s:%(lineno)s: Seen unexpected token "%(token)s"'
-                ) % {
+            ) % {
                 'token': tstring,
                 'file': self.__curfile,
                 'lineno': self.__lineno
-                }
+            }
             self.__state = self.__waiting
 
     def __addentry(self, msg, lineno=None, isdocstring=0):
@@ -503,7 +505,6 @@ class TokenEater:
                 print >> fp, 'msgstr ""\n'
 
 
-
 def main():
     global default_keywords
     try:
@@ -525,7 +526,7 @@ def main():
         GNU = 1
         SOLARIS = 2
         # defaults
-        extractall = 0 # FIXME: currently this option has no effect at all.
+        extractall = 0  # FIXME: currently this option has no effect at all.
         escape = 0
         keywords = []
         outpath = ''
@@ -540,8 +541,8 @@ def main():
         maxoccur = 3
 
     options = Options()
-    locations = {'gnu' : options.GNU,
-                 'solaris' : options.SOLARIS,
+    locations = {'gnu': options.GNU,
+                 'solaris': options.SOLARIS,
                  }
 
     # parse options

@@ -104,7 +104,8 @@ def find_untranslated_parser(subparsers):
     errors or warnings). If you provide the -n option, the report will
     contain only the errors for each file.
     """
-    parser = subparsers.add_parser('find-untranslated',
+    parser = subparsers.add_parser(
+        'find-untranslated',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-s', '--silent', action='store_true', help=(
@@ -190,7 +191,8 @@ def rebuild_pot_parser(subparsers):
     You can provide the number of max occurences of the references you want
     by using --maxreferences.
     """
-    parser = subparsers.add_parser('rebuild-pot',
+    parser = subparsers.add_parser(
+        'rebuild-pot',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -318,7 +320,8 @@ def merge_parser(subparsers):
     You can provide the number of max occurences of the references you want
     by using --maxreferences.
     """
-    parser = subparsers.add_parser('merge',
+    parser = subparsers.add_parser(
+        'merge',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -386,7 +389,8 @@ def sync_parser(subparsers):
     You can provide the number of max occurences of the references you want
     by using --maxreferences.
     """
-    parser = subparsers.add_parser('sync',
+    parser = subparsers.add_parser(
+        'sync',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -409,7 +413,6 @@ def sync(arguments):
             maxreferences = int(maxreferences)
         except ValueError:
             short_usage(1, u'--maxreferences argument must be an integer: %s' % maxreferences)
-
 
     files = filter_isfile(arguments.files)
 
@@ -438,7 +441,8 @@ def two_file_parser(subparsers, cmd, description):
     filter, admix and trmerge all accept two files as arguments.
     """
 
-    parser = subparsers.add_parser(cmd,
+    parser = subparsers.add_parser(
+        cmd,
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -571,7 +575,6 @@ def trmerge(arguments):
         except ValueError:
             short_usage(1, u'--maxreferences argument must be an integer: %s' % maxreferences)
 
-
     for msgid in mixin_ctl:
         base_entry = base_ctl.get(msgid)
         if base_entry is None and arguments.ignore_extra:
@@ -619,7 +622,8 @@ def list_parser(subparsers):
     from the directory containing the pot-files. The product name is
     normally a domain name.
     """
-    parser = subparsers.add_parser('list',
+    parser = subparsers.add_parser(
+        'list',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-p', '--products', metavar='product', nargs='+',
