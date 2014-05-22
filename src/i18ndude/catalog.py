@@ -30,7 +30,6 @@ DEFAULT_PO_MIME = (('Project-Id-Version', 'PACKAGE VERSION'),
                    ('Preferred-Encodings', 'utf-8 latin1'),
                    ('Domain', 'DOMAIN'))
 
-MAX_OCCUR = 3  # maximum number of occurrences listed
 # Set it to None to list all occurences
 
 
@@ -260,8 +259,8 @@ class MessageCatalog(OrderedDict):
                          automatic_comments=entry.automatic_comments)
                 ids.append(key)
             elif mergewarn:
-                print >> sys.stderr, \
-                    'Merge-Warning: Key is already in target-catalog: %s' % key.encode('utf-8')
+                # Instead of just showing a warning, it is usefull to add other references
+                self[key].references.extend(msgctl[key].references)
 
         return ids
 
@@ -442,10 +441,11 @@ class POParser:
 
 class POWriter:
 
-    def __init__(self, file, catalog):
+    def __init__(self, file, catalog, maxreferences=3):
         """Initialize a POWriter with a filelike object that I am to write to."""
         self._file = file
         self._msgctl = catalog
+        self._maxreferences = maxreferences
 
     def _encode(self, line, input_encoding=None, output_encoding=None):
         """encode a given unicode type or string type to string type
@@ -600,11 +600,11 @@ class POWriter:
 
         # Support for max number of references
         refs_values = sorted(refs.values())
-#        include_ellipsis = MAX_OCCUR is not None and \
-#                           len(refs_values[MAX_OCCUR:])
-        for idx, ref in enumerate(refs_values[:MAX_OCCUR]):
+#        include_ellipsis = self._maxreferences is not None and \
+#                           len(refs_values[self._maxreferences:])
+        for idx, ref in enumerate(refs_values[:self._maxreferences]):
             self._printToFile(f, '#: %s' % ref)
-#            if include_ellipsis and idx == MAX_OCCUR - 1:
+#            if include_ellipsis and idx == self._maxreferences - 1:
 #                self._printToFile(f, '#: %s' % ref)
 #                self._printToFile(f, '#: ...')
 
@@ -645,7 +645,7 @@ class PTReader:
         """
         from extract import tal_strings
         tal = tal_strings(self.path, domain=self.domain,
-                          exclude=self.exclude+('tests', 'docs'))
+                          exclude=self.exclude + ('tests', 'docs'))
 
         for msgid in tal:
 
@@ -655,7 +655,7 @@ class PTReader:
                 self._add_msg(msgid,
                               msgstr,
                               [],
-                              [l[0]+':'+str(l[1]) for l in tal[msgid]],
+                              [l[0] + ':' + str(l[1]) for l in tal[msgid]],
                               [],
                               self.domain)
 
@@ -699,13 +699,13 @@ class PYReader:
 
         from extract import py_strings
         py = py_strings(self.path, self.domain,
-                        exclude=self.exclude+('tests', ))
+                        exclude=self.exclude + ('tests', ))
 
         for msgid in py:
             self._add_msg(msgid,
                           msgid.default or '',
                           [],
-                          [l[0]+':'+str(l[1]) for l in py[msgid]],
+                          [l[0] + ':' + str(l[1]) for l in py[msgid]],
                           [],
                           self.domain)
         return []
@@ -747,7 +747,7 @@ class GSReader(object):
 
         from gsextract import gs_strings
         gs = gs_strings(self.path, self.domain,
-                        exclude=self.exclude+('tests', ))
+                        exclude=self.exclude + ('tests', ))
 
         for domain in gs:
             for msgid in gs[domain]:

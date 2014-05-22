@@ -1,10 +1,18 @@
 Changelog
 =========
 
-3.3.4 (unreleased)
-------------------
+3.3.4-arsia (unreleased)
+------------------------
 
 - Nothing changed yet.
+
+
+3.3.3-arsia (2014-02-06)
+------------------------
+
+- Add possibility to choose max occurence of references in scripts options
+
+- Instead of just showing a warning, add other references while merging
 
 
 3.3.3 (2013-11-27)

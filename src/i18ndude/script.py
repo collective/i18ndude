@@ -104,7 +104,8 @@ def find_untranslated_parser(subparsers):
     errors or warnings). If you provide the -n option, the report will
     contain only the errors for each file.
     """
-    parser = subparsers.add_parser('find-untranslated',
+    parser = subparsers.add_parser(
+        'find-untranslated',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-s', '--silent', action='store_true', help=(
@@ -159,7 +160,8 @@ def rebuild_pot_parser(subparsers):
     """Argument parser for rebuild-pot command.
 
     rebuild-pot --pot <filename> --create <domain> [--merge <filename>
-    [--merge2 <filename>]] [--exclude="<ignore1> <ignore2> ..."] path [path2 ...]
+    [--merge2 <filename>]] [--exclude="<ignore1> <ignore2> ..."]
+    [--maxreferences <max_references>] path [path2 ...]
     """
 
     description = """
@@ -185,8 +187,12 @@ def rebuild_pot_parser(subparsers):
     You can also provide a list of filenames which should not be included
     by using the --exclude argument, which takes a whitespace delimited
     list of files.
+
+    You can provide the number of max occurences of the references you want
+    by using --maxreferences.
     """
-    parser = subparsers.add_parser('rebuild-pot',
+    parser = subparsers.add_parser(
+        'rebuild-pot',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -197,6 +203,7 @@ def rebuild_pot_parser(subparsers):
     parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn')
     parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
     parser.add_argument('--exclude', metavar='"<ignore1> <ignore2> ..."', default='')
+    parser.add_argument('--maxreferences', metavar='NUMBER', dest='maxreferences')
     parser.add_argument('path', nargs='*')
     parser.set_defaults(func=rebuild_pot)
     return parser
@@ -213,6 +220,14 @@ def rebuild_pot(arguments):
     merge2_fn = arguments.merge2_fn
     if merge2_fn == merge_fn:
         merge2_fn = False
+
+    maxreferences = arguments.maxreferences
+    if maxreferences:
+        try:
+            maxreferences = int(maxreferences)
+        except ValueError:
+            short_usage(1, u'--maxreferences argument must be an integer: %s' % maxreferences)
+
     path = arguments.path
 
     try:
@@ -282,7 +297,7 @@ def rebuild_pot(arguments):
 
     ctl.mime_header['POT-Creation-Date'] = catalog.now()
     file = open(pot_fn, 'w')
-    writer = catalog.POWriter(file, ctl)
+    writer = catalog.POWriter(file, ctl, maxreferences)
     writer.write(msgstrToComment=True)
 
 
@@ -290,6 +305,7 @@ def merge_parser(subparsers):
     """Argument parser for merge command.
 
     merge --pot <filename> --merge <filename> [--merge2 <filename>]
+    [--maxreferences <max_references>]
     """
 
     description = """
@@ -300,8 +316,12 @@ def merge_parser(subparsers):
 
     If you provide a --merge2 <filename> I'll first merge this one
     in addition to the first one.
+
+    You can provide the number of max occurences of the references you want
+    by using --maxreferences.
     """
-    parser = subparsers.add_parser('merge',
+    parser = subparsers.add_parser(
+        'merge',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -310,6 +330,7 @@ def merge_parser(subparsers):
     parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn',
                         required=True)
     parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
+    parser.add_argument('--maxreferences', metavar='NUMBER', dest='maxreferences')
     parser.set_defaults(func=merge)
     return parser
 
@@ -319,6 +340,14 @@ def merge(arguments):
     pot_fn = arguments.pot_fn
     merge_fn = arguments.merge_fn
     merge2_fn = arguments.merge2_fn
+
+    maxreferences = arguments.maxreferences
+    if maxreferences:
+        try:
+            maxreferences = int(maxreferences)
+        except ValueError:
+            short_usage(1, u'--maxreferences argument must be an integer: %s' % maxreferences)
+
     if merge2_fn == merge_fn:
         merge2_fn = False
 
@@ -341,14 +370,14 @@ def merge(arguments):
         orig_ctl.add_missing(merge2_ctl, '', 1)
     orig_ctl.mime_header['POT-Creation-Date'] = catalog.now()
     file = open(pot_fn, 'w')
-    writer = catalog.POWriter(file, orig_ctl)
+    writer = catalog.POWriter(file, orig_ctl, maxreferences)
     writer.write(msgstrToComment=True)
 
 
 def sync_parser(subparsers):
     """Argument parser for sync command.
 
-    sync --pot <filename> file1 [file2 ...]
+    sync --pot <filename> file1 [file2 ...] [--maxreferences <max_references>]
     """
 
     description = """
@@ -356,14 +385,19 @@ def sync_parser(subparsers):
     remove from the po files those message translations of which the
     msgids are not in the pot-file and add messages that the pot-file has
     but the po-file doesn't.
+
+    You can provide the number of max occurences of the references you want
+    by using --maxreferences.
     """
-    parser = subparsers.add_parser('sync',
+    parser = subparsers.add_parser(
+        'sync',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-p', '--pot', metavar='potfilename',
                         dest='pot_fn', required=True)
     parser.add_argument('files', nargs='+', metavar='pofilename')
+    parser.add_argument('--maxreferences', metavar='NUMBER', dest='maxreferences')
     parser.set_defaults(func=sync)
     return parser
 
@@ -372,6 +406,13 @@ def sync(arguments):
     pot_fn = arguments.pot_fn
     if not pot_fn:
         short_usage(1, u"No pot file specified as target with --pot.")
+
+    maxreferences = arguments.maxreferences
+    if maxreferences:
+        try:
+            maxreferences = int(maxreferences)
+        except ValueError:
+            short_usage(1, u'--maxreferences argument must be an integer: %s' % maxreferences)
 
     files = filter_isfile(arguments.files)
 
@@ -385,7 +426,7 @@ def sync(arguments):
         added_msgids, removed_msgids = po.sync(pot_ctl)
 
         file = open(po.filename, 'w')
-        writer = catalog.POWriter(file, po)
+        writer = catalog.POWriter(file, po, maxreferences)
         writer.write(msgstrToComment=False, sync=True)
 
         print '%s: %s added, %s removed' % (po.filename,
@@ -400,7 +441,8 @@ def two_file_parser(subparsers, cmd, description):
     filter, admix and trmerge all accept two files as arguments.
     """
 
-    parser = subparsers.add_parser(cmd,
+    parser = subparsers.add_parser(
+        cmd,
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
@@ -412,7 +454,7 @@ def two_file_parser(subparsers, cmd, description):
 def filter_parser(subparsers):
     """Argument parser for filter command.
 
-    filter <file1> <file2>
+    filter <file1> <file2> [--maxreferences <max_references>]
     """
 
     description = """
@@ -420,6 +462,7 @@ def filter_parser(subparsers):
     messages removed that are also in file2, i.e. where msgids match.
     """
     parser = two_file_parser(subparsers, 'filter', description)
+    parser.add_argument('--maxreferences', metavar='NUMBER', dest='maxreferences')
     parser.set_defaults(func=filter)
     return parser
 
@@ -428,18 +471,25 @@ def filter(arguments):
     f1_ctl = catalog.MessageCatalog(filename=arguments.file1)
     f2_ctl = catalog.MessageCatalog(filename=arguments.file2)
 
+    maxreferences = arguments.maxreferences
+    if maxreferences:
+        try:
+            maxreferences = int(maxreferences)
+        except ValueError:
+            short_usage(1, u'--maxreferences argument must be an integer: %s' % maxreferences)
+
     for msgid in f1_ctl.keys():
         if msgid in f2_ctl:
             del f1_ctl[msgid]
 
-    writer = catalog.POWriter(sys.stdout, f1_ctl)
+    writer = catalog.POWriter(sys.stdout, f1_ctl, maxreferences)
     writer.write(sort=False, msgstrToComment=True)
 
 
 def admix_parser(subparsers):
     """Argument parser for admix command.
 
-    admix <file1> <file2>
+    admix <file1> <file2> [--maxreferences <max_references>]
     """
 
     description = """
@@ -447,8 +497,12 @@ def admix_parser(subparsers):
     are untranslated in file1. I add these translations (msgstrs) to
     file1. Note that this will not affect the number of entries in file1.
     The result will be on stdout.
+
+    You can provide the number of max occurences of the references you want
+    by using --maxreferences.
     """
     parser = two_file_parser(subparsers, 'admix', description)
+    parser.add_argument('--maxreferences', metavar='NUMBER', dest='maxreferences')
     parser.set_defaults(func=admix)
     return parser
 
@@ -456,6 +510,13 @@ def admix_parser(subparsers):
 def admix(arguments):
     base_ctl = catalog.MessageCatalog(filename=arguments.file1)
     mixin_ctl = catalog.MessageCatalog(filename=arguments.file2)
+
+    maxreferences = arguments.maxreferences
+    if maxreferences:
+        try:
+            maxreferences = int(maxreferences)
+        except ValueError:
+            short_usage(1, u'--maxreferences argument must be an integer: %s' % maxreferences)
 
     for msgid in mixin_ctl:
         mixin_msgstr = mixin_ctl[msgid].msgstr
@@ -465,14 +526,14 @@ def admix(arguments):
             entry.msgstr = mixin_ctl[msgid].msgstr
             base_ctl[msgid] = entry
 
-    writer = catalog.POWriter(sys.stdout, base_ctl)
+    writer = catalog.POWriter(sys.stdout, base_ctl, maxreferences)
     writer.write(sort=False)
 
 
 def trmerge_parser(subparsers):
     """Argument parser for trmerge command.
 
-    trmerge <file1> <file2>
+    trmerge <file1> <file2> [--maxreferences <max_references>]
     """
 
     description = """
@@ -487,6 +548,9 @@ def trmerge_parser(subparsers):
     The result will be on stdout.  If you want to update the first
     file in place, use a temporary file, something like this:
 
+    You can provide the number of max occurences of the references you want
+    by using --maxreferences.
+
       i18ndude trmerge file1.po file2.po > tmp_merge && mv tmp_merge file1.po
     """
     parser = two_file_parser(subparsers, 'trmerge', description)
@@ -495,6 +559,7 @@ def trmerge_parser(subparsers):
         "original po-file. Only update translations for existing msgids."))
     parser.add_argument('--no-override', action='store_true', help=(
         "Do not override translations, only add missing translations."))
+    parser.add_argument('--maxreferences', metavar='NUMBER', dest='maxreferences')
     parser.set_defaults(func=trmerge)
     return parser
 
@@ -502,6 +567,13 @@ def trmerge_parser(subparsers):
 def trmerge(arguments):
     base_ctl = catalog.MessageCatalog(filename=arguments.file1)
     mixin_ctl = catalog.MessageCatalog(filename=arguments.file2)
+
+    maxreferences = arguments.maxreferences
+    if maxreferences:
+        try:
+            maxreferences = int(maxreferences)
+        except ValueError:
+            short_usage(1, u'--maxreferences argument must be an integer: %s' % maxreferences)
 
     for msgid in mixin_ctl:
         base_entry = base_ctl.get(msgid)
@@ -534,7 +606,7 @@ def trmerge(arguments):
         # Finally store the new entry
         base_ctl[msgid] = entry
 
-    writer = catalog.POWriter(sys.stdout, base_ctl)
+    writer = catalog.POWriter(sys.stdout, base_ctl, maxreferences)
     writer.write(sort=False)
 
 
@@ -550,7 +622,8 @@ def list_parser(subparsers):
     from the directory containing the pot-files. The product name is
     normally a domain name.
     """
-    parser = subparsers.add_parser('list',
+    parser = subparsers.add_parser(
+        'list',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=description)
     parser.add_argument('-p', '--products', metavar='product', nargs='+',

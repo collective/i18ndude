@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-version = '3.3.4.dev0'
+version = '3.3.4-arsia.dev0'
 
 install_requires = [
     'zope.tal >= 3.5.2',
