@@ -70,11 +70,12 @@ class TestUtils(unittest.TestCase):
         line = ' '.join((A, B, C))
         self.assertEqual(wrapString(line), ['', A + ' ', B + ' ', C])
 
-        # Accept a line of 5: 3 characters plus 2 quotes.
-        i18ndude.utils.MAX_WIDTH = 5
+        # Accept a line of 12: 3 characters plus 2 quotes (and 'msgstr ').
+        i18ndude.utils.MAX_WIDTH = 12
         self.assertEqual(wrapString('aaa'), ['aaa'])
         self.assertEqual(wrapString('aaaa'), ['', 'aaaa'])
-        self.assertEqual(wrapString('aaa aaaaa'), ['', 'aaa ', 'aaaaa'])
+        self.assertEqual(wrapString('aaa' + ' ' + 'a'*12),
+                         ['', 'aaa ', 'a'*12])
 
         # If this is 2 or less, we do not wrap lines.
         i18ndude.utils.MAX_WIDTH = 2
