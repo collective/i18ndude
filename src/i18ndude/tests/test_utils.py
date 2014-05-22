@@ -32,7 +32,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(wrapString(line),
                          ['',
                           'a'*20 + ' ' + 'b'*50 + ' ',
-                          'c'*20+ ' ' + 'd'*50])
+                          'c'*20 + ' ' + 'd'*50])
 
         # Look for the maximum that can fit on a single line.  This is
         # the maximum width, minus a starting and ending quote.
