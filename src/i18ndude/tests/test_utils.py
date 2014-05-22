@@ -35,6 +35,22 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(wrapString('a'), ['a'])
         self.assertEqual(wrapString('a b'), ['a b'])
 
+    def test_wrapString_wrapping_first_line_edge_case(self):
+        """Lines that are just a bit shorter than MAX_WIDTH are still longer
+        at the end, as the line also contains the 'msgstr '.
+        This test makes sure that this edge case is taken care of
+        """
+        msgstr_length = len('msgstr ')
+        # the maximum amount of characters on the first line should be:
+        max_line_length = i18ndude.utils.MAX_WIDTH - msgstr_length - 2
+
+        line = 'a' * max_line_length
+        self.assertEqual(wrapString(line), [line])
+
+        # but only one character more would make it split into two lines
+        line += 'a'
+        self.assertEqual(wrapString(line), ['', line])
+
     def test_wrapString_wrapping_multiline(self):
         # This does not fit on a single line.
         line = 'a'*20 + ' ' + 'b'*50 + ' ' + 'c'*20+ ' ' + 'd'*50
@@ -42,20 +58,6 @@ class TestUtils(unittest.TestCase):
                          ['',
                           'a'*20 + ' ' + 'b'*50 + ' ',
                           'c'*20 + ' ' + 'd'*50])
-
-        # Look for the maximum that can fit on a single line.  This is
-        # the maximum width, minus a starting and ending quote.
-        max_one_line = i18ndude.utils.MAX_WIDTH - 2
-        line = 'a'*40 + ' ' + 'b'*36
-        self.assertEqual(len(line), max_one_line)
-        self.assertEqual(wrapString(line), [line])
-
-        # With one extra character we must split.
-        line += 'b'
-        self.assertEqual(wrapString(line),
-                         ['',
-                          'a'*40 + ' ',
-                          'b'*37])
 
     def test_wrapString_wrapping_long_words(self):
         # What happens when some words are really too long?
