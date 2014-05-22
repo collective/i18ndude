@@ -111,9 +111,15 @@ def wrapString(value):
     # Determine the maximum line length.  At first we only reserve
     # room for the two enclosing quotes.
     max_len = MAX_WIDTH - 2
+    # For a single line the maximum length is shorter, it has to account
+    # for the 'msgstr ' that goes before the string.
+    single_line_max_len = max_len - len('msgstr ')
     # Maybe we have it easy.
-    if len(value) <= max_len or max_len <= 0:
+    if max_len <= 0 or len(value) <= single_line_max_len:
         return [value]
+    # The line maybe is just in between max_len and single_line_max_len
+    if len(value) <= max_len:
+        return ['', value]
     # No, the value does not fit on one line.  This means we need to
     # reserve room for a space at the end of all but the last line.
     max_len -= 1
