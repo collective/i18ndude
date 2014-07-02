@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.3.4 (unreleased)
+3.3.4 (2014-07-02)
 ------------------
 
 - Wrap first line correctly.  Fixes #9.
