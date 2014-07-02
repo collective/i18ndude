@@ -4,7 +4,8 @@ Changelog
 3.3.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Wrap first line correctly.  Fixes #9.
+  [gforcada]
 
 
 3.3.3 (2013-11-27)
