@@ -11,7 +11,6 @@ i18ndude
 ::
 
   usage: i18ndude [-h]
-                  
                   {find-untranslated,rebuild-pot,merge,sync,filter,admix,list,trmerge}
                   ...
 
