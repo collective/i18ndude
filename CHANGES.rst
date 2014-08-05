@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.3.5 (unreleased)
+3.3.5 (2014-08-05)
 ------------------
 
 - Avoid AttributeError: 'NoneType' object has no attribute 'comments'
