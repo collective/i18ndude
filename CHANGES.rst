@@ -4,7 +4,11 @@ Changelog
 3.3.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Avoid AttributeError: 'NoneType' object has no attribute 'comments'
+  when a ``.po`` file is missing an empty msgid and msgstr near the
+  top.  This is fixed automatically, although it will override some
+  headers.
+  [maurits]
 
 
 3.3.4 (2014-07-02)

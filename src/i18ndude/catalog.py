@@ -329,12 +329,17 @@ class MessageCatalog(OrderedDict):
         parser.read()
         file.close()
         header = parser.msgdict.get('')
-        try:
-            self.commentary_header = header.comments
-            self._parse_mime_header(header.msgstr)
-            del parser.msgdict['']
-        except KeyError:
-            print >> sys.stderr, "%s lacks MIME header." % filename
+        if header is None:
+            print >> sys.stderr, (
+                "%s misses 'msgid \"\"' and 'msgstr \"\"' "
+                "near the top. Will be fixed." % filename)
+        else:
+            try:
+                self.commentary_header = header.comments
+                self._parse_mime_header(header.msgstr)
+                del parser.msgdict['']
+            except KeyError:
+                print >> sys.stderr, "%s lacks MIME header." % filename
         # Update the file after the header has been read.
         self.update(parser.msgdict)
 
