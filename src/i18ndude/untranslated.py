@@ -1,5 +1,8 @@
 import xml.sax
 
+IGNORE_UNTRANSLATED = 'i18n:ignore'
+IGNORE_UNTRANSLATED_ATTRIBUTES = 'i18n:ignore-attributes'
+
 
 def _translatable(data):
     """Returns 1 for strings that contain alphanumeric characters."""
@@ -72,6 +75,9 @@ def _valid_i18ned_attr(attr, attrs):
     """
 
     if attr in attrs and _translatable(attrs[attr]):
+        if IGNORE_UNTRANSLATED_ATTRIBUTES in attrs:
+            if attr in attrs[IGNORE_UNTRANSLATED_ATTRIBUTES].split(';'):
+                return 1
         if 'i18n:attributes' in attrs:
             # First check old syntax, or the simple case of one single
             # i18n:attribute.
@@ -168,8 +174,14 @@ class Handler(xml.sax.ContentHandler):
             if (self._i18nlevel == 0) and not tag in ['script', 'style']:  # not enclosed
                 severity = _severity(tag, attrs) or ''
                 if severity:
-                    self.log('i18n:translate missing for this:\n'
-                             '"""\n%s\n"""' % (data,), severity)
+                    if IGNORE_UNTRANSLATED in attrs.keys():
+                        # Ignore untranslated data. This is necessary for
+                        # including literal content, that does not need to be
+                        # translated.
+                        pass
+                    else:
+                        self.log('i18n:translate missing for this:\n'
+                                 '"""\n%s\n"""' % (data,), severity)
 
         if self._i18nlevel != 0:
             self._i18nlevel -= 1

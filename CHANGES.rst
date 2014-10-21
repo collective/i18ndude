@@ -4,8 +4,12 @@ Changelog
 3.3.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Drop python2.6 support.
 
+- For the find-untranslated feature, add the possibility to mark a tag to be
+  ignored by setting the "i18n:ignore" attribute on the tag. Also works for
+  attributes with the "i18n:ignore-attributes" attribute.
+  [janjaapdriessen]
 
 3.3.5 (2014-08-05)
 ------------------
