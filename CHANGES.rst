@@ -4,12 +4,17 @@ Changelog
 3.3.6 (unreleased)
 ------------------
 
-- Drop python2.6 support.
+- Drop Python 2.6 support.  It may still work, but the tests only run
+  on Python 2.7.  Note that it is fine to use one central i18ndude
+  command for all your projects, no matter what Python version they
+  are using.
+  [janjaapdriessen, maurits]
 
 - For the find-untranslated feature, add the possibility to mark a tag to be
   ignored by setting the "i18n:ignore" attribute on the tag. Also works for
   attributes with the "i18n:ignore-attributes" attribute.
   [janjaapdriessen]
+
 
 3.3.5 (2014-08-05)
 ------------------
