@@ -45,6 +45,9 @@ find-untranslated
       of errors and warnings for each file (or no output if there are no
       errors or warnings). If you provide the -n option, the report will
       contain only the errors for each file.
+
+      You can mark tags to be ignored for this translation check by
+      setting the "i18n:ignore" attribute on the tag.
       
 
   positional arguments:
