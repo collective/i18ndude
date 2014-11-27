@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.3.6 (unreleased)
+3.4.0 (2014-11-27)
 ------------------
 
 - Drop Python 2.6 support.  It may still work, but the tests only run
