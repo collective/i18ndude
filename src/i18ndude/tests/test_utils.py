@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from i18ndude.utils import wrapString
+from i18ndude.utils import wrapAndQuoteString
 
 import i18ndude.utils
 import unittest
@@ -80,6 +81,15 @@ class TestUtils(unittest.TestCase):
         # If this is 2 or less, we do not wrap lines.
         i18ndude.utils.MAX_WIDTH = 2
         self.assertEqual(wrapString('aaa aaaaa'), ['aaa aaaaa'])
+
+    def test_wrapAndQuoteString(self):
+        self.assertEqual(wrapAndQuoteString(''), '""')
+        lineA = 'a'*50
+        self.assertEqual(wrapAndQuoteString(lineA), '"{0}"'.format(lineA))
+        lineB = 'b'*50
+        lineAB = lineA + ' ' + lineB
+        self.assertEqual(wrapAndQuoteString(lineAB),
+                         '"{0} "\n"{1}"'.format(lineA, lineB))
 
 
 def test_suite():
