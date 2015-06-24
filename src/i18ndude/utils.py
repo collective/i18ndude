@@ -235,13 +235,13 @@ def prepare_cli_documentation(data):
 
     # If there is a diff, we want to commit it.
     from zest.releaser import choose
-    from zest.releaser.utils import ask, system
+    from zest.releaser.utils import ask, execute_command
     vcs = choose.version_control()
     diff_cmd = vcs.cmd_diff()
-    diff = system(diff_cmd)
+    diff = execute_command(diff_cmd)
     if diff.strip():
         print "The %r:\n\n%s\n" % (diff_cmd, diff)
         if ask("OK to commit this"):
             msg = "Wrote command line documentation."
             commit_cmd = vcs.cmd_commit(msg)
-            print system(commit_cmd)
+            print execute_command(commit_cmd)
