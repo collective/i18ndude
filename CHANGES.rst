@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.4.1 (unreleased)
+3.4.1 (2015-06-25)
 ------------------
 
 - Releasing as Python wheel too.
