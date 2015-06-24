@@ -4,6 +4,9 @@ Changelog
 3.4.1 (unreleased)
 ------------------
 
+- Releasing as Python wheel too.
+  [maurits]
+
 - Fixed wrapping when string contains newline.
   Issue #13
   [maurits]
