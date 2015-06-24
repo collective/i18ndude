@@ -192,6 +192,14 @@ class TestMessageCatalogInit(unittest.TestCase):
                      ("Note that the unix msgattrib command can wrap or "
                       "unwrap long lines in po files.")]),
 
+            u'msgid_with_long_lines_including_backslash_n.': self.me(
+                'msgid_with_long_lines_including_backslash_n.',
+                msgstr=("Falls aktiv wird der entsprechende \\nLinkcycle einen "
+                        "Button haben, mit dem man durch ihn blaettern kann. "
+                        "mit dem man durch ihn blaettern kann. mit dem man "
+                        "durch ihn blaettern kann. mit dem man durch ihn "
+                        "blaettern kann.")), # XXX
+
                       }
 
     def test_init(self):
