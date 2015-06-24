@@ -4,7 +4,9 @@ Changelog
 3.4.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed wrapping when string contains newline.
+  Issue #13
+  [maurits]
 
 
 3.4.0 (2014-11-27)

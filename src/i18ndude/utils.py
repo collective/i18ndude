@@ -96,6 +96,23 @@ def getProduct(file):
     return file
 
 
+def wrapAndQuoteString(value):
+    """Wrap a string in multiple quoted lines.
+    """
+    if not value:
+        return '""'
+    # Wrap over multiple lines if needed.
+    lineparts = wrapString(value)
+    if len(lineparts) == 1:
+        return '"{0}"'.format(lineparts[0])
+    # We expect the first line to be empty.  Remove it.
+    if not lineparts[0]:
+        lineparts.pop(0)
+    # Quote all and separate them by newlines.
+    newline = '"\n"'.join(lineparts)
+    return '"%s"' % newline
+
+
 def wrapString(value):
     """Wrap a string in multiple lines.
 

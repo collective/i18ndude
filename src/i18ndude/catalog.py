@@ -9,6 +9,7 @@ from zope.i18nmessageid import Message
 
 from i18ndude import common
 from i18ndude.utils import wrapString
+from i18ndude.utils import wrapAndQuoteString
 from ordereddict import OrderedDict
 
 DEFAULT_PO_HEADER = [
@@ -627,9 +628,15 @@ class POWriter:
             self._printToFile(f, 'msgstr ""')
             lines = msgstr.split('\\n')
             for line in lines[:-1]:
-                self._printToFile(f, '"%s\\n"' % line)
+                # Restore the literal backslash-n at the end
+                line += '\\n'
+                # Wrap over multiple lines if needed.
+                newline = wrapAndQuoteString(line)
+                self._printToFile(f, newline)
             if lines[-1]:
-                self._printToFile(f, '"%s"' % lines[-1])
+                # This is the part after the last literal backslash-n
+                newline = wrapAndQuoteString(lines[-1])
+                self._printToFile(f, newline)
 
 
 class PTReader:
