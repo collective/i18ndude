@@ -2,3 +2,4 @@ include *.rst
 graft src
 graft docs
 global-exclude *.pyc
+prune src/zope.tal
