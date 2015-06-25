@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
-
+from i18ndude import common
+from i18ndude.utils import wrapAndQuoteString
+from i18ndude.utils import wrapString
+from ordereddict import OrderedDict
+from zope.i18nmessageid import Message
 import os
 import re
 import sys
 import time
-
-from zope.i18nmessageid import Message
-
-from i18ndude import common
-from i18ndude.utils import wrapString
-from i18ndude.utils import wrapAndQuoteString
-from ordereddict import OrderedDict
 
 DEFAULT_PO_HEADER = [
     '--- PLEASE EDIT THE LINES BELOW CORRECTLY ---',
@@ -45,7 +42,7 @@ def now():
 
 
 def is_literal_id(msgid):
-    if '_' in msgid and not ' ' in msgid:
+    if '_' in msgid and ' ' not in msgid:
         return False
     else:
         return True
@@ -56,8 +53,11 @@ class MessageEntry:
     msgstr and optional positional information and comments.
     """
 
-    def __init__(self, msgid, msgstr='', references=[], automatic_comments=[], comments=[]):
-        """ Build a MessageEntry"""
+    def __init__(
+            self, msgid, msgstr='',
+            references=[], automatic_comments=[], comments=[]):
+        """Build a MessageEntry.
+        """
         self.msgid = msgid
         self.msgstr = msgstr
         self.references = references
@@ -65,8 +65,15 @@ class MessageEntry:
         self.comments = comments
 
     def __repr__(self):
-        """ Textual representation of a MessageEntry"""
-        return ', '.join([self.msgid, self.msgstr, repr(self.references), repr(self.automatic_comments), repr(self.comments)])
+        """Textual representation of a MessageEntry.
+        """
+        return ', '.join([
+            self.msgid,
+            self.msgstr,
+            repr(self.references),
+            repr(self.automatic_comments),
+            repr(self.comments)
+        ])
 
     def __eq__(self, other):
         """ Compare a MessageEntry to another one"""
@@ -200,7 +207,8 @@ class MessageCatalog(OrderedDict):
                 val.msgstr = val.msgstr.decode(self.encoding)
             self[key.decode(self.encoding)] = val
 
-    def add(self, msgid, msgstr='', comments=[], references=[], automatic_comments=[]):
+    def add(self, msgid, msgstr='',
+            comments=[], references=[], automatic_comments=[]):
         """Add an entry to the catalog.
 
         If the msgid already exists in the catalog, we only add comments,
@@ -220,8 +228,9 @@ class MessageCatalog(OrderedDict):
                                        references=references,
                                        automatic_comments=automatic_comments)
         else:
-            # We can have a msgid with an associated default in a page template,
-            # and the same msgid with a different default in a Python file
+            # We can have a msgid with an associated default in a page
+            # template, and the same msgid with a different default in a Python
+            # file
             if msgstr != self[msgid].msgstr:
                 msg = u"Warning: msgid '%s' in %s already exists " \
                       u"with a different default (bad: %s, should be: %s)\n" \
@@ -233,7 +242,8 @@ class MessageCatalog(OrderedDict):
                              u'\n'.join(self[msgid].references))
                 print >> sys.stderr, msg.encode('utf-8')
             if comments:
-                comments = [c for c in comments if c not in self[msgid].comments]
+                comments = [
+                    c for c in comments if c not in self[msgid].comments]
                 self[msgid].comments.extend(comments)
             if references:
                 references = [ref for ref in references
@@ -261,8 +271,9 @@ class MessageCatalog(OrderedDict):
                          automatic_comments=entry.automatic_comments)
                 ids.append(key)
             elif mergewarn:
-                print >> sys.stderr, \
-                    'Merge-Warning: Key is already in target-catalog: %s' % key.encode('utf-8')
+                print >> sys.stderr,\
+                    'Merge-Warning: Key is already in target-catalog: %s'\
+                    % key.encode('utf-8')
 
         return ids
 
@@ -277,9 +288,9 @@ class MessageCatalog(OrderedDict):
 
     def sync(self, msgctl):
         """Syncronize the catalog with the given one. This removes all messages
-        which are not found anymore in the new catalog, adds additional ones and
-        overwrites the comments with the ones from the given catalog. This is
-        used in the sync command.
+        which are not found anymore in the new catalog, adds additional ones
+        and overwrites the comments with the ones from the given catalog. This
+        is used in the sync command.
         """
         removed_msgids = [common.quote(msgid)
                           for msgid in self.accept_ids(msgctl.keys())]
@@ -287,7 +298,8 @@ class MessageCatalog(OrderedDict):
         added_msgids = [common.quote(msgid)
                         for msgid in self.add_missing(msgctl)]
 
-        self.mime_header['POT-Creation-Date'] = msgctl.mime_header['POT-Creation-Date']
+        self.mime_header[
+            'POT-Creation-Date'] = msgctl.mime_header['POT-Creation-Date']
 
         return (added_msgids, removed_msgids)
 
@@ -304,7 +316,8 @@ class MessageCatalog(OrderedDict):
 
     def accept_ids(self, ids):
         """Remove all messages from the catalog where the id is not in argument
-        'ids' (a list). Values are not touched. Returns the ids that were deleted.
+        'ids' (a list). Values are not touched. Returns the ids that were
+        deleted.
         """
         removed_ids = []
         for key in self.keys():
@@ -355,6 +368,7 @@ class MessageCatalog(OrderedDict):
 
 
 class POParser:
+
     """Parses an existing po- file and builds a dictionary according to
     MessageCatalog. POParser is the deserializer, POWriter the serializer.
     """
@@ -395,7 +409,7 @@ class POParser:
                     self._readNewMessage()
 
         # last msg
-        if not self.msgid in self.msgdict:
+        if self.msgid not in self.msgdict:
             self.line = '#:'
             self._readNewMessage()
 
@@ -411,14 +425,14 @@ class POParser:
             ls = line.startswith
             if ls(ORIGINAL_COMMENT):
                 line = line.replace(ORIGINAL_COMMENT, DEFAULT_COMMENT)
-            if not line in self.automatic_comments:
+            if line not in self.automatic_comments:
                 self.automatic_comments.append(line)
         elif line.startswith('#'):
             line = line[1:].strip()
             ls = line.startswith
             if ls(ORIGINAL_COMMENT) or ls(DEFAULT_COMMENT):
                 line = line.replace(ORIGINAL_COMMENT, DEFAULT_COMMENT)
-                if not line in self.automatic_comments:
+                if line not in self.automatic_comments:
                     self.automatic_comments.append(line)
             else:
                 self.comments.append(line)
@@ -434,7 +448,8 @@ class POParser:
             self.sameMessageEntry = True
             self.msgdict[self.msgid] = MessageEntry(
                 self.msgid, msgstr=self.msgstr, references=self.references,
-                automatic_comments=self.automatic_comments, comments=self.comments)
+                automatic_comments=self.automatic_comments,
+                comments=self.comments)
             # reset variables
             self.msgid = self.msgstr = ''
             self.references = []
@@ -449,7 +464,8 @@ class POParser:
 class POWriter:
 
     def __init__(self, file, catalog):
-        """Initialize a POWriter with a filelike object that I am to write to."""
+        """Initialize a POWriter with a filelike object that I am to write to.
+        """
         self._file = file
         self._msgctl = catalog
 
@@ -486,7 +502,8 @@ class POWriter:
     def write(self, sort=True, msgstrToComment=False, sync=False):
         """Start writing to file."""
         self._write_header()
-        self._write_messages(sort=sort, msgstrToComment=msgstrToComment, sync=sync)
+        self._write_messages(
+            sort=sort, msgstrToComment=msgstrToComment, sync=sync)
 
     def _write_header(self):
         """Writes out commentary and mime headers."""
@@ -501,7 +518,7 @@ class POWriter:
             self._printToFile(f, False)
             return
 
-        #write out mime:
+        # write out mime:
         self._printToFile(f, 'msgid ""')
         self._printToFile(f, 'msgstr ""')
 
@@ -516,7 +533,8 @@ class POWriter:
 
         for id in ids:
             entry = self._msgctl[id]
-            self._print_entry(f, id, entry, msgstrToComment=msgstrToComment, sync=sync)
+            self._print_entry(
+                f, id, entry, msgstrToComment=msgstrToComment, sync=sync)
 
         # File should end with a blank line
         self._printToFile(f, False)
@@ -545,7 +563,8 @@ class POWriter:
         fuzzy = False
 
         for comment in comments:
-            if not comment.startswith(', fuzzy') and not comment.startswith(' , fuzzy'):
+            if not comment.startswith(', fuzzy')\
+                    and not comment.startswith(' , fuzzy'):
                 if comment.startswith('#'):
                     self._printToFile(f, '#%s' % comment)
                 else:
@@ -573,7 +592,8 @@ class POWriter:
 
         # used in sync to filter duplicate default comments
         if sync:
-            default_comments = [o for o in automatic_comments if o.startswith(DEFAULT_COMMENT)]
+            default_comments = [
+                o for o in automatic_comments if o.startswith(DEFAULT_COMMENT)]
             if len(default_comments) > 1:
                 msg_changed = True
                 # the first element is the old comment, the second the new one
@@ -611,8 +631,8 @@ class POWriter:
         for idx, ref in enumerate(refs_values[:MAX_OCCUR]):
             self._printToFile(f, '#: %s' % ref)
 #            if include_ellipsis and idx == MAX_OCCUR - 1:
-#                self._printToFile(f, '#: %s' % ref)
-#                self._printToFile(f, '#: ...')
+# self._printToFile(f, '#: %s' % ref)
+# self._printToFile(f, '#: ...')
 
         if msgstr and (msg_changed or fuzzy):
             self._printToFile(f, '#, fuzzy')
@@ -622,7 +642,7 @@ class POWriter:
             id = id.replace('"', '\\"')
 
         self._printToFile(f, self._create_msgid(id))
-        if not '\\n' in msgstr:
+        if '\\n' not in msgstr:
             self._printToFile(f, self._create_msgstr(msgstr))
         else:
             self._printToFile(f, 'msgstr ""')
@@ -640,7 +660,8 @@ class POWriter:
 
 
 class PTReader:
-    """Reads in a list of page templates"""
+    """Reads in a list of page templates.
+    """
 
     def __init__(self, path, domain='none', exclude=()):
 
@@ -657,7 +678,7 @@ class PTReader:
         """
         from extract import tal_strings
         tal = tal_strings(self.path, domain=self.domain,
-                          exclude=self.exclude+('tests', 'docs'))
+                          exclude=self.exclude + ('tests', 'docs'))
 
         for msgid in tal:
 
@@ -667,19 +688,20 @@ class PTReader:
                 self._add_msg(msgid,
                               msgstr,
                               [],
-                              [l[0]+':'+str(l[1]) for l in tal[msgid]],
+                              [l[0] + ':' + str(l[1]) for l in tal[msgid]],
                               [],
                               self.domain)
 
         return []
 
-    def _add_msg(self, msgid, msgstr, comments, filename, automatic_comments, domain):
+    def _add_msg(self, msgid, msgstr, comments, filename, automatic_comments,
+                 domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
                 (msgid, filename)
             return
 
-        if not domain in self.catalogs:
+        if domain not in self.catalogs:
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
         self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments,
@@ -688,7 +710,8 @@ class PTReader:
 
 
 class PYReader:
-    """Reads in a list of python scripts"""
+    """Reads in a list of python scripts.
+    """
 
     def __init__(self, path, domain, exclude=()):
 
@@ -711,24 +734,25 @@ class PYReader:
 
         from extract import py_strings
         py = py_strings(self.path, self.domain,
-                        exclude=self.exclude+('tests', ))
+                        exclude=self.exclude + ('tests', ))
 
         for msgid in py:
             self._add_msg(msgid,
                           msgid.default or '',
                           [],
-                          [l[0]+':'+str(l[1]) for l in py[msgid]],
+                          [l[0] + ':' + str(l[1]) for l in py[msgid]],
                           [],
                           self.domain)
         return []
 
-    def _add_msg(self, msgid, msgstr, comments, references, automatic_comments, domain):
+    def _add_msg(self, msgid, msgstr, comments, references, automatic_comments,
+                 domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
                 (msgid, references)
             return
 
-        if not domain in self.catalogs:
+        if domain not in self.catalogs:
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
         self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments,
@@ -737,7 +761,8 @@ class PYReader:
 
 
 class GSReader(object):
-    """Reads in a list of GenericSetup profile files."""
+    """Reads in a list of GenericSetup profile files.
+    """
 
     def __init__(self, path, domain, exclude=()):
         self.domain = domain
@@ -759,7 +784,7 @@ class GSReader(object):
 
         from gsextract import gs_strings
         gs = gs_strings(self.path, self.domain,
-                        exclude=self.exclude+('tests', ))
+                        exclude=self.exclude + ('tests', ))
 
         for domain in gs:
             for msgid in gs[domain]:
@@ -771,13 +796,14 @@ class GSReader(object):
                               domain)
         return []
 
-    def _add_msg(self, msgid, msgstr, comments, references, automatic_comments, domain):
+    def _add_msg(self, msgid, msgstr, comments, references, automatic_comments,
+                 domain):
         if not domain:
             print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
                 (msgid, references)
             return
 
-        if not domain in self.catalogs:
+        if domain not in self.catalogs:
             self.catalogs[domain] = MessageCatalog(domain=domain)
 
         self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments,

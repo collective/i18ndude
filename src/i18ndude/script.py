@@ -81,7 +81,7 @@ def filter_isfile(files):
             result += subdirs
 
         elif not os.path.isfile(name):
-            print >> sys.stderr, 'Warning: %s is not a file or is ignored.' % name
+            print >> sys.stderr, 'Warning: %s is not a file or is ignored.' % name  # noqa
 
         else:
             result.append(name)
@@ -107,9 +107,11 @@ def find_untranslated_parser(subparsers):
     You can mark tags to be ignored for this translation check by
     setting the "i18n:ignore" attribute on the tag.
     """
-    parser = subparsers.add_parser('find-untranslated',
+    parser = subparsers.add_parser(
+        'find-untranslated',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description)
+        description=description
+    )
     parser.add_argument('-s', '--silent', action='store_true', help=(
         "The report will only contain a summary of errors and warnings for "
         "each file (or no output if there are no errors or warnings)."))
@@ -161,8 +163,9 @@ def find_untranslated(arguments):
 def rebuild_pot_parser(subparsers):
     """Argument parser for rebuild-pot command.
 
-    rebuild-pot --pot <filename> --create <domain> [--merge <filename>
-    [--merge2 <filename>]] [--exclude="<ignore1> <ignore2> ..."] path [path2 ...]
+    rebuild-pot --pot <filename> --create <domain>
+        [--merge <filename> [--merge2 <filename>]]
+        [--exclude="<ignore1> <ignore2> ..."] path [path2 ...]
     """
 
     description = """
@@ -189,17 +192,20 @@ def rebuild_pot_parser(subparsers):
     by using the --exclude argument, which takes a whitespace delimited
     list of files.
     """
-    parser = subparsers.add_parser('rebuild-pot',
+    parser = subparsers.add_parser(
+        'rebuild-pot',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description)
+        description=description
+    )
     parser.add_argument('-p', '--pot', metavar='filename',
                         dest='pot_fn', required=True)
     parser.add_argument('-c', '--create', metavar='domain',
                         dest='create_domain', required=False)
     parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn')
     parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
-    parser.add_argument('--exclude', metavar='"<ignore1> <ignore2> ..."', default='')
+    parser.add_argument(
+        '--exclude', metavar='"<ignore1> <ignore2> ..."', default='')
     parser.add_argument('path', nargs='*')
     parser.set_defaults(func=rebuild_pot)
     return parser
@@ -247,14 +253,16 @@ def rebuild_pot(arguments):
         for key in orig_ctl.keys():
             if key in ptctl:
                 # preserve comments
-                ptctl[key].comments = ptctl[key].comments + orig_ctl.getComments(key)
+                ptctl[key].comments = ptctl[
+                    key].comments + orig_ctl.getComments(key)
 
     if domain in pyreader.catalogs:
         pyctl = pyreader.catalogs[domain]
         for key in orig_ctl.keys():
             if key in pyctl:
                 # preserve comments
-                pyctl[key].comments = pyctl[key].comments + orig_ctl.getComments(key)
+                pyctl[key].comments = pyctl[
+                    key].comments + orig_ctl.getComments(key)
 
     if domain in gsreader.catalogs:
         gsctl = gsreader.catalogs[domain]
@@ -304,10 +312,12 @@ def merge_parser(subparsers):
     If you provide a --merge2 <filename> I'll first merge this one
     in addition to the first one.
     """
-    parser = subparsers.add_parser('merge',
+    parser = subparsers.add_parser(
+        'merge',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description)
+        description=description
+    )
     parser.add_argument('-p', '--pot', metavar='filename',
                         dest='pot_fn', required=True)
     parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn',
@@ -360,10 +370,12 @@ def sync_parser(subparsers):
     msgids are not in the pot-file and add messages that the pot-file has
     but the po-file doesn't.
     """
-    parser = subparsers.add_parser('sync',
+    parser = subparsers.add_parser(
+        'sync',
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description)
+        description=description
+    )
     parser.add_argument('-p', '--pot', metavar='potfilename',
                         dest='pot_fn', required=True)
     parser.add_argument('files', nargs='+', metavar='pofilename')
@@ -403,10 +415,12 @@ def two_file_parser(subparsers, cmd, description):
     filter, admix and trmerge all accept two files as arguments.
     """
 
-    parser = subparsers.add_parser(cmd,
+    parser = subparsers.add_parser(
+        cmd,
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description)
+        description=description
+    )
     parser.add_argument('file1')
     parser.add_argument('file2')
     return parser
@@ -553,9 +567,11 @@ def list_parser(subparsers):
     from the directory containing the pot-files. The product name is
     normally a domain name.
     """
-    parser = subparsers.add_parser('list',
+    parser = subparsers.add_parser(
+        'list',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description)
+        description=description
+    )
     parser.add_argument('-p', '--products', metavar='product', nargs='+',
                         required=True)
     parser.add_argument('-t', '--table', action='store_true')

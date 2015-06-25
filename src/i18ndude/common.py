@@ -8,7 +8,7 @@ DEFAULT_DECL = {
     '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
 
     '<?xml': '<?xml version="1.0" encoding="utf-8"?>'
-    }
+}
 
 
 def prepare_xml(file):
@@ -20,9 +20,9 @@ def prepare_xml(file):
         idx = content.find(el)
         if idx >= 0:
             if content[0:idx].strip():
-                idx2 = content.find('>', idx+1)
-                extraction = content[idx:idx2+1]
-                content = extraction + content[:idx] + content[idx2+1:]
+                idx2 = content.find('>', idx + 1)
+                extraction = content[idx:idx2 + 1]
+                content = extraction + content[:idx] + content[idx2 + 1:]
                 # mispositioned element fixed at this point
         else:  # element was not found, replace with default
             content = DEFAULT_DECL[el] + content

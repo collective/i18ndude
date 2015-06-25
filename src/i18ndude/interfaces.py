@@ -15,7 +15,7 @@
 """
 __docformat__ = 'restructuredtext'
 
-# INFO: This is a modified copy of zope3's zope.app.locales.interfaces (r71023).
+# INFO: This is a modified copy of zope3's zope.app.locales.interfaces (r71023)
 
 from zope.interface import Interface
 

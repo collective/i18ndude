@@ -15,7 +15,8 @@ I18N_ATTRIBUTES = '{%s}attributes' % I18N_NS
 
 
 class GSParser(object):
-    """GenericSetup profile i18n parser."""
+    """GenericSetup profile i18n parser.
+    """
 
     def __init__(self):
         self.catalogs = {}
@@ -57,7 +58,8 @@ class GSParser(object):
                     else:
                         msgstr = u""
                     if msgid:
-                        self.catalogs[domain].append((msgid, msgstr, self.filename))
+                        self.catalogs[domain].append(
+                            (msgid, msgstr, self.filename))
             if attributes is not None:
                 attributes = attributes.strip().split(';')
                 for attr in attributes:
@@ -76,7 +78,8 @@ class GSParser(object):
                         else:
                             msgid = text
                             msgstr = u""
-                        self.catalogs[domain].append((msgid, msgstr, self.filename))
+                        self.catalogs[domain].append(
+                            (msgid, msgstr, self.filename))
 
     def getCatalogs(self):
         return self.catalogs

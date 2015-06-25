@@ -13,8 +13,10 @@ WRAP = False
 
 
 def getPoFiles(product, all=False):
-    """ Returns all product*.po files in the current folder """
-    # First try old style i18n directory that has all .pot and .po files in one directory.
+    """Returns all product*.po files in the current folder.
+    """
+    # First try old style i18n directory that has all .pot and .po files in
+    # one directory.
     files = os.listdir(os.curdir)
     if all:
         files = [file for file in files if file.startswith('%s-' % product)
@@ -37,14 +39,19 @@ def getPoFiles(product, all=False):
 
 
 def getPotFiles(product=None, all=False):
-    """ Returns all pot files in the current folder
-        Normally it doesn't return manual.pots and generated.pots
+    """Returns all pot files in the current folder.
+    Normally it doesn't return manual.pots and generated.pots.
     """
     files = os.listdir(os.curdir)
     if all:
         files = [f for f in files if f.endswith('.pot')]
     else:
-        files = [f for f in files if f.endswith('.pot') and not f[:-4].endswith('manual') and not f[:-4].endswith('generated')]
+        files = [
+            f for f in files
+            if f.endswith('.pot')
+            and not f[:-4].endswith('manual')
+            and not f[:-4].endswith('generated')
+        ]
     if product is not None:
         files = [f for f in files if f.startswith('%s.pot' % product)]
     return files
@@ -59,14 +66,17 @@ def getPoFilesAsCmdLine(product):
 
 
 def getPoFilesByLanguageCode(lang):
-    """ Returns all po files which ends with given language code."""
+    """Returns all po files which ends with given language code.
+    """
     files = os.listdir(os.curdir)
-    files = [file for file in files if file.endswith('.po') and file[:-3].endswith(lang)]
+    files = [file for file in files if file.endswith(
+        '.po') and file[:-3].endswith(lang)]
     return files
 
 
 def getLanguage(product, file):
-    """ Returns the language part of a po-file """
+    """Returns the language part of a po-file.
+    """
     lang = None
     if file.endswith('.po'):
         if file.startswith(product):
@@ -85,8 +95,9 @@ def getLanguage(product, file):
 
 
 def getProduct(file):
-    """ Returns the product part of a file. We assume files to be something like domain-language.po.
-        Example: atcontenttypes-pt-br.po
+    """Returns the product part of a file. We assume files to be something like
+    domain-language.po.
+    Example: atcontenttypes-pt-br.po
     """
     assert file.endswith('.po') or file.endswith('.pot')
 
@@ -146,14 +157,14 @@ def wrapString(value):
     lines = ['']
     line = ''
     for index, word in enumerate(words):
-        if index == len_words -1:
+        if index == len_words - 1:
             # This is the last word.  The last line needs no space at
             # the end, so we are allowed to use one more character.
             max_len += 1
         if not line:
             new_line = word
         else:
-            new_line = '%s %s' %(line, word)
+            new_line = '%s %s' % (line, word)
         if len(new_line) <= max_len or not line:
             # There is room or we had an empty line and the current
             # single word is already too large so we accept it as a

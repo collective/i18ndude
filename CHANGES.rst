@@ -4,7 +4,8 @@ Changelog
 3.4.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Pep8.
+  [thet]
 
 
 3.4.1 (2015-06-25)

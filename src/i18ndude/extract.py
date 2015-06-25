@@ -20,17 +20,16 @@ __docformat__ = 'restructuredtext'
 
 # INFO: This is a modified copy of zope3's zope.app.locales.extract (r71023).
 
+from .pygettext import safe_eval, normalize, make_escapes
+from zope.i18nmessageid import Message
+from zope.interface import implements
+import codecs
+import fnmatch
 import os
 import sys
-import fnmatch
-import codecs
 import time
 import tokenize
 import traceback
-from pygettext import safe_eval, normalize, make_escapes
-
-from zope.interface import implements
-from zope.i18nmessageid import Message
 
 # Modified, as we don't want a dependency on zope.app.locales
 # from zope.app.locales.interfaces import IPOTEntry, IPOTMaker, ITokenEater
@@ -194,7 +193,7 @@ class POTMaker(object):
         # general project.
 
         # # Second, try to find a Zope version
-        # from zope.app.applicationcontrol.zopeversion import ZopeVersionUtility
+        # from zope.app.applicationcontrol.zopeversion import ZopeVersionUtility  # noqa
         # return ZopeVersionUtility.getZopeVersion()
         return 'PACKAGE VERSION'
 
@@ -352,14 +351,14 @@ class TokenEater(object):
     #     elif ttype == tokenize.STRING:
     #         self.__data.append(safe_eval(tstring))
     #     # XXX Ignore most things or print out warning
-    #     elif ttype == tokenize.OP and tstring in ['{',':','}','.','(',')','[',']','=','%']:
+    #     elif ttype == tokenize.OP and tstring in ['{',':','}','.','(',')','[',']','=','%']:  # noqa
     #         self.__data = []
     #     elif ttype in [tokenize.NAME, tokenize.NUMBER] or tstring == '"':
     #         self.__data = []
-    #     elif ttype not in [tokenize.COMMENT, tokenize.INDENT, tokenize.DEDENT,
+    #     elif ttype not in [tokenize.COMMENT, tokenize.INDENT, tokenize.DEDENT,  # noqa
     #                        tokenize.NEWLINE, tokenize.NL]:
     #         # warn if we see anything else than STRING or whitespace
-    #         print >> sys.stderr, '* %(file)s:%(lineno)s: Seen unexpected token "%(typ)s %(token)s"' % {'token': tstring, 'typ': ttype, 'file': self.__curfile, 'lineno': self.__lineno}
+    #         print >> sys.stderr, '* %(file)s:%(lineno)s: Seen unexpected token "%(typ)s %(token)s"' % {'token': tstring, 'typ': ttype, 'file': self.__curfile, 'lineno': self.__lineno}  # noqa
     #         self.__state = self.__waiting
 
     def __addentry(self, msg, default=None, lineno=None, isdocstring=0):
@@ -374,12 +373,14 @@ class TokenEater(object):
             idx = messages.index(msg)
             existing_msg = messages[idx]
             if msg.default != existing_msg.default:
-                references = '\n'.join([location[0]+':'+str(location[1])
-                    for location in self.__messages[msg].keys()])
+                references = '\n'.join([
+                    location[0] + ':' + str(location[1])
+                    for location in self.__messages[msg].keys()
+                ])
                 print >> sys.stderr, "Warning: msgid '%s' in %s already exists " \
                     "with a different default (bad: %s, should be: %s)\n" \
                     "The references for the existent value are:\n%s\n" % \
-                    (msg, self.__curfile+':'+str(lineno),
+                    (msg, self.__curfile + ':' + str(lineno),
                      msg.default, existing_msg.default, references)
         entry = (self.__curfile, lineno)
         self.__messages.setdefault(msg, {})[entry] = isdocstring
@@ -442,8 +443,11 @@ def py_strings(dir, domain="none", exclude=()):
     make_escapes(0)
     for filename in find_files(
             # We want to include cpy and vpy scripts as well
-            # dir, '*.py', exclude=('extract.py', 'pygettext.py')+tuple(exclude)):
-            dir, '*.*py', exclude=('extract.py', 'pygettext.py')+tuple(exclude)):
+            # dir, '*.py', exclude=('extract.py', 'pygettext.py')+tuple(exclude)):  # noqa
+            dir,
+            '*.*py',
+            exclude=('extract.py', 'pygettext.py') + tuple(exclude)
+        ):
         fp = codecs.open(filename, 'r', DEFAULT_CHARSET)
         try:
             eater.set_filename(filename)
@@ -511,7 +515,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
             traceback.print_exc()
 
     # See whether anything in the domain was found
-    if not domain in engine.catalog:
+    if domain not in engine.catalog:
         return {}
     # We do not want column numbers.
     catalog = engine.catalog[domain].copy()

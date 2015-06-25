@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-
+from i18ndude import catalog
+from i18ndude import utils
+from utils import PACKAGE_HOME
 import os
 import tempfile
 import unittest
 import warnings
-
-from utils import PACKAGE_HOME
-
-from i18ndude import catalog
-from i18ndude import utils
 
 
 class TestGlobal(unittest.TestCase):
@@ -24,10 +21,18 @@ class TestGlobal(unittest.TestCase):
         self.assertTrue(i('This is a text.'), errortext)
 
     def test_originalComment(self):
-        self.assertEqual(catalog.ORIGINAL_COMMENT, 'Original: ', 'Wrong original comment constant')
+        self.assertEqual(
+            catalog.ORIGINAL_COMMENT,
+            'Original: ',
+            'Wrong original comment constant'
+        )
 
     def test_defaultComment(self):
-        self.assertEqual(catalog.DEFAULT_COMMENT, 'Default: ', 'Wrong default comment constant')
+        self.assertEqual(
+            catalog.DEFAULT_COMMENT,
+            'Default: ',
+            'Wrong default comment constant'
+        )
 
 
 class TestMessageEntry(unittest.TestCase):
@@ -38,10 +43,10 @@ class TestMessageEntry(unittest.TestCase):
         self.msgstr = 'test text'
         self.references = ['test1.pt', 'test2.pt']
         self.default_text = 'test default'
-        self.default_comment = '%s"%s"' % (catalog.DEFAULT_COMMENT, self.default_text)
-        self.automatic_comments = ['first line', 'second line', self.default_comment]
+        self.default_comment = '%s"%s"' % (catalog.DEFAULT_COMMENT, self.default_text)  # noqa
+        self.automatic_comments = ['first line', 'second line', self.default_comment]  # noqa
         self.orig_text = 'test original'
-        self.orig_comment = '%s"%s"' % (catalog.ORIGINAL_COMMENT, self.orig_text)
+        self.orig_comment = '%s"%s"' % (catalog.ORIGINAL_COMMENT, self.orig_text)  # noqa
         self.comments = ['A comment', self.orig_comment]
 
     def test_init(self):
@@ -55,25 +60,21 @@ class TestMessageEntry(unittest.TestCase):
         me1 = me(self.msgid, msgstr=self.msgstr, references=self.references)
         self.assertEqual(me1.msgid, self.msgid, 'msgid not set correctly')
         self.assertEqual(me1.msgstr, self.msgstr, 'msgstr not set correctly')
-        self.assertEqual(me1.references, self.references, 'references not set correctly')
+        self.assertEqual(me1.references, self.references, 'references not set correctly')  # noqa
 
         me1 = me(self.msgid, msgstr=self.msgstr, comments=self.comments)
         self.assertEqual(me1.msgid, self.msgid, 'msgid not set correctly')
         self.assertEqual(me1.msgstr, self.msgstr, 'msgstr not set correctly')
-        self.assertEqual(me1.comments, self.comments, 'comments not set correctly')
-        self.assertEqual(me1.getOriginalComment(), self.orig_comment,
-                          'Original comment not set correctly')
-        self.assertEqual(me1.getOriginal(), self.orig_text,
-                          'Original text not set correctly')
+        self.assertEqual(me1.comments, self.comments, 'comments not set correctly')  # noqa
+        self.assertEqual(me1.getOriginalComment(), self.orig_comment, 'Original comment not set correctly')  # noqa
+        self.assertEqual(me1.getOriginal(), self.orig_text, 'Original text not set correctly')  # noqa
 
-        me2 = me(self.msgid, msgstr=self.msgstr, automatic_comments=self.automatic_comments)
+        me2 = me(self.msgid, msgstr=self.msgstr, automatic_comments=self.automatic_comments)  # noqa
         self.assertEqual(me2.msgid, self.msgid, 'msgid not set correctly')
         self.assertEqual(me2.msgstr, self.msgstr, 'msgstr not set correctly')
-        self.assertEqual(me2.automatic_comments, self.automatic_comments, 'comments not set correctly')
-        self.assertEqual(me2.getDefaultComment(), self.default_comment,
-                          'Default comment not set correctly')
-        self.assertEqual(me2.getDefault(), self.default_text,
-                          'Default text not set correctly')
+        self.assertEqual(me2.automatic_comments, self.automatic_comments, 'comments not set correctly')  # noqa
+        self.assertEqual(me2.getDefaultComment(), self.default_comment, 'Default comment not set correctly')  # noqa
+        self.assertEqual(me2.getDefault(), self.default_text, 'Default text not set correctly')  # noqa
 
 
 class TestMessageCatalogInit(unittest.TestCase):
@@ -101,7 +102,7 @@ class TestMessageCatalogInit(unittest.TestCase):
             'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
             'POT-Creation-Date': '2005-08-01 12:00+0000',
             'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
-            }
+        }
 
         self.msgids = {
             u'msgid1': self.me(
@@ -173,7 +174,7 @@ class TestMessageCatalogInit(unittest.TestCase):
 
             u'msgid for text with html-entity': self.me(
                 'msgid for text with html-entity',
-                msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;'),
+                msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;'),  # noqa
 
             (u"Its quite annoying that all translation editors wrap "
              "translations strings at 80 characters, but then when you "
@@ -194,13 +195,13 @@ class TestMessageCatalogInit(unittest.TestCase):
 
             u'msgid_with_long_lines_including_backslash_n.': self.me(
                 'msgid_with_long_lines_including_backslash_n.',
-                msgstr=("Falls aktiv wird der entsprechende \\nLinkcycle einen "
-                        "Button haben, mit dem man durch ihn blaettern kann. "
+                msgstr=("Falls aktiv wird der entsprechende \\nLinkcycle einen"
+                        " Button haben, mit dem man durch ihn blaettern kann. "
                         "mit dem man durch ihn blaettern kann. mit dem man "
                         "durch ihn blaettern kann. mit dem man durch ihn "
-                        "blaettern kann.")), # XXX
+                        "blaettern kann.")),  # XXX
 
-                      }
+        }
 
     def test_init(self):
         failing = False
@@ -208,7 +209,8 @@ class TestMessageCatalogInit(unittest.TestCase):
             catalog.MessageCatalog()
         except AssertionError:
             failing = True
-        self.assertTrue(failing, 'Init without parameters should not be allowed.')
+        self.assertTrue(
+            failing, 'Init without parameters should not be allowed.')
 
     def test_initWithDomain(self):
         domain = 'testing'
@@ -216,17 +218,33 @@ class TestMessageCatalogInit(unittest.TestCase):
         mime = catalog.DEFAULT_PO_MIME
         for key, value in mime:
             if key != 'Domain':
-                self.assertEqual(value, test.mime_header[key], 'header mismatch on %s' % key)
+                self.assertEqual(
+                    value,
+                    test.mime_header[key],
+                    'header mismatch on %s' % key
+                )
             else:
-                self.assertEqual(domain, test.mime_header['Domain'], 'Domain mismatch')
-        self.assertEqual(catalog.DEFAULT_PO_HEADER, test.commentary_header, 'commentary header mismatch')
+                self.assertEqual(
+                    domain,
+                    test.mime_header['Domain'],
+                    'Domain mismatch'
+                )
+        self.assertEqual(
+            catalog.DEFAULT_PO_HEADER,
+            test.commentary_header,
+            'commentary header mismatch'
+        )
         self.assertEqual(len(test), 0, 'Non-empty catalog')
 
     def test_initWithEmptyFile(self):
         test = self.mc(filename=self.emptyfile)
         mime = catalog.DEFAULT_PO_MIME
         for key, value in mime:
-            self.assertEqual(value, test.mime_header[key], 'header mismatch on %s' % key)
+            self.assertEqual(
+                value,
+                test.mime_header[key],
+                'header mismatch on %s' % key
+            )
 
     def test_initWithEmptyFileAndDomain(self):
         failing = False
@@ -234,17 +252,32 @@ class TestMessageCatalogInit(unittest.TestCase):
             self.mc(domain='testing', filename=self.emptyfile)
         except AssertionError:
             failing = True
-        self.assertTrue(failing, 'Init with filename and domain parameters is not allowed.')
+        self.assertTrue(
+            failing,
+            'Init with filename and domain parameters is not allowed.'
+        )
 
     def test_initWithFile(self):
         test = self.mc(filename=self.file)
         for key in test.mime_header:
-            self.assertEqual(test.mime_header[key], self.mimeheader[key], 'wrong mime header parsing:\nGot: %s !=\nExpected: %s' % (test.mime_header[key], self.mimeheader[key]))
+            self.assertEqual(
+                test.mime_header[key],
+                self.mimeheader[key],
+                'wrong mime header parsing:\nGot: %s !=\nExpected: %s'
+                % (test.mime_header[key], self.mimeheader[key])
+            )
         for value in test.commentary_header:
-            self.assertTrue(value in self.commentary_header, 'wrong commentary header parsing')
+            self.assertTrue(
+                value in self.commentary_header,
+                'wrong commentary header parsing'
+            )
         if not test == self.msgids:
             for key in test:
-                self.assertTrue(test[key] == self.msgids[key], 'error in po parsing:\nGot:      %s !=\nExpected: %s' % (test[key], self.msgids[key]))
+                self.assertTrue(
+                    test[key] == self.msgids[key],
+                    'error in po parsing:\nGot:      %s !=\nExpected: %s'
+                    % (test[key], self.msgids[key])
+                )
 
 
 class TestMessageCatalog(unittest.TestCase):
@@ -256,10 +289,10 @@ class TestMessageCatalog(unittest.TestCase):
         self.msgstr = 'test text'
         self.references = ['test1.pt', 'test2.pt']
         self.default_text = 'test default'
-        self.default_comment = '%s"%s"' % (catalog.DEFAULT_COMMENT, self.default_text)
-        self.automatic_comments = ['first line', 'second line', self.default_comment]
+        self.default_comment = '%s"%s"' % (catalog.DEFAULT_COMMENT, self.default_text)  # noqa
+        self.automatic_comments = ['first line', 'second line', self.default_comment]  # noqa
         self.orig_text = 'test original'
-        self.orig_comment = '%s"%s"' % (catalog.ORIGINAL_COMMENT, self.orig_text)
+        self.orig_comment = '%s"%s"' % (catalog.ORIGINAL_COMMENT, self.orig_text)  # noqa
         self.comments = ['A comment', self.orig_comment]
 
     def test_add(self):
@@ -275,17 +308,17 @@ class TestMessageCatalog(unittest.TestCase):
         self.assertFalse(msgid in self.mc, 'msgid found in catalog')
         # add with msgid and msgstr
         self.mc.add(msgid, msgstr=msgstr)
-        self.assertEqual(self.mc[msgid].msgstr, msgstr, 'msgstr not found in catalog.')
+        self.assertEqual(self.mc[msgid].msgstr, msgstr, 'msgstr not found in catalog.')  # noqa
         del self.mc[msgid]
         self.assertFalse(msgid in self.mc, 'msgid found in catalog')
         # add with msgid, msgstr and filename
         self.mc.add(msgid, msgstr=msgstr, references=references)
-        self.assertEqual(self.mc[msgid].references, references, 'references not found in catalog.')
+        self.assertEqual(self.mc[msgid].references, references, 'references not found in catalog.')  # noqa
         del self.mc[msgid]
         self.assertFalse(msgid in self.mc, 'msgid found in catalog')
         # add with msgid, msgstr, filename and excerpt
-        self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
-        self.assertEqual(self.mc[msgid].automatic_comments, automatic_comments, 'automatic_comments not found in catalog.')
+        self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)  # noqa
+        self.assertEqual(self.mc[msgid].automatic_comments, automatic_comments, 'automatic_comments not found in catalog.')  # noqa
         del self.mc[msgid]
         self.assertFalse(msgid in self.mc, 'msgid found in catalog')
 
@@ -295,19 +328,19 @@ class TestMessageCatalog(unittest.TestCase):
         references = self.references
         automatic_comments = self.automatic_comments
 
-        self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
-        self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)
-        self.assertTrue(len(self.mc)==1, 'duplicate msgid')
-        self.assertTrue(len(self.mc[msgid].references)==2, 'references missing')
+        self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)  # noqa
+        self.mc.add(msgid, msgstr=msgstr, references=references, automatic_comments=automatic_comments)  # noqa
+        self.assertTrue(len(self.mc) == 1, 'duplicate msgid')
+        self.assertTrue(len(self.mc[msgid].references) == 2, 'references missing')  # noqa
 
     def test_originalComment(self):
-        self.mc.add(self.msgid, msgstr=self.msgstr, references=self.references, automatic_comments=self.automatic_comments)
+        self.mc.add(self.msgid, msgstr=self.msgstr, references=self.references, automatic_comments=self.automatic_comments)  # noqa
         self.mc[self.msgid].comments.extend(self.comments)
-        self.assertEqual(self.mc.getComments(self.msgid), self.comments, 'wrong comments')
-        self.assertEqual(self.mc.getOriginalComment(self.msgid), self.orig_comment, 'wrong original comment line')
-        self.assertEqual(self.mc.getOriginal(self.msgid), self.orig_text, 'wrong original comment text')
-        self.assertEqual(self.mc.getDefaultComment(self.msgid), self.default_comment, 'wrong default comment line')
-        self.assertEqual(self.mc.getDefault(self.msgid), self.default_text, 'wrong default comment text')
+        self.assertEqual(self.mc.getComments(self.msgid), self.comments, 'wrong comments')  # noqa
+        self.assertEqual(self.mc.getOriginalComment(self.msgid), self.orig_comment, 'wrong original comment line')  # noqa
+        self.assertEqual(self.mc.getOriginal(self.msgid), self.orig_text, 'wrong original comment text')  # noqa
+        self.assertEqual(self.mc.getDefaultComment(self.msgid), self.default_comment, 'wrong default comment line')  # noqa
+        self.assertEqual(self.mc.getDefault(self.msgid), self.default_text, 'wrong default comment text')  # noqa
 
 
 class TestMessageCatalogSync(unittest.TestCase):
@@ -324,15 +357,18 @@ class TestMessageCatalogSync(unittest.TestCase):
         for id in self.po:
             old_defaults[id] = self.po[id].getDefault()
         self.po.sync(self.pot)
-        self.assertTrue(len(self.pot)==len(self.po), 'number of messages does not match')
+        self.assertTrue(len(self.pot) == len(self.po), 'number of messages does not match')  # noqa
         for msgid in self.pot:
-            self.assertTrue(msgid in self.po, 'msgid %s could not be found' % self.pot[msgid])
-            self.assertTrue(self.po[msgid].references == self.pot[msgid].references)
+            self.assertTrue(msgid in self.po, 'msgid %s could not be found' % self.pot[msgid])  # noqa
+            self.assertTrue(self.po[msgid].references == self.pot[msgid].references)  # noqa
             defaults = self.po[msgid].getDefaults()
             if defaults is not None:
                 for dc in defaults:
-                    self.assertTrue(dc == self.pot[msgid].getDefault() or
-                                    dc == old_defaults[msgid], 'Either old or new default comment is missing on msgid: %s' % msgid)
+                    self.assertTrue(
+                        dc == self.pot[msgid].getDefault() or
+                        dc == old_defaults[msgid],
+                        'Either old or new default comment is missing on msgid: %s' % msgid  # noqa
+                    )
 
 
 class TestMessagePoWriter(unittest.TestCase):
@@ -342,7 +378,7 @@ class TestMessagePoWriter(unittest.TestCase):
         self.input = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
         self.output = os.path.join(PACKAGE_HOME, 'output', 'test-en.po')
         self.input2 = os.path.join(PACKAGE_HOME, 'input', 'test2-en.po')
-        self.expectedOutput2 = os.path.join(PACKAGE_HOME, 'input', 'test2_expected-en.po')
+        self.expectedOutput2 = os.path.join(PACKAGE_HOME, 'input', 'test2_expected-en.po')  # noqa
         self.output2 = os.path.join(PACKAGE_HOME, 'output', 'test2-en.po')
         self.catalog = mc(filename=self.input)
         self.catalog2 = mc(filename=self.input2)
@@ -375,7 +411,12 @@ class TestMessagePoWriter(unittest.TestCase):
 
         for i, result in outlines:
             orig = inlines[i]
-            self.assertEqual(orig, result, 'difference in line %s, \'%s\' != \'%s\'' % (i, orig, result))
+            self.assertEqual(
+                orig,
+                result,
+                'difference in line %s, \'%s\' != \'%s\''
+                % (i, orig, result)
+            )
 
     def test_writeSpecialComments(self):
         fd = open(self.output2, 'wb')
@@ -395,7 +436,12 @@ class TestMessagePoWriter(unittest.TestCase):
 
         for i, result in explines:
             orig = outlines[i]
-            self.assertEqual(orig, result, 'difference in line %s, Got: \'%s\' != Expected: \'%s\'' % (i, orig, result))
+            self.assertEqual(
+                orig,
+                result,
+                'difference in line %s, Got: \'%s\' != Expected: \'%s\''
+                % (i, orig, result)
+            )
 
     def tearDown(self):
         if os.path.exists(self.output):
@@ -410,17 +456,18 @@ class TestMessagePTReader(unittest.TestCase):
         self.me = catalog.MessageEntry
         self.input = os.path.join(PACKAGE_HOME, 'input')
         filename = self.input + os.sep + 'test1.pt'
-        self.output = {u'Buzz': self.me(u'Buzz', references=[filename+':18']),
-                       u'${foo} ${bar}': self.me(u'${foo} ${bar}', references=[filename+':23']),
-                       u'dig_this': self.me(u'dig_this', msgstr=u'Dig this', references=[filename+':49']),
-                       u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=[filename+':26', filename+':28']),
-                       u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=[filename+':12']),
-                       u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=[filename+':12']),
-                       u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', references=[filename+':43']),
-                       u'spacing': self.me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename+':34']),
-                       u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename+':38']),
-                       u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename+':46'])
-                       }
+        self.output = {
+            u'Buzz': self.me(u'Buzz', references=[filename + ':18']),
+            u'${foo} ${bar}': self.me(u'${foo} ${bar}', references=[filename + ':23']),  # noqa
+            u'dig_this': self.me(u'dig_this', msgstr=u'Dig this', references=[filename + ':49']),  # noqa
+            u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=[filename + ':26', filename + ':28']),  # noqa
+            u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=[filename + ':12']),  # noqa
+            u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=[filename + ':12']),  # noqa
+            u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', references=[filename + ':43']),  # noqa
+            u'spacing': self.me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename + ':34']),  # noqa
+            u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename + ':38']),  # noqa
+            u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':46'])  # noqa
+        }
 
     def test_read(self):
         ptr = catalog.PTReader(self.input, domain='testing')
@@ -447,8 +494,10 @@ class TestMessagePTReader(unittest.TestCase):
 
         out = ptr.catalogs['testing']
         for key in out:
-            self.assertTrue(key in self.output,
-                            'Failure in pt parsing.\nUnexpected msgid: %s' % key)
+            self.assertTrue(
+                key in self.output,
+                'Failure in pt parsing.\nUnexpected msgid: %s' % key
+            )
         for key in self.output:
             self.assertTrue(out[key] == self.output[key],
                             'Failure in pt parsing.\nGot:%s\nExpected:%s' %
@@ -463,30 +512,35 @@ class TestMessagePYReader(unittest.TestCase):
         dirpath = os.path.join(PACKAGE_HOME, 'input')
         filepath = os.path.join(dirpath, 'test2.py')
         self.input = dirpath
-        self.output = {u'Zero': self.me(u'Zero', references=[filepath+':4']),
-                       u'One': self.me(u'One', references=[filepath+':5']),
-                       u'msgid_three': self.me(u'msgid_three', msgstr='Three', references=[filepath+':10']),
-                       u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath+':13']),
-                       u'msgid_five': self.me(u'msgid_five', msgstr=u"五番目", references=[filepath+':17']),
-                       u'msgid_six': self.me(u'msgid_six', msgstr=u"\nLine 1\nLine 2\nLine 3\n", references=[filepath+':19']),
-                       # XXX This should not be found as it's in a different domain
-                       # instead it recognizes the domain as a msgstr now
-                       u'Out1': self.me(u'Out1', msgstr='running', references=[filepath+':7'])
-                       }
+        self.output = {
+            u'Zero': self.me(u'Zero', references=[filepath + ':4']),
+            u'One': self.me(u'One', references=[filepath + ':5']),
+            u'msgid_three': self.me(u'msgid_three', msgstr='Three', references=[filepath + ':10']),  # noqa
+            u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath + ':13']),  # noqa
+            u'msgid_five': self.me(u'msgid_five', msgstr=u"五番目", references=[filepath + ':17']),  # noqa
+            u'msgid_six': self.me(u'msgid_six', msgstr=u"\nLine 1\nLine 2\nLine 3\n", references=[filepath + ':19']),  # noqa
+            # XXX This should not be found as it's in a different domain
+            # instead it recognizes the domain as a msgstr now
+            u'Out1': self.me(u'Out1', msgstr='running', references=[filepath + ':7'])  # noqa
+        }
 
     def test_read(self):
         pyr = catalog.PYReader(self.input, 'testing')
         pyr.read()
         out = pyr.catalogs['testing']
         for key in out:
-            self.assertTrue(key in self.output,
-                            'Failure in py parsing.\nUnexpected msgid: %s' % key)
+            self.assertTrue(
+                key in self.output,
+                'Failure in py parsing.\nUnexpected msgid: %s' % key)
         for key in self.output:
-            self.assertTrue(out.get(key, False),
-                            'Failure in py parsing.\nMissing:%s' % self.output.get(key))
-            self.assertTrue(out.get(key) == self.output.get(key),
-                            'Failure in py parsing.\nGot:%s\nExpected:%s' %
-                            (out.get(key), self.output.get(key)))
+            self.assertTrue(
+                out.get(key, False),
+                'Failure in py parsing.\nMissing:%s' % self.output.get(key))
+            self.assertTrue(
+                out.get(key) == self.output.get(key),
+                'Failure in py parsing.\nGot:%s\nExpected:%s' %
+                (out.get(key), self.output.get(key))
+            )
         self.assertEqual(len(out), len(self.output))
 
 

@@ -20,7 +20,7 @@ def _severity(tag, attrs):
     keys = attrs.keys()
     ns = ':' in tag and '%s:' % tag[:tag.find(':')] or ''
     if ns:
-        keys = [ns+key for key in keys]
+        keys = [ns + key for key in keys]
 
     if 'metal:use-macro' in keys:
         return ''
@@ -57,7 +57,7 @@ def _tal_replaced_content(tag, attrs):
 
 def _tal_replaced_attr(attrs, attr):
     # Is the attribute replaced by tal?
-    if not 'tal:attributes' in attrs:
+    if 'tal:attributes' not in attrs:
         return False
     talattrs = [talattr.strip().split()[0] for talattr in
                 attrs['tal:attributes'].split(';') if talattr]
@@ -149,7 +149,7 @@ class Handler(xml.sax.ContentHandler):
 
     def startDocument(self):
         self._history = []  # history contains 3-tuples in the form
-                            # (tag, attrs, characterdata)
+        # (tag, attrs, characterdata)
         self._i18nlevel = 0  # 0 means not inside i18n:translate area
         self._stats = {'WARNING': 0, 'ERROR': 0, 'FATAL': 0}
 
@@ -171,7 +171,8 @@ class Handler(xml.sax.ContentHandler):
         data = data.strip()
 
         if _translatable(data) and not _tal_replaced_content(tag, attrs):
-            if (self._i18nlevel == 0) and not tag in ['script', 'style']:  # not enclosed
+            # not enclosed
+            if (self._i18nlevel == 0) and tag not in ['script', 'style']:
                 severity = _severity(tag, attrs) or ''
                 if severity:
                     if IGNORE_UNTRANSLATED in attrs.keys():
@@ -240,7 +241,8 @@ class NoSummaryVerboseHandler(Handler):
         data = data.strip()
 
         if _translatable(data):
-            if (self._i18nlevel == 0) and not tag in ['script', 'style']:  # not enclosed
+            # not enclosed
+            if (self._i18nlevel == 0) and not tag in ['script', 'style']:
                 severity = _severity(tag, attrs) or ''
                 if severity and severity != 'WARNING':
                     self.log('i18n:translate missing for this:\n'

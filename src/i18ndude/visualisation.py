@@ -3,12 +3,12 @@ IGNORE = frozenset(('zh', 'sr-Latn', ))
 GROUP1 = [
     'fr', 'it', 'de', 'es', 'nl', 'zh-cn', 'zh-tw', 'ja', 'ko', 'pt-br',
     'ru', 'pl', 'tr', 'th', 'ar',
-    ]
+]
 
 GROUP2 = [
     'sv', 'fi', 'da', 'pt', 'ro', 'hu', 'he', 'id', 'cs', 'el', 'no', 'vi',
     'bg', 'hr', 'lt', 'sk', 'tl', 'sl', 'sr', 'ca', 'lv', 'uk', 'hi',
-    ]
+]
 
 _TEMPLATE = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -46,10 +46,10 @@ def print_row(percentage, desc):
         color = 'red'
 
     return _ROW % dict(
-        width = width,
-        color = color,
-        percent = percentage,
-        name = desc,
+        width=width,
+        color=color,
+        percent=percentage,
+        name=desc,
     )
 
 
@@ -164,7 +164,7 @@ def make_listing(pot, pos, table=False):
                 if not [1 for fuzzy in po[msgid].comments if 'fuzzy' in fuzzy]:
                     value += 1
 
-        percentage = int(value / (total*1.0) * 100)
+        percentage = int(value / (total * 1.0) * 100)
         if percentage == 99:
             percentage = 100
         values[code] = dict(percentage=percentage, desc=desc)

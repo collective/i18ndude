@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from i18ndude.utils import wrapString
 from i18ndude.utils import wrapAndQuoteString
-
+from i18ndude.utils import wrapString
 import i18ndude.utils
 import unittest
 
@@ -23,9 +22,9 @@ class TestUtils(unittest.TestCase):
         # Disable wrapping.
         i18ndude.utils.WRAP = False
 
-        line = 'a'*50 + ' ' + 'b'*50
+        line = 'a' * 50 + ' ' + 'b' * 50
         self.assertEqual(wrapString(line),
-                         ['a'*50 + ' ' + 'b'*50])
+                         ['a' * 50 + ' ' + 'b' * 50])
 
     def test_wrapString_wrapping_single_line(self):
         # Enable wrapping.
@@ -54,17 +53,17 @@ class TestUtils(unittest.TestCase):
 
     def test_wrapString_wrapping_multiline(self):
         # This does not fit on a single line.
-        line = 'a'*20 + ' ' + 'b'*50 + ' ' + 'c'*20+ ' ' + 'd'*50
+        line = 'a' * 20 + ' ' + 'b' * 50 + ' ' + 'c' * 20 + ' ' + 'd' * 50
         self.assertEqual(wrapString(line),
                          ['',
-                          'a'*20 + ' ' + 'b'*50 + ' ',
-                          'c'*20 + ' ' + 'd'*50])
+                          'a' * 20 + ' ' + 'b' * 50 + ' ',
+                          'c' * 20 + ' ' + 'd' * 50])
 
     def test_wrapString_wrapping_long_words(self):
         # What happens when some words are really too long?
-        A = 'a'*99
-        B = 'b'*99
-        C = 'c'*99
+        A = 'a' * 99
+        B = 'b' * 99
+        C = 'c' * 99
         self.assertEqual(wrapString(A), ['', A])
         line = ' '.join((A, B))
         self.assertEqual(wrapString(line), ['', A + ' ', B])
@@ -75,8 +74,8 @@ class TestUtils(unittest.TestCase):
         i18ndude.utils.MAX_WIDTH = 12
         self.assertEqual(wrapString('aaa'), ['aaa'])
         self.assertEqual(wrapString('aaaa'), ['', 'aaaa'])
-        self.assertEqual(wrapString('aaa' + ' ' + 'a'*12),
-                         ['', 'aaa ', 'a'*12])
+        self.assertEqual(wrapString('aaa' + ' ' + 'a' * 12),
+                         ['', 'aaa ', 'a' * 12])
 
         # If this is 2 or less, we do not wrap lines.
         i18ndude.utils.MAX_WIDTH = 2
@@ -84,9 +83,9 @@ class TestUtils(unittest.TestCase):
 
     def test_wrapAndQuoteString(self):
         self.assertEqual(wrapAndQuoteString(''), '""')
-        lineA = 'a'*50
+        lineA = 'a' * 50
         self.assertEqual(wrapAndQuoteString(lineA), '"{0}"'.format(lineA))
-        lineB = 'b'*50
+        lineB = 'b' * 50
         lineAB = lineA + ' ' + lineB
         self.assertEqual(wrapAndQuoteString(lineAB),
                          '"{0} "\n"{1}"'.format(lineA, lineB))
@@ -96,3 +95,4 @@ def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestUtils))
     return suite
+
