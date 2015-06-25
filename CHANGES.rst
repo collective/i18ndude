@@ -4,6 +4,9 @@ Changelog
 3.4.2 (unreleased)
 ------------------
 
+- Fix encoding errors with wrapAndQuoteString.
+  [thet]
+
 - Pep8.
   [thet]
 

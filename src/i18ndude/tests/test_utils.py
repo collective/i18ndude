@@ -90,9 +90,17 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(wrapAndQuoteString(lineAB),
                          '"{0} "\n"{1}"'.format(lineA, lineB))
 
+    def test_wrapAndQuoteString_singleline_unicode(self):
+        # disable wrapping
+        i18ndude.utils.WRAP = False
+        val = u'ø' * 100
+        try:
+            wrapAndQuoteString(val)
+        except UnicodeEncodeError:
+            self.fail("wrapAndQuoteString raised UnicodeEncodeError unexpectedly!")  # noqa
+
 
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestUtils))
     return suite
-

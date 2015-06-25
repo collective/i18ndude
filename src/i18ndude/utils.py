@@ -111,17 +111,17 @@ def wrapAndQuoteString(value):
     """Wrap a string in multiple quoted lines.
     """
     if not value:
-        return '""'
+        return u'""'
     # Wrap over multiple lines if needed.
     lineparts = wrapString(value)
     if len(lineparts) == 1:
-        return '"{0}"'.format(lineparts[0])
+        return u'"{0}"'.format(lineparts[0])
     # We expect the first line to be empty.  Remove it.
     if not lineparts[0]:
         lineparts.pop(0)
     # Quote all and separate them by newlines.
-    newline = '"\n"'.join(lineparts)
-    return '"%s"' % newline
+    newline = u'"\n"'.join(lineparts)
+    return u'"{0}"'.format(newline)
 
 
 def wrapString(value):
@@ -147,15 +147,15 @@ def wrapString(value):
         return [value]
     # The line maybe is just in between max_len and single_line_max_len
     if len(value) <= max_len:
-        return ['', value]
+        return [u'', value]
     # No, the value does not fit on one line.  This means we need to
     # reserve room for a space at the end of all but the last line.
     max_len -= 1
-    words = value.split(' ')
+    words = value.split(u' ')
     len_words = len(words)
     # We always start with an empty first line
-    lines = ['']
-    line = ''
+    lines = [u'']
+    line = u''
     for index, word in enumerate(words):
         if index == len_words - 1:
             # This is the last word.  The last line needs no space at
@@ -164,7 +164,7 @@ def wrapString(value):
         if not line:
             new_line = word
         else:
-            new_line = '%s %s' % (line, word)
+            new_line = u'{0} {1}'.format(line, word)
         if len(new_line) <= max_len or not line:
             # There is room or we had an empty line and the current
             # single word is already too large so we accept it as a
@@ -175,7 +175,7 @@ def wrapString(value):
         # There is no more room so we store the line.  If it is not
         # empty it should end with a space.
         if line:
-            line += ' '
+            line += u' '
         lines.append(line)
         # Start a fresh line with the current word.
         line = word
