@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.4.2 (unreleased)
+3.4.2 (2015-07-16)
 ------------------
 
 - Fix encoding errors with wrapAndQuoteString.
