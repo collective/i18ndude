@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.4.3 (unreleased)
+3.4.3 (2015-09-01)
 ------------------
 
 - Fix ``nosummary`` option from ``find-untranslated``.
