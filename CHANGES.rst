@@ -4,7 +4,9 @@ Changelog
 3.4.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix ``nosummary`` option from ``find-untranslated``.
+  It was reporting wrong information.
+  [gforcada]
 
 
 3.4.2 (2015-07-16)

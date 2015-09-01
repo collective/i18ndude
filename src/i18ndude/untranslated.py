@@ -236,21 +236,6 @@ class VerboseHandler(Handler):
 
 class NoSummaryVerboseHandler(Handler):
 
-    def endElement(self, tag):
-        tag, attrs, data = self._history.pop()
-        data = data.strip()
-
-        if _translatable(data):
-            # not enclosed
-            if (self._i18nlevel == 0) and not tag in ['script', 'style']:
-                severity = _severity(tag, attrs) or ''
-                if severity and severity != 'WARNING':
-                    self.log('i18n:translate missing for this:\n'
-                             '"""\n%s\n"""' % (data,), severity)
-
-        if self._i18nlevel != 0:
-            self._i18nlevel -= 1
-
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
