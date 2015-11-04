@@ -466,7 +466,9 @@ class TestMessagePTReader(unittest.TestCase):
             u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', references=[filename + ':43']),  # noqa
             u'spacing': self.me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename + ':34']),  # noqa
             u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename + ':38']),  # noqa
-            u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':46'])  # noqa
+            u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':46']),  # noqa
+            u'odd': self.me(u'odd', references=[filename + ':55']),
+            u'even': self.me(u'even', references=[filename + ':56']),
         }
 
     def test_read(self):

@@ -34,6 +34,7 @@ import traceback
 # Modified, as we don't want a dependency on zope.app.locales
 # from zope.app.locales.interfaces import IPOTEntry, IPOTMaker, ITokenEater
 from i18ndude.interfaces import IPOTEntry, IPOTMaker, ITokenEater
+from i18ndude.generator import DudeGenerator
 
 DEFAULT_CHARSET = 'utf-8'
 DEFAULT_ENCODING = '8bit'
@@ -205,8 +206,7 @@ class POTMaker(object):
                                  'encoding': DEFAULT_ENCODING})
 
         # Sort the catalog entries by filename
-        catalog = self.catalog.values()
-        catalog.sort()
+        catalog = sorted(self.catalog.values())
 
         # Write each entry to the file
         for entry in catalog:
@@ -395,19 +395,15 @@ class TokenEater(object):
         # sort all the entries by their first item.
         reverse = {}
         for k, v in self.__messages.items():
-            keys = v.keys()
-            keys.sort()
+            keys = sorted(v.keys())
             reverse.setdefault(tuple(keys), []).append((k, v))
-        rkeys = reverse.keys()
-        rkeys.sort()
+        rkeys = sorted(reverse.keys())
         for rkey in rkeys:
-            rentries = reverse[rkey]
-            rentries.sort()
+            rentries = sorted(reverse[rkey])
             for msgid, locations in rentries:
                 catalog[msgid] = []
 
-                locations = locations.keys()
-                locations.sort()
+                locations = sorted(locations.keys())
 
                 for filename, lineno in locations:
                     catalog[msgid].append((filename, lineno))
@@ -453,7 +449,7 @@ def py_strings(dir, domain="none", exclude=()):
             eater.set_filename(filename)
             try:
                 tokenize.tokenize(fp.readline, eater)
-            except tokenize.TokenError, e:
+            except tokenize.TokenError as e:
                 print >> sys.stderr, '%s: %s, line %d, column %d' % (
                     e[0], filename, e[1][0], e[1][1])
         finally:
@@ -491,6 +487,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
     engine = POEngine()
 
     class Devnull(object):
+
         def write(self, s):
             pass
 
@@ -503,7 +500,8 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
             engine.file = filename
             name, ext = os.path.splitext(filename)
             if ext == '.html' or ext.endswith('pt'):
-                p = HTMLTALParser()
+                gen = DudeGenerator(xml=0)
+                p = HTMLTALParser(gen=gen)
             else:
                 p = TALParser()
             p.parseFile(filename)

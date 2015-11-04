@@ -143,13 +143,13 @@ def find_untranslated(arguments):
 
         try:
             parser.parse(content)
-        except xml.sax.SAXException, e:
+        except xml.sax.SAXException as e:
             handler.log('ERROR in document:\n%s' % e, 'FATAL')
             errors += 1
         except KeyboardInterrupt:
             print >> sys.stderr, 'Interrupted by user.'
             sys.exit(0)
-        except Exception, e:
+        except Exception as e:
             handler.log('ERROR in document:\n%s' % e, 'FATAL')
             errors += 1
         # Note that the error stats of the handler get reset to zero
@@ -237,7 +237,7 @@ def rebuild_pot(arguments):
         ptreader = catalog.PTReader(path, create_domain, exclude=exclude)
         pyreader = catalog.PYReader(path, create_domain, exclude=exclude)
         gsreader = catalog.GSReader(path, create_domain, exclude=exclude)
-    except IOError, e:
+    except IOError as e:
         short_usage(0, 'I/O Error: %s' % e)
 
     # Read the data.
@@ -345,7 +345,7 @@ def merge(arguments):
         merge_ctl = catalog.MessageCatalog(filename=merge_fn)
         if merge2_fn:
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
-    except IOError, e:
+    except IOError as e:
         short_usage(0, 'I/O Error: %s' % e)
 
     # merge
@@ -393,7 +393,7 @@ def sync(arguments):
     try:
         pot_ctl = catalog.MessageCatalog(filename=pot_fn)
         po_ctls = [catalog.MessageCatalog(filename=fn) for fn in files]
-    except IOError, e:
+    except IOError as e:
         short_usage(1, 'I/O Error: %s' % e)
 
     for po in po_ctls:
@@ -623,8 +623,7 @@ def list(arguments):
 
     po_catalogs = []
     # flatten to list and sort
-    keys = po_ctls.keys()
-    keys.sort()
+    keys = sorted(po_ctls.keys())
     for key in keys:
         po_catalogs.append(po_ctls[key])
 
