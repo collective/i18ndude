@@ -11,8 +11,8 @@ if True:
               default='Three')
 
 four = _(msgid='msgid_four',
-        default='Four ${map}',
-        mapping={'map': zero})
+         default='Four ${map}',
+         mapping={'map': zero})
 
 five = _(u"msgid_five", default=u"五番目")
 

@@ -491,6 +491,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
     engine = POEngine()
 
     class Devnull(object):
+
         def write(self, s):
             pass
 
