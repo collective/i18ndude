@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from zope.tal import taldefs
 from zope.tal.taldefs import I18NError
-from zope.tal.taldefs import KNOWN_TAL_ATTRIBUTES
-from zope.tal.taldefs import METALError
 from zope.tal.taldefs import TAL_VERSION
 from zope.tal.taldefs import TALError
 from zope.tal.talgenerator import _parseI18nAttributes
@@ -10,20 +8,19 @@ from zope.tal.talgenerator import TALGenerator
 from zope.tal.translationcontext import DEFAULT_DOMAIN
 from zope.tal.translationcontext import TranslationContext
 
-# This is needed to be used in the monkey patch
-KNOWN_CHAMELEON_ATTRIBUTES = KNOWN_TAL_ATTRIBUTES.union(
-    (
-        'case',
-        'switch',
-    )
-)
-
 
 class DudeGenerator(TALGenerator):
 
-    ''' Custom Generator that supports default tal attributes and chameleon
-    ones
-    '''
+    """Custom Generator that does not raise template errors.
+
+    We have simply removed any TALErrors and METALErrors that would be
+    raised by zope.tal.  i18ndude is not a tool for checking the syntax
+    of your template.  It needs to know just enough to be able to
+    extract i18n information from it.
+
+    Main use case: support default tal attributes plus
+    chameleon-specific ones.
+    """
 
     def emitStartElement(self, name, attrlist, taldict, metaldict, i18ndict,
                          position=(None, None), isend=0):
@@ -36,32 +33,12 @@ class DudeGenerator(TALGenerator):
             return
         self.position = position
 
-        # TODO: Ugly hack to work around tal:replace and i18n:translate issue.
-        # I (DV) need to cleanup the code later.
         replaced = False
         if "replace" in taldict:
-            if "content" in taldict:
-                raise TALError(
-                    "tal:content and tal:replace are mutually exclusive",
-                    position)
             taldict["omit-tag"] = taldict.get("omit-tag", "")
             taldict["content"] = taldict.pop("replace")
             replaced = True
 
-        for key, value in taldict.items():
-            # Here we have the patch.
-            if key not in KNOWN_CHAMELEON_ATTRIBUTES:
-                raise TALError("bad TAL attribute: " + repr(key), position)
-            if not (value or key == 'omit-tag'):
-                raise TALError("missing value for TAL attribute: " +
-                               repr(key), position)
-        for key, value in metaldict.items():
-            if key not in taldefs.KNOWN_METAL_ATTRIBUTES:
-                raise METALError("bad METAL attribute: " + repr(key),
-                                 position)
-            if not value:
-                raise TALError("missing value for METAL attribute: " +
-                               repr(key), position)
         for key, value in i18ndict.items():
             if key not in taldefs.KNOWN_I18N_ATTRIBUTES:
                 raise I18NError("bad i18n attribute: " + repr(key), position)
@@ -101,23 +78,7 @@ class DudeGenerator(TALGenerator):
             raise I18NError("i18n:data must be accompanied by i18n:translate",
                             position)
 
-        if extendMacro:
-            if useMacro:
-                raise METALError(
-                    "extend-macro cannot be used with use-macro", position)
-            if not defineMacro:
-                raise METALError(
-                    "extend-macro must be used with define-macro", position)
-
         if defineMacro or extendMacro or useMacro:
-            if fillSlot or defineSlot:
-                raise METALError(
-                    "define-slot and fill-slot cannot be used with "
-                    "define-macro, extend-macro, or use-macro", position)
-            if defineMacro and useMacro:
-                raise METALError(
-                    "define-macro may not be used with use-macro", position)
-
             useMacro = useMacro or extendMacro
 
         if content and msgid:
@@ -142,10 +103,6 @@ class DudeGenerator(TALGenerator):
                     self.emit("setSourceFile", self.source_file)
                 todo["fillSlot"] = fillSlot
                 self.inMacroUse = 0
-        else:
-            if fillSlot:
-                raise METALError("fill-slot must be within a use-macro",
-                                 position)
         if not self.inMacroUse:
             if defineMacro:
                 self.pushProgram()
@@ -164,10 +121,6 @@ class DudeGenerator(TALGenerator):
                 todo["useMacro"] = useMacro
                 self.inMacroUse = 1
             if defineSlot:
-                if not self.inMacroDef:
-                    raise METALError(
-                        "define-slot must be within a define-macro",
-                        position)
                 self.pushProgram()
                 todo["defineSlot"] = defineSlot
 
@@ -237,8 +190,11 @@ class DudeGenerator(TALGenerator):
             self.pushProgram()
         if attrsubst or i18nattrs:
             if attrsubst:
-                repldict = taldefs.parseAttributeReplacements(attrsubst,
-                                                              self.xml)
+                try:
+                    repldict = taldefs.parseAttributeReplacements(
+                        attrsubst, self.xml)
+                except TALError:
+                    repldict = {}
             else:
                 repldict = {}
             if i18nattrs:

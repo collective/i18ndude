@@ -6,6 +6,10 @@ Changelog
 
 New:
 
+- Support Chameleon unnamed attributes without crashing.  For example:
+  ``tal:attributes="python:{'data-something': 'chameleon-only'}"``
+  [maurits]
+
 - Support chameleon attributes tal:switch and tal:case.
   Fixes issue #24.
   [ale-rt]
