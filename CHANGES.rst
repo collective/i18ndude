@@ -6,7 +6,8 @@ Changelog
 
 New:
 
-- *add item here*
+- Support chameleon attributes tal:switch and tal:case (#24)
+  [ale-rt]
 
 Fixes:
 
