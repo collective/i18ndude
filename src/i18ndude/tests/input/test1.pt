@@ -49,5 +49,12 @@ tal:replace="options/userid">Userid</span>.</tal:block>
 <input type="submit" value="Dig this" i18n:attributes="value dig_this"/>
 </form>
 
+<!-- Swich/case is chameleon only.  Not supported by zope.tal. -->
+<ul tal:define="items python:['one', 'two', 'three']"
+    tal:switch="len(items) % 2">
+  <li tal:case="True" i18n:translate="">odd</li>
+  <li tal:case="False" i18n:translate="">even</li>
+</ul>
+
 </body>
 </html>
