@@ -34,6 +34,7 @@ import traceback
 # Modified, as we don't want a dependency on zope.app.locales
 # from zope.app.locales.interfaces import IPOTEntry, IPOTMaker, ITokenEater
 from i18ndude.interfaces import IPOTEntry, IPOTMaker, ITokenEater
+from i18ndude.generator import DudeGenerator
 
 DEFAULT_CHARSET = 'utf-8'
 DEFAULT_ENCODING = '8bit'
@@ -499,7 +500,8 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
             engine.file = filename
             name, ext = os.path.splitext(filename)
             if ext == '.html' or ext.endswith('pt'):
-                p = HTMLTALParser()
+                gen = DudeGenerator(xml=0)
+                p = HTMLTALParser(gen=gen)
             else:
                 p = TALParser()
             p.parseFile(filename)

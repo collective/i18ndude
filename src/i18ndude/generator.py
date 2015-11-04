@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from zope.tal import taldefs
 from zope.tal.taldefs import I18NError
+from zope.tal.taldefs import KNOWN_TAL_ATTRIBUTES
 from zope.tal.taldefs import METALError
 from zope.tal.taldefs import TAL_VERSION
 from zope.tal.taldefs import TALError
@@ -8,6 +9,14 @@ from zope.tal.talgenerator import _parseI18nAttributes
 from zope.tal.talgenerator import TALGenerator
 from zope.tal.translationcontext import DEFAULT_DOMAIN
 from zope.tal.translationcontext import TranslationContext
+
+# This is needed to be used in the monkey patch
+KNOWN_CHAMELEON_ATTRIBUTES = KNOWN_TAL_ATTRIBUTES.union(
+    (
+        'case',
+        'switch',
+    )
+)
 
 
 class DudeGenerator(TALGenerator):
@@ -40,7 +49,8 @@ class DudeGenerator(TALGenerator):
             replaced = True
 
         for key, value in taldict.items():
-            if key not in taldefs.KNOWN_TAL_ATTRIBUTES:
+            # Here we have the patch.
+            if key not in KNOWN_CHAMELEON_ATTRIBUTES:
                 raise TALError("bad TAL attribute: " + repr(key), position)
             if not (value or key == 'omit-tag'):
                 raise TALError("missing value for TAL attribute: " +
