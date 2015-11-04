@@ -528,8 +528,7 @@ class POWriter:
     def _write_messages(self, sort, msgstrToComment, sync):
         """Writes the messages out."""
         f = self._file
-        ids = self._msgctl.keys()
-        ids.sort()
+        ids = sorted(self._msgctl.keys())
 
         for id in ids:
             entry = self._msgctl[id]

@@ -26,7 +26,7 @@ class GSParser(object):
         self.filename = filename
         try:
             tree = ElementTree(file=filename)
-        except Exception, e:
+        except Exception as e:
             print u"There was an error in parsing %s: %s" % (filename, e)
             sys.exit(0)
         elem = tree.getroot()

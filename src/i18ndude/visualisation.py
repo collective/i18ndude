@@ -85,8 +85,7 @@ def output_table(out, languagelist, total):
     table = ''
 
     body += '\n<h2>Tier 3:</h2>\n'
-    group3 = out.values()
-    group3.sort()
+    group3 = sorted(out.values())
     for value in group3:
         perc = value['percentage']
         if perc == 0:
@@ -130,8 +129,7 @@ def output_list(out, languagelist, total):
             aligned_print(0, desc)
 
     print '\nTier 3:\n'
-    group3 = out.values()
-    group3.sort()
+    group3 = sorted(out.values())
     for value in group3:
         perc = value['percentage']
         if perc == 0:

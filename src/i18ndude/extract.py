@@ -205,8 +205,7 @@ class POTMaker(object):
                                  'encoding': DEFAULT_ENCODING})
 
         # Sort the catalog entries by filename
-        catalog = self.catalog.values()
-        catalog.sort()
+        catalog = sorted(self.catalog.values())
 
         # Write each entry to the file
         for entry in catalog:
@@ -395,19 +394,15 @@ class TokenEater(object):
         # sort all the entries by their first item.
         reverse = {}
         for k, v in self.__messages.items():
-            keys = v.keys()
-            keys.sort()
+            keys = sorted(v.keys())
             reverse.setdefault(tuple(keys), []).append((k, v))
-        rkeys = reverse.keys()
-        rkeys.sort()
+        rkeys = sorted(reverse.keys())
         for rkey in rkeys:
-            rentries = reverse[rkey]
-            rentries.sort()
+            rentries = sorted(reverse[rkey])
             for msgid, locations in rentries:
                 catalog[msgid] = []
 
-                locations = locations.keys()
-                locations.sort()
+                locations = sorted(locations.keys())
 
                 for filename, lineno in locations:
                     catalog[msgid].append((filename, lineno))
@@ -453,7 +448,7 @@ def py_strings(dir, domain="none", exclude=()):
             eater.set_filename(filename)
             try:
                 tokenize.tokenize(fp.readline, eater)
-            except tokenize.TokenError, e:
+            except tokenize.TokenError as e:
                 print >> sys.stderr, '%s: %s, line %d, column %d' % (
                     e[0], filename, e[1][0], e[1][1])
         finally:
