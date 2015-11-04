@@ -38,23 +38,23 @@ class DudeGenerator(TALGenerator):
 
         for key, value in taldict.items():
             if key not in taldefs.KNOWN_TAL_ATTRIBUTES:
-                raise TALError("bad TAL attribute: " + `key`, position)
+                raise TALError("bad TAL attribute: " + repr(key), position)
             if not (value or key == 'omit-tag'):
                 raise TALError("missing value for TAL attribute: " +
-                               `key`, position)
+                               repr(key), position)
         for key, value in metaldict.items():
             if key not in taldefs.KNOWN_METAL_ATTRIBUTES:
-                raise METALError("bad METAL attribute: " + `key`,
+                raise METALError("bad METAL attribute: " + repr(key),
                                  position)
             if not value:
                 raise TALError("missing value for METAL attribute: " +
-                               `key`, position)
+                               repr(key), position)
         for key, value in i18ndict.items():
             if key not in taldefs.KNOWN_I18N_ATTRIBUTES:
-                raise I18NError("bad i18n attribute: " + `key`, position)
+                raise I18NError("bad i18n attribute: " + repr(key), position)
             if not value and key in ("attributes", "data", "id"):
                 raise I18NError("missing value for i18n attribute: " +
-                                `key`, position)
+                                repr(key), position)
 
         todo = {}
         defineMacro = metaldict.get("define-macro")
@@ -163,9 +163,9 @@ class DudeGenerator(TALGenerator):
             domain = i18ndict.get("domain") or self.i18nContext.domain
             source = i18ndict.get("source") or self.i18nContext.source
             target = i18ndict.get("target") or self.i18nContext.target
-            if (  domain != DEFAULT_DOMAIN
-                  or source is not None
-                  or target is not None):
+            if (domain != DEFAULT_DOMAIN
+                    or source is not None
+                    or target is not None):
                 self.i18nContext = TranslationContext(self.i18nContext,
                                                       domain=domain,
                                                       source=source,
@@ -182,13 +182,13 @@ class DudeGenerator(TALGenerator):
             self.emit("beginScope", dict)
             todo["scope"] = 1
         if onError:
-            self.pushProgram() # handler
+            self.pushProgram()  # handler
             if TALtag:
-                self.pushProgram() # start
-            self.emitStartTag(name, list(attrlist)) # Must copy attrlist!
+                self.pushProgram()  # start
+            self.emitStartTag(name, list(attrlist))  # Must copy attrlist!
             if TALtag:
-                self.pushProgram() # start
-            self.pushProgram() # block
+                self.pushProgram()  # start
+            self.pushProgram()  # block
             todo["onError"] = onError
         if define:
             self.emitDefines(define)
