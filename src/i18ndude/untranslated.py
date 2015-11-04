@@ -181,7 +181,8 @@ class Handler(xml.sax.ContentHandler):
 
         if _translatable(data) and not _tal_replaced_content(tag, attrs):
             # not enclosed
-            if (self._i18nlevel == 0) and tag not in ['script', 'style', 'html']:
+            if (self._i18nlevel == 0) and tag not in [
+                    'script', 'style', 'html']:
                 severity = _severity(tag, attrs) or ''
                 if severity:
                     if IGNORE_UNTRANSLATED in attrs.keys():

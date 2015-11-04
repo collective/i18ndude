@@ -32,7 +32,7 @@ _ROW = """
 </div></td>
 <td>%(name)s</td>
 </tr>
-"""
+"""  # noqa
 
 
 def print_row(percentage, desc):
