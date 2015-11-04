@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from zope.tal import taldefs
-from zope.tal.taldefs import I18NError, METALError, TALError
+from zope.tal.taldefs import I18NError
+from zope.tal.taldefs import METALError
 from zope.tal.taldefs import TAL_VERSION
+from zope.tal.taldefs import TALError
 from zope.tal.talgenerator import _parseI18nAttributes
 from zope.tal.talgenerator import TALGenerator
-from zope.tal.translationcontext import TranslationContext, DEFAULT_DOMAIN
+from zope.tal.translationcontext import DEFAULT_DOMAIN
+from zope.tal.translationcontext import TranslationContext
 
 
 class DudeGenerator(TALGenerator):
@@ -235,7 +238,7 @@ class DudeGenerator(TALGenerator):
                 i18nattrs = {}
             # Convert repldict's name-->expr mapping to a
             # name-->(compiled_expr, translate) mapping
-            for key, value in repldict.items():
+            for key, value in sorted(repldict.items()):
                 if i18nattrs.get(key, None):
                     raise I18NError(
                         "attribute [%s] cannot both be part of tal:attributes"
@@ -243,7 +246,7 @@ class DudeGenerator(TALGenerator):
                         position)
                 ce = self.compileExpression(value)
                 repldict[key] = ce, key in i18nattrs, i18nattrs.get(key)
-            for key in i18nattrs:
+            for key in sorted(i18nattrs):
                 if key not in repldict:
                     repldict[key] = None, 1, i18nattrs.get(key)
         else:
