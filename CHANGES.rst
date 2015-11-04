@@ -4,13 +4,22 @@ Changelog
 3.4.4 (unreleased)
 ------------------
 
-New:
-
-- *add item here*
-
 Fixes:
 
-- *add item here*
+- Check ``tal:condition`` correctly when it is in a ``tal:something`` tag.
+  [maurits]
+
+- In ``find-untranslated`` only ignore ``tal:condition="nothing"``,
+  not other conditions.
+  Fixes issue #16.
+  [maurits]
+
+- Improved the ``prepare_xml`` function.  This tries to work around
+  templates that miss the usual boiler plate, like
+  ``xmlns:i18n="http://xml.zope.org/namespaces/i18n"``.  But there
+  were some silly errors in it.
+  This refs issue #16.
+  [maurits]
 
 
 3.4.3 (2015-09-01)

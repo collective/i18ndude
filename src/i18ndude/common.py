@@ -29,18 +29,30 @@ def prepare_xml(file):
 
     # We want namespace declarations for tal, metal and i18n.
     # http://sf.net/tracker/?func=detail&atid=516339&aid=982527&group_id=66950
-    mobj = re.search(r'<([a-zA-Z]).*\s', content)
+    mobj = re.search(r'<([a-zA-Z]+)', content)
     if mobj:
         if mobj.group(1) == 'html':
             m = mobj.end()
-            content = content[:m] + \
-                'xmlns:tal="tal" xmlns:i18n="i18n" ' + \
-                'xmlns:metal="metal" ' + content[m:]
+            extra = ''
+            if 'xmlns:i18n=' not in content:
+                extra += 'xmlns:i18n="http://xml.zope.org/namespaces/i18n" '
+            if 'xmlns:metal=' not in content:
+                extra += 'xmlns:metal="http://xml.zope.org/namespaces/metal" '
+            if 'xmlns:tal=' not in content:
+                extra += 'xmlns:tal="http://xml.zope.org/namespaces/tal">'
+            if extra:
+                content = content[:m] + ' ' + extra + content[m:]
         else:
             m = mobj.start()
-            content = content[:m] + \
-                '<html xmlns:tal="tal" xmlns:i18n="i18n" ' + \
-                'xmlns:metal="metal">' + content[m:] + '</html>'
+            content = (
+                content[:m] +
+                '<html ' +
+                'xmlns:i18n="http://xml.zope.org/namespaces/i18n" '
+                'xmlns:metal="http://xml.zope.org/namespaces/metal" ' +
+                'xmlns:tal="http://xml.zope.org/namespaces/tal">' +
+                '<head><title></title></head><body>' +
+                content[m:] +
+                '</body></html>')
 
     return StringIO(content.strip())
 

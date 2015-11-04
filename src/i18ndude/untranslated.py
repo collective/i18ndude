@@ -18,26 +18,35 @@ def _severity(tag, attrs):
     Returns textual representation of severity otherwise."""
 
     keys = attrs.keys()
+    # Check for namespaces in the tag and attributes.
+    # Catch all of these use cases:
+    # <span tal:condition...
+    # <tal condition...
+    # <tal:block tal:condition...
+    # All of those should result in tal:condition as attribute key.
     ns = ':' in tag and '%s:' % tag[:tag.find(':')] or ''
     if ns:
-        keys = [ns + key for key in keys]
+        new_keys = []
+        for key in keys:
+            if not key.startswith(ns):
+                key = ns + key
+            new_keys.append(key)
+        keys = new_keys
 
     if 'metal:use-macro' in keys:
         return ''
 
     # comments
-    elif 'tal:condition' in keys or 'tal:replace' in keys:
+    if 'tal:condition' in keys:
         cond_val = attrs.get('tal:condition', attrs.get('condition', None))
-        repl_val = attrs.get('tal:replace', attrs.get('replace', None))
-
-        if cond_val == 'nothing' or repl_val == 'nothing':
+        if cond_val == 'nothing':
             return ''
+        return 'ERROR'
 
     elif 'tal:replace' in keys or 'tal:content' in keys:
         return 'WARNING'
 
-    else:
-        return 'ERROR'
+    return 'ERROR'
 
 
 def _tal_replaced_content(tag, attrs):
@@ -172,7 +181,7 @@ class Handler(xml.sax.ContentHandler):
 
         if _translatable(data) and not _tal_replaced_content(tag, attrs):
             # not enclosed
-            if (self._i18nlevel == 0) and tag not in ['script', 'style']:
+            if (self._i18nlevel == 0) and tag not in ['script', 'style', 'html']:
                 severity = _severity(tag, attrs) or ''
                 if severity:
                     if IGNORE_UNTRANSLATED in attrs.keys():
