@@ -496,23 +496,36 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
                      find_files(dir, '*.kupu', exclude=tuple(exclude)) +
                      find_files(dir, '*.pox', exclude=tuple(exclude)) +
                      find_files(dir, '*.xsl', exclude=tuple(exclude))):
+        engine.file = filename
+        name, ext = os.path.splitext(filename)
+        # First try with standard zope.tal parsers.
+        if ext == '.html' or ext.endswith('pt'):
+            parser = HTMLTALParser()
+        else:
+            parser = TALParser()
         try:
-            engine.file = filename
-            name, ext = os.path.splitext(filename)
-            if ext == '.html' or ext.endswith('pt'):
-                gen = DudeGenerator(xml=0)
-                p = HTMLTALParser(gen=gen)
-            else:
-                p = TALParser()
-            p.parseFile(filename)
-            program, macros = p.getCode()
+            parser.parseFile(filename)
+            program, macros = parser.getCode()
             POTALInterpreter(program, macros, engine, stream=Devnull(),
                              metal=False)()
         except KeyboardInterrupt:
             raise
         except:  # Hee hee, I love bare excepts!
-            print 'There was an error processing', filename
-            traceback.print_exc()
+            if ext == '.html' or ext.endswith('pt'):
+                # We can have one retry with our own generator.
+                gen = DudeGenerator(xml=0)
+                parser = HTMLTALParser(gen=gen)
+                try:
+                    parser.parseFile(filename)
+                    program, macros = parser.getCode()
+                    POTALInterpreter(program, macros, engine, stream=Devnull(),
+                                     metal=False)()
+                except:  # Hee hee, I love bare excepts!
+                    print 'There was an error processing', filename
+                    traceback.print_exc()
+            else:
+                print 'There was an error processing', filename
+                traceback.print_exc()
 
     # See whether anything in the domain was found
     if domain not in engine.catalog:

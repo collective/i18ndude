@@ -60,5 +60,8 @@ tal:replace="options/userid">Userid</span>.</tal:block>
        i18n:attributes="value"
        value="Test for issue 15, html5 attributes without value" />
 
+<div tal:define="patterns python:{'data-something': 'chameleon-only-again'}"
+     tal:attributes="python:patterns" />
+
 </body>
 </html>
