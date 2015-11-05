@@ -105,7 +105,11 @@ def find_untranslated_parser(subparsers):
     contain only the errors for each file.
 
     You can mark tags to be ignored for this translation check by
-    setting the "i18n:ignore" attribute on the tag.
+    setting the "i18n:ignore" attribute on the tag. Same for
+    attributes with "i18n:ignore-attributes". Note that i18ndude may
+    be happy with this, but your template engine may fail when trying
+    to render a template containing those ignore hints.  You need
+    Chameleon 2.23 or higher, or the to be released zope.tal 4.1.2.
     """
     parser = subparsers.add_parser(
         'find-untranslated',
