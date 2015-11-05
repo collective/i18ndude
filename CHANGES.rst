@@ -6,6 +6,10 @@ Changelog
 
 New:
 
+- First try the original zope.tal parser.  Only when this fails we try
+  our own parser/generator.
+  [maurits]
+
 - Support Chameleon unnamed attributes without crashing.  For example:
   ``tal:attributes="python:{'data-something': 'chameleon-only'}"``
   [maurits]
