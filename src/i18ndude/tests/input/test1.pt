@@ -56,5 +56,9 @@ tal:replace="options/userid">Userid</span>.</tal:block>
   <li tal:case="False" i18n:translate="">even</li>
 </ul>
 
+<input checked type="checkbox" name="friendly_type_name:list"
+       i18n:attributes="value"
+       value="Test for issue 15, html5 attributes without value" />
+
 </body>
 </html>

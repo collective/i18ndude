@@ -469,6 +469,7 @@ class TestMessagePTReader(unittest.TestCase):
             u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':46']),  # noqa
             u'odd': self.me(u'odd', references=[filename + ':55']),
             u'even': self.me(u'even', references=[filename + ':56']),
+            u'Test for issue 15, html5 attributes without value': self.me(u'Test for issue 15, html5 attributes without value', references=[filename + ':59']),
         }
 
     def test_read(self):
