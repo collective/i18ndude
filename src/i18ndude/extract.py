@@ -508,6 +508,8 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
             program, macros = p.getCode()
             POTALInterpreter(program, macros, engine, stream=Devnull(),
                              metal=False)()
+        except KeyboardInterrupt:
+            raise
         except:  # Hee hee, I love bare excepts!
             print 'There was an error processing', filename
             traceback.print_exc()
