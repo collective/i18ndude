@@ -55,12 +55,3 @@ def prepare_xml(file):
                 '</body></html>')
 
     return StringIO(content.strip())
-
-
-def quote(s):
-    """Quote if string has spaces."""
-
-    if [ch for ch in s if ch.isspace()]:
-        return '"%s"' % s
-    else:
-        return s

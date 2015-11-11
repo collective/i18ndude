@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from i18ndude import common
+from i18ndude.utils import quote
 from i18ndude.utils import wrapAndQuoteString
 from i18ndude.utils import wrapString
 from ordereddict import OrderedDict
@@ -292,10 +292,10 @@ class MessageCatalog(OrderedDict):
         and overwrites the comments with the ones from the given catalog. This
         is used in the sync command.
         """
-        removed_msgids = [common.quote(msgid)
+        removed_msgids = [quote(msgid)
                           for msgid in self.accept_ids(msgctl.keys())]
         self.overwrite_context(msgctl)
-        added_msgids = [common.quote(msgid)
+        added_msgids = [quote(msgid)
                         for msgid in self.add_missing(msgctl)]
 
         self.mime_header[
