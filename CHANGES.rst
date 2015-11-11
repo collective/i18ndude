@@ -6,7 +6,9 @@ Changelog
 
 New:
 
-- *add item here*
+- Use lxml instead of xml.etree or elementtree for parsing
+  GenericSetup xml files.
+  [maurits]
 
 Fixes:
 
