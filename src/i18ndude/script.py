@@ -73,15 +73,20 @@ def filter_isfile(files):
     for name in files:  # parse file by file
         name = name.strip()
         if os.path.isdir(name):  # descend recursively
-            join = lambda file: os.path.join(name, file)
-            subdirs = filter_isfile([path for path in
-                                     map(join, os.listdir(name))
-                                     if os.path.isdir(path) or
-                                     os.path.splitext(path)[1].endswith('pt')])
-            result += subdirs
+            subdirs = []
+            for subpath in os.listdir(name):
+                if subpath.startswith('.'):
+                    # ignore hidden file
+                    continue
+                path = os.path.join(name, subpath)
+                if (os.path.isdir(path) or
+                        os.path.splitext(subpath)[1].endswith('pt')):
+                    subdirs.append(path)
+            result += filter_isfile(subdirs)
 
         elif not os.path.isfile(name):
-            print >> sys.stderr, 'Warning: %s is not a file or is ignored.' % name  # noqa
+            print >> sys.stderr, (
+                'Warning: %s is not a file or is ignored.' % name)
 
         else:
             result.append(name)

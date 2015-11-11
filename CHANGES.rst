@@ -6,8 +6,8 @@ Changelog
 
 New:
 
-- Use lxml instead of xml.etree or elementtree for parsing
-  GenericSetup xml files.
+- Ignore hidden files in the find-untranslated command.
+  Issue #29
   [maurits]
 
 Fixes:
