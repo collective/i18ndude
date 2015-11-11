@@ -147,25 +147,53 @@ def find_untranslated(arguments):
 
     errors = 0
     for filename in filter_isfile(arguments.files):  # parse file by file
+        with open(filename) as myfile:
+            if not myfile.read().strip():
+                continue
+        # Reinitialize the handler, resetting errors.
         handler.set_filename(filename)
-        content = common.prepare_xml(open(filename))
-
-        try:
-            parser.parse(content)
-        except xml.sax.SAXException as e:
-            handler.log('ERROR in document:\n%s' % e, 'FATAL')
+        file_errors = []
+        success = False
+        for content in common.present_file_contents(filename):
+            if content is None:
+                continue
+            if isinstance(content, list):
+                # These are errors.
+                file_errors.extend(content)
+                continue
+            # Reinitialize the handler, resetting errors.
+            handler.set_filename(filename)
+            try:
+                parser.parse(content)
+            except KeyboardInterrupt:
+                print >> sys.stderr, 'Interrupted by user.'
+                sys.exit(1)
+            except xml.sax.SAXException as error:
+                file_errors.append(error)
+                continue
+            except Exception as error:
+                file_errors.append(error)
+                continue
+            else:
+                # We have successfully parsed the file.
+                success = True
+                # No need for a run with another parser.
+                break
+        if success:
+            # next file
+            continue
+        if file_errors:
             errors += 1
-        except KeyboardInterrupt:
-            print >> sys.stderr, 'Interrupted by user.'
-            sys.exit(0)
-        except Exception as e:
-            handler.log('ERROR in document:\n%s' % e, 'FATAL')
-            errors += 1
-        # Note that the error stats of the handler get reset to zero
-        # when starting on a new document, so we ask about errors
-        # after each document.
-        if handler.has_errors():
-            errors += 1
+            report = 'ERRORs found trying to parse document in various ways:\n'
+            for error in file_errors:
+                report += '%s\n' % error
+            handler.log(report, 'FATAL')
+        else:
+            # Note that the error stats of the handler get reset to zero
+            # when starting on a new document, so we ask about errors
+            # after each document.
+            if handler.has_errors():
+                errors += 1
     return errors
 
 
@@ -584,11 +612,11 @@ def list_parser(subparsers):
     parser.add_argument('-p', '--products', metavar='product', nargs='+',
                         required=True)
     parser.add_argument('-t', '--table', action='store_true')
-    parser.set_defaults(func=list)
+    parser.set_defaults(func=arg_list)
     return parser
 
 
-def list(arguments):
+def arg_list(arguments):
     table = arguments.table
     products = arguments.products
 
