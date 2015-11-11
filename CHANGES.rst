@@ -26,6 +26,10 @@ New:
   Issue #29
   [maurits]
 
+- Use lxml instead of xml.etree or elementtree for parsing
+  GenericSetup xml files.
+  [maurits]
+
 Fixes:
 
 - *add item here*
