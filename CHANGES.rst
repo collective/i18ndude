@@ -6,6 +6,10 @@ Changelog
 
 New:
 
+- Extract strings from zcml.
+  Issue #28
+  [maurits]
+
 - No longer print two blank lines at the end of .po and .pot files.
   [maurits]
 
