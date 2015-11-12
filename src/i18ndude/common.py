@@ -82,19 +82,14 @@ def present_file_contents(filename):
     """
     errors = []
     # First try to parse as nice xml.
-    try:
-        tree = etree.parse(filename)
-    except etree.XMLSyntaxError as error:
-        errors.append(error)
-    else:
-        yield tree_content(tree)
     # If that fails, try to parse it as html.
-    try:
-        tree = etree.parse(filename, HTML_PARSER)
-    except etree.XMLSyntaxError as error:
-        errors.append(error)
-    else:
-        yield tree_content(tree)
+    for parser in (None, HTML_PARSER):
+        try:
+            tree = etree.parse(filename, parser)
+        except etree.XMLSyntaxError as error:
+            errors.append(error)
+        else:
+            yield tree_content(tree)
     # Try our (t)rusty old way.
     yield prepare_xml(open(filename))
     # Give back any errors we found.
