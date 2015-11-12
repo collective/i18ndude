@@ -547,6 +547,42 @@ class TestMessagePYReader(unittest.TestCase):
         self.assertEqual(len(out), len(self.output))
 
 
+class TestMessageGSReader(unittest.TestCase):
+
+    def setUp(self):
+        self.me = catalog.MessageEntry
+        dirpath = os.path.join(PACKAGE_HOME, 'input')
+        filepath = os.path.join(dirpath, 'test.xml')
+        self.input = dirpath
+        self.output = {
+            u'RSS feed':
+                self.me(u'RSS feed',
+                        references=[filepath]),
+            u'Print this':
+                self.me(u'Print this',
+                        references=[filepath]),
+        }
+
+    def test_read(self):
+        reader = catalog.GSReader(self.input, 'plone')
+        reader.read()
+        out = reader.catalogs['plone']
+        for key in out:
+            self.assertTrue(
+                key in self.output,
+                'Failure in gs parsing.\nUnexpected msgid: %s' % key)
+        for key in self.output:
+            self.assertTrue(
+                out.get(key, False),
+                'Failure in gs parsing.\nMissing:%s' % self.output.get(key))
+            self.assertTrue(
+                out.get(key) == self.output.get(key),
+                'Failure in gs parsing.\nGot:%s\nExpected:%s' %
+                (out.get(key), self.output.get(key))
+            )
+        self.assertEqual(len(out), len(self.output))
+
+
 class TestMessageZCMLReader(unittest.TestCase):
 
     def setUp(self):
@@ -596,6 +632,7 @@ def test_suite():
     suite.addTest(unittest.makeSuite(TestMessagePoWriter))
     suite.addTest(unittest.makeSuite(TestMessagePTReader))
     suite.addTest(unittest.makeSuite(TestMessagePYReader))
+    suite.addTest(unittest.makeSuite(TestMessageGSReader))
     suite.addTest(unittest.makeSuite(TestMessageZCMLReader))
     return suite
 

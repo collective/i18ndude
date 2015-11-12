@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<object name="portal_actions" meta_type="Plone Actions Tool"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+        i18n:domain="plone">
+ <object name="document_actions" meta_type="CMF Action Category">
+  <property name="title"></property>
+  <object name="rss" meta_type="CMF Action" i18n:domain="plone">
+   <property name="title" i18n:translate="">RSS feed</property>
+   <property name="description" i18n:translate=""></property>
+   <property name="url_expr">object/@@syndication-util/rss_url</property>
+   <property name="icon_expr">string:$portal_url/rss.png</property>
+   <property
+      name="available_expr">object/@@syndication-util/context_enabled</property>
+   <property name="permissions">
+    <element value="View"/>
+   </property>
+   <property name="visible">False</property>
+  </object>
+  <object name="print" meta_type="CMF Action" i18n:domain="plone">
+   <property name="title" i18n:translate="">Print this</property>
+   <property name="description" i18n:translate=""></property>
+   <property name="url_expr">string:javascript:this.print();</property>
+   <property name="icon_expr">string:$portal_url/print_icon.png</property>
+   <property name="available_expr"></property>
+   <property name="permissions">
+    <element value="View"/>
+   </property>
+   <property name="visible">False</property>
+  </object>
+ </object>
+</object>
