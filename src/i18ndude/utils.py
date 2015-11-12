@@ -256,3 +256,12 @@ def prepare_cli_documentation(data):
             msg = "Wrote command line documentation."
             commit_cmd = vcs.cmd_commit(msg)
             print execute_command(commit_cmd)
+
+
+def quote(s):
+    """Quote if string has spaces."""
+
+    if [ch for ch in s if ch.isspace()]:
+        return '"%s"' % s
+    else:
+        return s

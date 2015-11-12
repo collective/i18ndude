@@ -11,10 +11,9 @@ install_requires = [
     'zope.i18nmessageid >= 3.3',
     'plone.i18n',
     'ordereddict',
+    'lxml',
 ]
 
-if sys.version_info < (2, 5):
-    install_requires.append('elementtree')
 if sys.version_info < (2, 7):
     # Python 2.7 contains argparse.  For earlier versions we need to
     # add it as a dependency.

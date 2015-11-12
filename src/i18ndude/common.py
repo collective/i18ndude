@@ -1,3 +1,4 @@
+from lxml import etree
 from StringIO import StringIO
 import re
 
@@ -9,6 +10,7 @@ DEFAULT_DECL = {
 
     '<?xml': '<?xml version="1.0" encoding="utf-8"?>'
 }
+HTML_PARSER = etree.HTMLParser()
 
 
 def prepare_xml(file):
@@ -57,10 +59,38 @@ def prepare_xml(file):
     return StringIO(content.strip())
 
 
-def quote(s):
-    """Quote if string has spaces."""
+def tree_content(tree):
+    content = etree.tostring(tree)
+    if content is None:
+        return
+    return StringIO(content.strip())
 
-    if [ch for ch in s if ch.isspace()]:
-        return '"%s"' % s
-    else:
-        return s
+
+def present_file_contents(filename):
+    """Present the file in various ways.
+
+    It is hard to parse files that may be plain html, plain xml, or a
+    page template.  It does not help that the page template might miss
+    namespaces so it gives an xml parse error.  Or it has html5-style
+    attributes that cannot be parsed by xml.sax but need to be smoothed
+    over by an html parser.  And this html parser may introduce double
+    attributes, like adding an xml:lang when this is already there in
+    the original template.
+
+    So we we present the file in various way, that other code can
+    iterate over.
+    """
+    errors = []
+    # First try to parse as nice xml.
+    # If that fails, try to parse it as html.
+    for parser in (None, HTML_PARSER):
+        try:
+            tree = etree.parse(filename, parser)
+        except etree.XMLSyntaxError as error:
+            errors.append(error)
+        else:
+            yield tree_content(tree)
+    # Try our (t)rusty old way.
+    yield prepare_xml(open(filename))
+    # Give back any errors we found.
+    yield errors

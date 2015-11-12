@@ -1,10 +1,6 @@
 import sys
 
-try:
-    from xml.etree.ElementTree import ElementTree
-    ElementTree  # pyflakes
-except ImportError:
-    from elementtree.ElementTree import ElementTree
+from lxml import etree
 
 from i18ndude.extract import find_files
 
@@ -25,7 +21,7 @@ class GSParser(object):
     def parse(self, filename):
         self.filename = filename
         try:
-            tree = ElementTree(file=filename)
+            tree = etree.parse(filename)
         except Exception as e:
             print u"There was an error in parsing %s: %s" % (filename, e)
             sys.exit(0)

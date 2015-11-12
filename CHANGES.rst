@@ -6,7 +6,18 @@ Changelog
 
 New:
 
-- *add item here*
+- In the find-untranslated command, first try to parse a template as
+  xml, which is good for non-html files.  If that fails, try to parse
+  it as html with a little help from the lxml HTMLPaser, which handles
+  html5 code much better.  If that fails, use our trusty home grown
+  ``common.prepare_xml`` function, which treats everything as old
+  html.  Note that we still use ``xml.sax`` as the core parser here.
+  Issue #15
+  [maurits]
+
+- Ignore hidden files in the find-untranslated command.
+  Issue #29
+  [maurits]
 
 Fixes:
 
