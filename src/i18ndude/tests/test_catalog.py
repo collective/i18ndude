@@ -457,19 +457,19 @@ class TestMessagePTReader(unittest.TestCase):
         self.input = os.path.join(PACKAGE_HOME, 'input')
         filename = self.input + os.sep + 'test1.pt'
         self.output = {
-            u'Buzz': self.me(u'Buzz', references=[filename + ':18']),
-            u'${foo} ${bar}': self.me(u'${foo} ${bar}', references=[filename + ':23']),  # noqa
-            u'dig_this': self.me(u'dig_this', msgstr=u'Dig this', references=[filename + ':49']),  # noqa
-            u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=[filename + ':26', filename + ':28']),  # noqa
-            u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=[filename + ':12']),  # noqa
-            u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=[filename + ':12']),  # noqa
-            u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', references=[filename + ':43']),  # noqa
-            u'spacing': self.me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename + ':34']),  # noqa
-            u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename + ':38']),  # noqa
-            u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':46']),  # noqa
-            u'odd': self.me(u'odd', references=[filename + ':55']),
-            u'even': self.me(u'even', references=[filename + ':56']),
-            u'Test for issue 15, html5 attributes without value': self.me(u'Test for issue 15, html5 attributes without value', references=[filename + ':59']),
+            u'Buzz': self.me(u'Buzz', references=[filename + ':21']),
+            u'${foo} ${bar}': self.me(u'${foo} ${bar}', references=[filename + ':26']),  # noqa
+            u'dig_this': self.me(u'dig_this', msgstr=u'Dig this', references=[filename + ':52']),  # noqa
+            u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=[filename + ':29', filename + ':31']),  # noqa
+            u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=[filename + ':15']),  # noqa
+            u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=[filename + ':15']),  # noqa
+            u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', references=[filename + ':46']),  # noqa
+            u'spacing': self.me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename + ':37']),  # noqa
+            u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename + ':41']),  # noqa
+            u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':49']),  # noqa
+            u'odd': self.me(u'odd', references=[filename + ':58']),
+            u'even': self.me(u'even', references=[filename + ':59']),
+            u'Test for issue 15, html5 attributes without value': self.me(u'Test for issue 15, html5 attributes without value', references=[filename + ':62']),  # noqa
         }
 
     def test_read(self):
