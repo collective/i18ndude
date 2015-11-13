@@ -34,4 +34,3 @@ msgstr "normal4"
 # comment5
 msgid "msgid5"
 msgstr "old5"
-
