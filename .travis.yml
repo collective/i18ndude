@@ -5,6 +5,8 @@ python:
 install:
   - python bootstrap.py
   - bin/buildout -N -q
-script: bin/test
+script:
+- bin/test
+- bin/i18ndude find-untranslated src/i18ndude/tests
 after_failure:
   - bin/buildout annotate
