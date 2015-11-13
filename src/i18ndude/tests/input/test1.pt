@@ -63,5 +63,31 @@ tal:replace="options/userid">Userid</span>.</tal:block>
 <div tal:define="patterns python:{'data-something': 'chameleon-only-again'}"
      tal:attributes="python:patterns" />
 
+<!-- Some tests for the find-untranslated command. -->
+<span tal:replace="nothing">
+  find-untranslated should not complain about content that will be
+  tal-replaced.
+</span>
+<span tal:content="something">
+  find-untranslated should not complain about content that will be
+  filled by tal-content.
+</span>
+<span tal:condition="nothing">
+  find-untranslated should not complain about content that has a
+  tal-condition that is nothing.
+</span>
+<tal:comment replace="nothing">
+  find-untranslated should not complain about tal-content that will be
+  replaced.
+</tal:comment>
+<tal:comment content="something">
+  find-untranslated should not complain about tal-content that will be
+  filled by tal-content.
+</tal:comment>
+<tal:comment condition="nothing">
+  find-untranslated should not complain about tal-content that has a
+  tal-condition that is nothing.
+</tal:comment>
+
 </body>
 </html>
