@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="testing">
+
+<head>
+</head>
+
+<body>
+
+<img src=""
+     alt="Some alt"
+     title="Some title"
+     i18n:attributes="alt some_alt" />
+
+<p>This file intentionally misses i18n:translate calls. This tests the
+find-untranslated script.</p>
+
+<span tal:condition="something">
+  Condition is not nothing.
+</span>
+<tal:comment condition="something">
+  Condition is not nothing.
+</tal:comment>
+
+</body>
+</html>

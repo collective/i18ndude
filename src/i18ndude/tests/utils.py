@@ -1,5 +1,6 @@
 import os
 import sys
+from contextlib import contextmanager
 
 
 def package_home(globals_dict):
@@ -18,3 +19,16 @@ PACKAGE_HOME = os.path.dirname(package_home(GLOBALS))
 
 if not PACKAGE_HOME.endswith('tests'):
     PACKAGE_HOME = os.path.join(PACKAGE_HOME, 'tests')
+
+
+@contextmanager
+def suppress_stdout():
+    # Taken with thanks from Dave Smith's site:
+    # http://thesmithfam.org/blog/2012/10/25/
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:
+            yield
+        finally:
+            sys.stdout = old_stdout
