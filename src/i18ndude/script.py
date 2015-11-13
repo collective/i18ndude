@@ -179,6 +179,12 @@ def find_untranslated(arguments):
                 success = True
                 # No need for a run with another parser.
                 break
+        # Note that the error stats of the handler get reset to zero
+        # when starting on a new document, so we ask about errors
+        # after each document.
+        if handler.has_errors():
+            # So some untranslated strings were found.
+            errors += 1
         if success:
             # next file
             continue
@@ -188,12 +194,6 @@ def find_untranslated(arguments):
             for error in file_errors:
                 report += '%s\n' % error
             handler.log(report, 'FATAL')
-        else:
-            # Note that the error stats of the handler get reset to zero
-            # when starting on a new document, so we ask about errors
-            # after each document.
-            if handler.has_errors():
-                errors += 1
     return errors
 
 
