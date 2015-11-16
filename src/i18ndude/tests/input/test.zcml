@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:gs="http://namespaces.zope.org/genericsetup"
+    xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="plone">
 
   <gs:registerProfile
@@ -26,5 +27,17 @@
       destination="1001"
       handler="some.handler"
       profile="Products.CMFPlone:plone" />
+
+  <gs:importStep
+      title="Import steps are translatable."
+      description="So here is an import step description."
+      handler="some.handler" />
+
+  <plone:behavior
+      title="Basic metadata"
+      description="Adds title and description fields."
+      provides=".metadata.IBasic"
+      factory=".metadata.Basic"
+      for="plone.dexterity.interfaces.IDexterityContent" />
 
 </configure>

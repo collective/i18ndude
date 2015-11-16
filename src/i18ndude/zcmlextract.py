@@ -5,8 +5,24 @@ from lxml import etree
 from i18ndude.extract import find_files
 
 GS_NS = "http://namespaces.zope.org/genericsetup"
-GS_PROFILE = '{%s}registerProfile' % GS_NS
+GS_UPGRADE_DEPENDS = '{%s}upgradeDepends' % GS_NS
+GS_UPGRADE_STEP = '{%s}upgradeStep' % GS_NS
+GS_UPGRADE_STEPS = '{%s}upgradeSteps' % GS_NS
 I18N_DOMAIN = 'i18n_domain'
+
+# These zcml directives should not be translated, because it is not useful.
+BLACKLISTED_DIRECTIVES = [
+    GS_UPGRADE_DEPENDS,
+    GS_UPGRADE_STEP,
+    GS_UPGRADE_STEPS,
+]
+# We cannot really read and interpret the meta zcml to figure out which
+# properties are translatable MessageIDs instead of simple TextLines.  So we
+# simply take all these properties:
+TRANSLATABLE_PROPERTIES = [
+    'description',
+    'title',
+]
 
 
 class ZCMLParser(object):
@@ -41,9 +57,9 @@ class ZCMLParser(object):
         if domain is not None:
             if domain not in self.catalogs:
                 self.catalogs[domain] = []
-            if elem.tag != GS_PROFILE:
+            if elem.tag in BLACKLISTED_DIRECTIVES:
                 return
-            for key in ('title', 'description'):
+            for key in TRANSLATABLE_PROPERTIES:
                 text = elem.get(key)
                 if text is not None:
                     text = text.strip()
