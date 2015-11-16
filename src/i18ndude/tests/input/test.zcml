@@ -1,9 +1,9 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:gs="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone">
 
-  <genericsetup:registerProfile
+  <gs:registerProfile
       name="plone"
       title="Plone Site"
       directory="profiles/default"
@@ -11,7 +11,7 @@
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       />
 
-  <genericsetup:registerProfile
+  <gs:registerProfile
       name="dependencies"
       title="Mandatory dependencies for a Plone site"
       directory="profiles/dependencies"
@@ -19,7 +19,7 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
-  <genericsetup:upgradeStep
+  <gs:upgradeStep
       title="Upgrade steps are not translated in the UI"
       description="So we should not extract them."
       source="1000"
