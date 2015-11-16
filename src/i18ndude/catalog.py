@@ -535,9 +535,6 @@ class POWriter:
             self._print_entry(
                 f, id, entry, msgstrToComment=msgstrToComment, sync=sync)
 
-        # File should end with a blank line
-        self._printToFile(f, False)
-
     def _create_msgid(self, value):
         # Wrap over multiple lines if needed.
         values = wrapString(value)

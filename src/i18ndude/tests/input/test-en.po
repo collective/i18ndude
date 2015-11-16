@@ -94,4 +94,3 @@ msgstr ""
 "Linkcycle einen Button haben, mit dem man durch ihn blaettern kann. mit dem "
 "man durch ihn blaettern kann. mit dem man durch ihn blaettern kann. mit dem "
 "man durch ihn blaettern kann."
-

@@ -6,6 +6,9 @@ Changelog
 
 New:
 
+- No longer print two blank lines at the end of .po and .pot files.
+  [maurits]
+
 - In the find-untranslated command, first try to parse a template as
   xml, which is good for non-html files.  If that fails, try to parse
   it as html with a little help from the lxml HTMLPaser, which handles
