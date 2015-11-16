@@ -425,7 +425,11 @@ def find_files(dir, pattern, exclude=()):
                   if name not in exclude]
 
     for folder in folders:
-        os.path.walk(folder, visit, files)
+        if os.path.isdir(folder):
+            os.path.walk(folder, visit, files)
+        else:
+            if fnmatch.filter([folder], pattern):
+                files.append(folder)
     return files
 
 # We don't want to assume a default domain of Zope
