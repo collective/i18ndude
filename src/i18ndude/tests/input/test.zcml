@@ -40,4 +40,15 @@
       factory=".metadata.Basic"
       for="plone.dexterity.interfaces.IDexterityContent" />
 
+  <permission
+      id="i18ndude.TestPermission"
+      title="should not be translated"
+      />
+
+  <interface
+      interface="zope.lifecycleevent.interfaces.IObjectAddedEvent"
+      type="plone.contentrules.rule.interfaces.IRuleEventType"
+      name="Content rule names should be translated"
+      />
+
 </configure>
