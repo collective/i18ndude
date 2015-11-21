@@ -48,7 +48,7 @@
   <interface
       interface="zope.lifecycleevent.interfaces.IObjectAddedEvent"
       type="plone.contentrules.rule.interfaces.IRuleEventType"
-      name="Content rule names should be translated"
+      name="Content rule names should be translated."
       />
 
 </configure>

@@ -606,6 +606,9 @@ class TestMessageZCMLReader(unittest.TestCase):
             u'Basic metadata':
                 self.me(u'Basic metadata',
                         references=[filepath + ':41']),
+            u'Content rule names should be translated.':
+                self.me(u'Content rule names should be translated.',
+                        references=[filepath + ':52']),
         }
 
     def test_read(self):

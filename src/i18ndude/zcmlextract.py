@@ -11,8 +11,10 @@ GS_IMPORT_STEP = '{%s}importStep' % GS_NS
 GS_UPGRADE_DEPENDS = '{%s}upgradeDepends' % GS_NS
 GS_UPGRADE_STEP = '{%s}upgradeStep' % GS_NS
 GS_UPGRADE_STEPS = '{%s}upgradeSteps' % GS_NS
+INTERFACE = '{%s}interface' % ZOPE_NS
 PERMISSION = '{%s}permission' % ZOPE_NS
 I18N_DOMAIN = 'i18n_domain'
+RULE_TYPE = 'plone.contentrules.rule.interfaces.IRuleEventType'
 
 # These zcml directives should not be translated, because it is not useful.
 BLACKLISTED_DIRECTIVES = [
@@ -66,16 +68,22 @@ class ZCMLParser(object):
                 self.catalogs[domain] = []
             if elem.tag in BLACKLISTED_DIRECTIVES:
                 return
+            if elem.tag == INTERFACE and elem.get('type') == RULE_TYPE:
+                self.maybe_add(domain, elem, 'name')
             for key in TRANSLATABLE_PROPERTIES:
-                text = elem.get(key)
-                if text is not None:
-                    text = text.strip()
-                if text:
-                    msgid = text
-                    msgstr = u""
-                    self.catalogs[domain].append(
-                        (msgid, msgstr,
-                         '{}:{}'.format(self.filename, elem.sourceline)))
+                self.maybe_add(domain, elem, key)
+
+    def maybe_add(self, domain, elem, key):
+        text = elem.get(key)
+        if text is not None:
+            text = text.strip()
+        if not text:
+            return
+        msgid = text
+        msgstr = u""
+        self.catalogs[domain].append(
+            (msgid, msgstr,
+             '{}:{}'.format(self.filename, elem.sourceline)))
 
     def getCatalogs(self):
         return self.catalogs
