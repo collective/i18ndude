@@ -30,7 +30,7 @@
 
   <gs:importStep
       title="Import steps are translatable."
-      description="So here is an import step description."
+      description="But nothing tries to translate it, so let's not extract these messages."
       handler="some.handler" />
 
   <plone:behavior

@@ -600,12 +600,6 @@ class TestMessageZCMLReader(unittest.TestCase):
             u'Mandatory dependencies for a Plone site':
                 self.me(u'Mandatory dependencies for a Plone site',
                         references=[filepath + ':21']),
-            u'So here is an import step description.':
-                self.me(u'So here is an import step description.',
-                        references=[filepath + ':34']),
-            u'Import steps are translatable.':
-                self.me(u'Import steps are translatable.',
-                        references=[filepath + ':34']),
             u'Adds title and description fields.':
                 self.me(u'Adds title and description fields.',
                         references=[filepath + ':41']),

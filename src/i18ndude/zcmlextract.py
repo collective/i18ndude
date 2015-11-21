@@ -5,6 +5,8 @@ from lxml import etree
 from i18ndude.extract import find_files
 
 GS_NS = "http://namespaces.zope.org/genericsetup"
+GS_EXPORT_STEP = '{%s}exportStep' % GS_NS
+GS_IMPORT_STEP = '{%s}importStep' % GS_NS
 GS_UPGRADE_DEPENDS = '{%s}upgradeDepends' % GS_NS
 GS_UPGRADE_STEP = '{%s}upgradeStep' % GS_NS
 GS_UPGRADE_STEPS = '{%s}upgradeSteps' % GS_NS
@@ -12,6 +14,8 @@ I18N_DOMAIN = 'i18n_domain'
 
 # These zcml directives should not be translated, because it is not useful.
 BLACKLISTED_DIRECTIVES = [
+    GS_EXPORT_STEP,
+    GS_IMPORT_STEP,
     GS_UPGRADE_DEPENDS,
     GS_UPGRADE_STEP,
     GS_UPGRADE_STEPS,
