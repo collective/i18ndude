@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:gs="http://namespaces.zope.org/genericsetup"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="plone">
 
@@ -49,6 +50,13 @@
       interface="zope.lifecycleevent.interfaces.IObjectAddedEvent"
       type="plone.contentrules.rule.interfaces.IRuleEventType"
       name="Content rule names should be translated."
+      />
+
+  <monkey:patch
+      description="collective.monkeypatcher descriptions should not be translated"
+      class="Some.Original.Class"
+      original="orginalMethod"
+      replacement=".patches.newMethod"
       />
 
 </configure>

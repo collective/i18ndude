@@ -593,22 +593,22 @@ class TestMessageZCMLReader(unittest.TestCase):
         self.output = {
             u'Plone Site':
                 self.me(u'Plone Site',
-                        references=[filepath + ':13']),
+                        references=[filepath + ':14']),
             u'Profile for a default Plone.':
                 self.me(u'Profile for a default Plone.',
-                        references=[filepath + ':13']),
+                        references=[filepath + ':14']),
             u'Mandatory dependencies for a Plone site':
                 self.me(u'Mandatory dependencies for a Plone site',
-                        references=[filepath + ':21']),
+                        references=[filepath + ':22']),
             u'Adds title and description fields.':
                 self.me(u'Adds title and description fields.',
-                        references=[filepath + ':41']),
+                        references=[filepath + ':42']),
             u'Basic metadata':
                 self.me(u'Basic metadata',
-                        references=[filepath + ':41']),
+                        references=[filepath + ':42']),
             u'Content rule names should be translated.':
                 self.me(u'Content rule names should be translated.',
-                        references=[filepath + ':52']),
+                        references=[filepath + ':53']),
         }
 
     def test_read(self):

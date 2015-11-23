@@ -4,14 +4,18 @@ from lxml import etree
 
 from i18ndude.extract import find_files
 
+# Namespaces.
 ZOPE_NS = "http://namespaces.zope.org/zope"
 GS_NS = "http://namespaces.zope.org/genericsetup"
+MONKEY_NS = "http://namespaces.plone.org/monkey"
+# Directives using those namespaces.
 GS_EXPORT_STEP = '{%s}exportStep' % GS_NS
 GS_IMPORT_STEP = '{%s}importStep' % GS_NS
 GS_UPGRADE_DEPENDS = '{%s}upgradeDepends' % GS_NS
 GS_UPGRADE_STEP = '{%s}upgradeStep' % GS_NS
 GS_UPGRADE_STEPS = '{%s}upgradeSteps' % GS_NS
 INTERFACE = '{%s}interface' % ZOPE_NS
+MONKEY_PATCH = '{%s}patch' % MONKEY_NS
 PERMISSION = '{%s}permission' % ZOPE_NS
 I18N_DOMAIN = 'i18n_domain'
 RULE_TYPE = 'plone.contentrules.rule.interfaces.IRuleEventType'
@@ -23,6 +27,7 @@ BLACKLISTED_DIRECTIVES = [
     GS_UPGRADE_DEPENDS,
     GS_UPGRADE_STEP,
     GS_UPGRADE_STEPS,
+    MONKEY_PATCH,
     PERMISSION,
 ]
 # We cannot really read and interpret the meta zcml to figure out which
