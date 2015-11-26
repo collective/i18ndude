@@ -7,6 +7,7 @@ install:
   - bin/buildout -N -q
 script:
 - bin/test
-- bin/i18ndude find-untranslated src/i18ndude/tests
+- bin/i18ndude find-untranslated src/i18ndude/tests/input/test1.pt
+- bin/i18ndude find-untranslated src/i18ndude/tests || echo 'find-untranslated is expected to give errors for missing translations'
 after_failure:
   - bin/buildout annotate
