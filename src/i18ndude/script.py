@@ -274,6 +274,7 @@ def rebuild_pot(arguments):
         ptreader = catalog.PTReader(path, create_domain, exclude=exclude)
         pyreader = catalog.PYReader(path, create_domain, exclude=exclude)
         gsreader = catalog.GSReader(path, create_domain, exclude=exclude)
+        zcmlreader = catalog.ZCMLReader(path, create_domain, exclude=exclude)
     except IOError as e:
         short_usage(0, 'I/O Error: %s' % e)
 
@@ -281,10 +282,11 @@ def rebuild_pot(arguments):
     ptreader.read()
     pyreader.read()
     gsreader.read()
+    zcmlreader.read()
 
     domain = orig_ctl.domain
 
-    ptctl = pyctl = gsctl = {}
+    ptctl = pyctl = gsctl = zcmlctl = {}
     if domain in ptreader.catalogs:
         ptctl = ptreader.catalogs[domain]
         for key in orig_ctl.keys():
@@ -305,14 +307,20 @@ def rebuild_pot(arguments):
         gsctl = gsreader.catalogs[domain]
         # XXX Preserve comments?
 
-    if not (ptctl or pyctl or gsctl):
+    if domain in zcmlreader.catalogs:
+        zcmlctl = zcmlreader.catalogs[domain]
+        # XXX Preserve comments?
+
+    if not (ptctl or pyctl or gsctl or zcmlctl):
         short_usage(0, 'No entries for domain "%s".' % domain)
 
-    ctl = ptctl or pyctl or gsctl
+    ctl = ptctl or pyctl or gsctl or zcmlctl
     if pyctl and pyctl is not ctl:
         ctl.merge(pyctl)
     if gsctl and gsctl is not ctl:
         ctl.merge(gsctl)
+    if zcmlctl and zcmlctl is not ctl:
+        ctl.merge(zcmlctl)
 
     if merge_ctl is not None:
         # use headers from merge-catalog

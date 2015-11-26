@@ -547,6 +547,90 @@ class TestMessagePYReader(unittest.TestCase):
         self.assertEqual(len(out), len(self.output))
 
 
+class TestMessageGSReader(unittest.TestCase):
+
+    def setUp(self):
+        self.me = catalog.MessageEntry
+        dirpath = os.path.join(PACKAGE_HOME, 'input')
+        filepath = os.path.join(dirpath, 'test.xml')
+        self.input = dirpath
+        self.output = {
+            u'RSS feed':
+                self.me(u'RSS feed',
+                        references=[filepath]),
+            u'Print this':
+                self.me(u'Print this',
+                        references=[filepath]),
+        }
+
+    def test_read(self):
+        reader = catalog.GSReader(self.input, 'plone')
+        reader.read()
+        out = reader.catalogs['plone']
+        for key in out:
+            self.assertTrue(
+                key in self.output,
+                'Failure in gs parsing.\nUnexpected msgid: %s' % key)
+        for key in self.output:
+            self.assertTrue(
+                out.get(key, False),
+                'Failure in gs parsing.\nMissing:%s' % self.output.get(key))
+            self.assertTrue(
+                out.get(key) == self.output.get(key),
+                'Failure in gs parsing.\nGot:%s\nExpected:%s' %
+                (out.get(key), self.output.get(key))
+            )
+        self.assertEqual(len(out), len(self.output))
+
+
+class TestMessageZCMLReader(unittest.TestCase):
+
+    def setUp(self):
+        self.me = catalog.MessageEntry
+        dirpath = os.path.join(PACKAGE_HOME, 'input')
+        filepath = os.path.join(dirpath, 'test.zcml')
+        self.input = dirpath
+        self.output = {
+            u'Plone Site':
+                self.me(u'Plone Site',
+                        references=[filepath + ':14']),
+            u'Profile for a default Plone.':
+                self.me(u'Profile for a default Plone.',
+                        references=[filepath + ':14']),
+            u'Mandatory dependencies for a Plone site':
+                self.me(u'Mandatory dependencies for a Plone site',
+                        references=[filepath + ':22']),
+            u'Adds title and description fields.':
+                self.me(u'Adds title and description fields.',
+                        references=[filepath + ':42']),
+            u'Basic metadata':
+                self.me(u'Basic metadata',
+                        references=[filepath + ':42']),
+            u'Content rule names should be translated.':
+                self.me(u'Content rule names should be translated.',
+                        references=[filepath + ':53']),
+        }
+
+    def test_read(self):
+        reader = catalog.ZCMLReader(self.input, 'plone')
+        reader.read()
+        out = reader.catalogs['plone']
+        for key in out:
+            self.assertTrue(
+                key in self.output,
+                'Failure in zcml parsing.\nUnexpected msgid: %s' % key)
+        for key in self.output:
+            self.assertTrue(
+                out.get(key, False),
+                'Failure in zcml parsing.\nMissing:%s' % self.output.get(key))
+            self.assertTrue(
+                out.get(key) == self.output.get(key),
+                'Failure in zcml parsing.\nGot:%s\nExpected:%s' %
+                (out.get(key), self.output.get(key))
+            )
+        self.assertEqual(len(out), len(self.output))
+
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestGlobal))
@@ -557,6 +641,8 @@ def test_suite():
     suite.addTest(unittest.makeSuite(TestMessagePoWriter))
     suite.addTest(unittest.makeSuite(TestMessagePTReader))
     suite.addTest(unittest.makeSuite(TestMessagePYReader))
+    suite.addTest(unittest.makeSuite(TestMessageGSReader))
+    suite.addTest(unittest.makeSuite(TestMessageZCMLReader))
     return suite
 
 if __name__ == '__main__':

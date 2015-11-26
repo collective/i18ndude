@@ -805,3 +805,54 @@ class GSReader(object):
         self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments,
                                   references=references,
                                   automatic_comments=automatic_comments)
+
+
+class ZCMLReader(object):
+    """Reads in a list of ZCML files.
+    """
+
+    def __init__(self, path, domain, exclude=()):
+        self.domain = domain
+        self.catalogs = {}  # keyed by domain name
+        self.path = path
+        self.exclude = exclude
+
+    def read(self):
+        """Reads in from all given zcml's and builds up MessageCatalogs
+        accordingly.
+
+        The MessageCatalogs can after this call be accessed through attribute
+        ``catalogs``, which indexes the MessageCatalogs by their domain.
+
+        read returns the list of tuples (filename, errormsg), where filename
+        is the name of the file that could not be read and errormsg a human
+        readable error message.
+        """
+
+        from zcmlextract import zcml_strings
+        zcml = zcml_strings(self.path, self.domain,
+                            exclude=self.exclude + ('tests', ))
+
+        for domain in zcml:
+            for msgid in zcml[domain]:
+                self._add_msg(msgid[0],
+                              msgid[1],
+                              [],
+                              [msgid[2]],
+                              [],
+                              domain)
+        return []
+
+    def _add_msg(self, msgid, msgstr, comments, references, automatic_comments,
+                 domain):
+        if not domain:
+            print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
+                (msgid, references)
+            return
+
+        if domain not in self.catalogs:
+            self.catalogs[domain] = MessageCatalog(domain=domain)
+
+        self.catalogs[domain].add(msgid, msgstr=msgstr, comments=comments,
+                                  references=references,
+                                  automatic_comments=automatic_comments)

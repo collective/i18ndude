@@ -1,0 +1,62 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:gs="http://namespaces.zope.org/genericsetup"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="plone">
+
+  <gs:registerProfile
+      name="plone"
+      title="Plone Site"
+      directory="profiles/default"
+      description="Profile for a default Plone."
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
+
+  <gs:registerProfile
+      name="dependencies"
+      title="Mandatory dependencies for a Plone site"
+      directory="profiles/dependencies"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <gs:upgradeStep
+      title="Upgrade steps are not translated in the UI"
+      description="So we should not extract them."
+      source="1000"
+      destination="1001"
+      handler="some.handler"
+      profile="Products.CMFPlone:plone" />
+
+  <gs:importStep
+      title="Import steps are translatable."
+      description="But nothing tries to translate it, so let's not extract these messages."
+      handler="some.handler" />
+
+  <plone:behavior
+      title="Basic metadata"
+      description="Adds title and description fields."
+      provides=".metadata.IBasic"
+      factory=".metadata.Basic"
+      for="plone.dexterity.interfaces.IDexterityContent" />
+
+  <permission
+      id="i18ndude.TestPermission"
+      title="should not be translated"
+      />
+
+  <interface
+      interface="zope.lifecycleevent.interfaces.IObjectAddedEvent"
+      type="plone.contentrules.rule.interfaces.IRuleEventType"
+      name="Content rule names should be translated."
+      />
+
+  <monkey:patch
+      description="collective.monkeypatcher descriptions should not be translated"
+      class="Some.Original.Class"
+      original="orginalMethod"
+      replacement=".patches.newMethod"
+      />
+
+</configure>

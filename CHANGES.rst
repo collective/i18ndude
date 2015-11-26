@@ -6,6 +6,10 @@ Changelog
 
 New:
 
+- Extract strings from zcml.
+  Issue #28
+  [maurits]
+
 - No longer print two blank lines at the end of .po and .pot files.
   [maurits]
 
@@ -20,6 +24,10 @@ New:
 
 - Ignore hidden files in the find-untranslated command.
   Issue #29
+  [maurits]
+
+- Use lxml instead of xml.etree or elementtree for parsing
+  GenericSetup xml files.
   [maurits]
 
 Fixes:
