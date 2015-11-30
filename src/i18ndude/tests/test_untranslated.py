@@ -1,9 +1,15 @@
 """Tests for finding untranslated prose.
 """
+import os
 import unittest
 import xml.sax
 import StringIO
 import i18ndude.untranslated
+from argparse import Namespace
+from i18ndude.script import find_untranslated as script
+from i18ndude.tests.utils import suppress_stdout
+
+TEST_DIR = os.path.dirname(__file__)
 
 
 def find_untranslated(input):
@@ -64,3 +70,27 @@ class TestUntranslated(unittest.TestCase):
             'alt attribute of <img> lacks i18n:attributes',
             result_without_attributes)
         self.assertIn('(0 warnings, 1 errors)', result_without_attributes)
+
+
+class TestUntranslatedScript(unittest.TestCase):
+
+    def test_script_template_1(self):
+        path = os.path.join(TEST_DIR, 'input', 'test1.pt')
+        with suppress_stdout():
+            result = script(Namespace(
+                silent=False, nosummary=False, files=[path]))
+        self.assertEqual(result, 0)
+
+    def test_script_template_3(self):
+        path = os.path.join(TEST_DIR, 'input', 'test3.pt')
+        with suppress_stdout():
+            result = script(Namespace(
+                silent=False, nosummary=False, files=[path]))
+        self.assertEqual(result, 1)
+
+    def test_script_directory(self):
+        path = os.path.join(TEST_DIR, 'input')
+        with suppress_stdout():
+            result = script(Namespace(
+                silent=False, nosummary=False, files=[path]))
+        self.assertEqual(result, 1)

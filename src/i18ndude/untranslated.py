@@ -24,49 +24,48 @@ def _severity(tag, attrs):
     # <tal condition...
     # <tal:block tal:condition...
     # All of those should result in tal:condition as attribute key.
-    ns = ':' in tag and '%s:' % tag[:tag.find(':')] or ''
-    if ns:
-        new_keys = []
-        for key in keys:
-            if not key.startswith(ns):
-                key = ns + key
-            new_keys.append(key)
-        keys = new_keys
+    # And since the lxml html parser strips off the tal namespace from tags, we
+    # should also support:
+    # <block condition...
 
-    if 'metal:use-macro' in keys:
+    # So lets simplify the keys.
+    keys = set([key[key.find(':') + 1:] for key in keys])
+
+    if 'use-macro' in keys:
+        # metal
         return ''
 
     # comments
-    if 'tal:condition' in keys:
+    if 'condition' in keys:
         cond_val = attrs.get('tal:condition', attrs.get('condition', None))
         if cond_val == 'nothing':
             return ''
         return 'ERROR'
 
-    elif 'tal:replace' in keys or 'tal:content' in keys:
+    elif 'replace' in keys or 'content' in keys:
         return 'WARNING'
 
     return 'ERROR'
 
 
 def _tal_replaced_content(tag, attrs):
-    # Will the data get replaced by tal?  So: is there a
-    # tal:content or tal:replace?
-    if 'tal:content' in attrs:
+    """Will the data get replaced by tal?
+
+    So: is there a tal:content or tal:replace?  Or is it '<tal:block
+    content=.".."'?  Problem with that last one is that the lxml html
+    parser strips off the 'tal:' namespace, unlike the standard lxml
+    parser that is tried first.
+    """
+    if 'tal:content' in attrs or 'content' in attrs:
         return True
-    if 'tal:replace' in attrs:
+    if 'tal:replace' in attrs or 'replace' in attrs:
         return True
-    if tag.startswith('tal:'):
-        if 'content' in attrs:
-            return True
-        if 'replace' in attrs:
-            return True
     return False
 
 
 def _tal_replaced_attr(attrs, attr):
     # Is the attribute replaced by tal?
-    if 'tal:attributes' not in attrs:
+    if 'tal:attributes' not in attrs and 'attributes' not in attrs:
         return False
     talattrs = [talattr.strip().split()[0] for talattr in
                 attrs['tal:attributes'].split(';') if talattr]
