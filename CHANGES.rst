@@ -30,10 +30,6 @@ New:
   GenericSetup xml files.
   [maurits]
 
-Fixes:
-
-- *add item here*
-
 
 3.4.5 (2015-11-05)
 ------------------
