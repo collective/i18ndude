@@ -1,3 +1,4 @@
+import StringIO
 import xml.sax
 
 IGNORE_UNTRANSLATED = 'i18n:ignore'
@@ -139,10 +140,21 @@ def attr_validator(tag, attrs, logfct):
 
 class Handler(xml.sax.ContentHandler):
 
-    def __init__(self, parser, out):
+    def __init__(self, parser, out=None):
         self._parser = parser
-        self._out = out
+        if out is None:
+            self._out = StringIO.StringIO()
+        else:
+            self._out = out
         self._filename = 'Undefined'
+
+    def show_output(self):
+        value = self._out.getvalue().strip()
+        if value:
+            print(value.encode('utf-8') + b'\n')
+
+    def clear_output(self):
+        self._out = StringIO.StringIO()
 
     def log(self, msg, severity):
         """Severity may be one out of 'WARNING', 'ERROR' or 'FATAL'."""

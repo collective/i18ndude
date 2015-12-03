@@ -81,7 +81,10 @@ def present_file_contents(filename):
     iterate over.
     """
     errors = []
-    # First try to parse as nice xml.
+    # First try our (t)rusty old way, as that reports the original line
+    # numbers.
+    yield prepare_xml(open(filename))
+    # Then try to parse as nice xml.
     # If that fails, try to parse it as html.
     for parser in (None, HTML_PARSER):
         try:
@@ -90,7 +93,5 @@ def present_file_contents(filename):
             errors.append(error)
         else:
             yield tree_content(tree)
-    # Try our (t)rusty old way.
-    yield prepare_xml(open(filename))
     # Give back any errors we found.
     yield errors

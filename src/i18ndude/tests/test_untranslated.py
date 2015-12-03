@@ -1,6 +1,7 @@
 """Tests for finding untranslated prose.
 """
 import os
+import sys
 import unittest
 import xml.sax
 import StringIO
@@ -88,9 +89,23 @@ class TestUntranslatedScript(unittest.TestCase):
                 silent=False, nosummary=False, files=[path]))
         self.assertEqual(result, 1)
 
+    def test_script_template_4(self):
+        path = os.path.join(TEST_DIR, 'input', 'test4.pt')
+        output = StringIO.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = output
+        try:
+            result = script(Namespace(
+                silent=False, nosummary=False, files=[path]))
+        finally:
+            sys.stdout = old_stdout
+        self.assertEqual(result, 1)
+        # A specific line should be reported as missing an i18n.
+        self.assertIn('{}:16'.format(path), output.getvalue())
+
     def test_script_directory(self):
         path = os.path.join(TEST_DIR, 'input')
         with suppress_stdout():
             result = script(Namespace(
                 silent=False, nosummary=False, files=[path]))
-        self.assertEqual(result, 1)
+        self.assertEqual(result, 2)

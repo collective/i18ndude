@@ -136,12 +136,12 @@ def find_untranslated(arguments):
     # disable external validation to make it work without network access
     parser.setFeature(xml.sax.handler.feature_external_ges, False)
     parser.setFeature(xml.sax.handler.feature_external_pes, False)
-    handler = untranslated.VerboseHandler(parser, sys.stdout)  # default
+    handler = untranslated.VerboseHandler(parser)  # default
 
     if arguments.silent:
-        handler = untranslated.SilentHandler(parser, sys.stdout)
+        handler = untranslated.SilentHandler(parser)
     elif arguments.nosummary:
-        handler = untranslated.NoSummaryVerboseHandler(parser, sys.stdout)
+        handler = untranslated.NoSummaryVerboseHandler(parser)
 
     parser.setContentHandler(handler)
 
@@ -177,8 +177,12 @@ def find_untranslated(arguments):
             else:
                 # We have successfully parsed the file.
                 success = True
+                # We can safely print the output.
+                handler.show_output()
                 # No need for a run with another parser.
                 break
+            finally:
+                handler.clear_output()
         # Note that the error stats of the handler get reset to zero
         # when starting on a new document, so we ask about errors
         # after each document.
