@@ -4,7 +4,11 @@ Changelog
 4.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Fixes:
+
+- Fixed some reported line numbers in find-untranslated.
+  Fixes issue #34.
+  [maurits]
 
 
 4.0.0 (2015-12-03)
