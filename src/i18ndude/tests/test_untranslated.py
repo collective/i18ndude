@@ -72,6 +72,17 @@ class TestUntranslated(unittest.TestCase):
             result_without_attributes)
         self.assertIn('(0 warnings, 1 errors)', result_without_attributes)
 
+    def test_ignore_untranslated_attribute_multiple_attrs(self):
+        """
+        find-untranslated shows no error if multiple attributes are marked
+        to be ignored.
+        """
+        result_with_multiple_ignore_attributes = find_untranslated(
+            '''<div><img title="bar" alt="qux"
+            i18n:ignore-attributes="title;alt"/></div>''')
+        self.assertIn('(0 warnings, 0 errors)',
+                      result_with_multiple_ignore_attributes)
+
 
 class TestUntranslatedScript(unittest.TestCase):
 
