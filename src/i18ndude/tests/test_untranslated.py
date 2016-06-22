@@ -25,6 +25,10 @@ def find_untranslated(input):
 class TestUntranslated(unittest.TestCase):
 
     def test_untranslated_content(self):
+        """
+        find-untranslated can find strings missing the i18n:translate marker
+        and it will show an error.
+        """
         result_with_errors = find_untranslated('<div><p>foo</p></div>')
         self.assertIn(
             'i18n:translate missing for this:\n"""\nfoo\n"""',
@@ -34,7 +38,9 @@ class TestUntranslated(unittest.TestCase):
             result_with_errors)
 
     def test_untranslated(self):
-        # When adding the i18n:translate marker, no errors are found:
+        """
+        find-untranslated finds no error if the i18n:translate marker is set.
+        """
         result_without_errors = find_untranslated(
             '<div><p i18n:translate="">foo</p></div>')
         self.assertNotIn(
@@ -43,12 +49,21 @@ class TestUntranslated(unittest.TestCase):
         self.assertIn('(0 warnings, 0 errors)', result_without_errors)
 
     def test_ignore_untranslated_with_marker(self):
-        # Adding the i18n:ignore marker will skip untranslated strings.
+        """
+        Adding the i18n:ignore marker will skip untranslated strings.
+        """
         result_with_marker = find_untranslated(
             '<div><p i18n:ignore="">foo</p></div>')
         self.assertIn('(0 warnings, 0 errors)', result_with_marker)
 
     def test_ignore_untranslated_attribute(self):
+        """
+        Attributes missing the i18n:attributes marker will cause
+        find-untranslated to show an error.
+
+        Attributes marked with i18n:ignore-attributes will cause
+        find-untranslated to not show an error.
+        """
         result_without_attributes = find_untranslated(
             '<div><a title="bar" i18n:translate="">spam</a></div>')
         self.assertIn(
@@ -64,6 +79,10 @@ class TestUntranslated(unittest.TestCase):
         self.assertIn('(0 warnings, 0 errors)', result_with_ignore_attributes)
 
     def test_ignore_untranslated_attribute_complain_about_other_attrs(self):
+        """
+        find-untranslated will find an error if not all attributes are marked
+        to be ignored.
+        """
         result_without_attributes = find_untranslated(
             '''<div><img title="bar" alt="qux"
             i18n:ignore-attributes="title"/></div>''')
@@ -74,7 +93,7 @@ class TestUntranslated(unittest.TestCase):
 
     def test_ignore_untranslated_attribute_multiple_attrs(self):
         """
-        find-untranslated shows no error if multiple attributes are marked
+        find-untranslated finds no error if multiple attributes are marked
         to be ignored.
         """
         result_with_multiple_ignore_attributes = find_untranslated(
