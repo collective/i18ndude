@@ -6,7 +6,9 @@ Changelog
 
 New:
 
-- *add item here*
+- Allow use of regular expressions for --exclude parameter. For example,
+  use ".*\.py" to exclude all python files. This doesn't break existing
+  behavior.
 
 Fixes:
 

@@ -26,6 +26,7 @@ from zope.interface import implements
 import codecs
 import fnmatch
 import os
+import re
 import sys
 import time
 import tokenize
@@ -419,7 +420,8 @@ def find_files(dir, pattern, exclude=()):
         folders = (dir, )
 
     def visit(files, dirname, names):
-        names[:] = filter(lambda x: x not in exclude, names)
+        names[:] = filter(lambda x: all(not re.match(e, x) for e in exclude),
+                          names)
         files += [os.path.join(dirname, name)
                   for name in fnmatch.filter(names, pattern)
                   if name not in exclude]
