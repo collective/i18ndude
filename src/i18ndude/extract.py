@@ -419,10 +419,10 @@ def find_files(dir, pattern, exclude=()):
         folders = (dir, )
 
     def visit(files, dirname, names):
-        names[:] = filter(lambda x: x not in exclude, names)
+        for ex in exclude:
+            names[:] = filter(lambda x: not fnmatch.fnmatch(x, ex), names)
         files += [os.path.join(dirname, name)
-                  for name in fnmatch.filter(names, pattern)
-                  if name not in exclude]
+                  for name in fnmatch.filter(names, pattern)]
 
     for folder in folders:
         if os.path.isdir(folder):

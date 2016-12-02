@@ -229,9 +229,10 @@ def rebuild_pot_parser(subparsers):
     from this additional pot-file. If you provide a second pot-file via
     --merge2 <filename> I'll merge this into the first merge's result
 
-    You can also provide a list of filenames which should not be included
-    by using the --exclude argument, which takes a whitespace delimited
-    list of files.
+    You can also provide a list of filenames (or regular expressions for
+    filenames) which should not be included by using the --exclude argument,
+    which takes a whitespace delimited list of files (or regular expressions
+    for files).
     """
     parser = subparsers.add_parser(
         'rebuild-pot',
