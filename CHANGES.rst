@@ -7,13 +7,9 @@ Changelog
 New:
 
 - Allow use of regular expressions for --exclude parameter. For example,
-  use "*.py" to exclude all python files. This doesn't break existing
+  use ``*.py`` to exclude all python files. This doesn't break existing
   behavior.  Do remember to use quotes around the expression.
   [laulaz, maurits]
-
-Fixes:
-
-- *add item here*
 
 
 4.0.1 (2015-12-03)
