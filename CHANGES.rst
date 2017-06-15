@@ -4,8 +4,10 @@ Changelog
 4.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+New:
 
+- Find untranslated attributes now also checks for 'placeholder' attributes on
+  input tags.
 
 4.1 (2016-12-02)
 ----------------
