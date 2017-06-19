@@ -4,6 +4,7 @@
 *.pyo
 .installed.cfg
 .mr.developer.cfg
+.Python
 bin
 build
 develop-eggs
@@ -11,6 +12,10 @@ dist
 download
 eggs
 fake-eggs
+include
+local
+lib
 parts
+pip-selfcheck.json
 src/zope.tal
 var

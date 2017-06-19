@@ -3,7 +3,8 @@ language: python
 python:
   - 2.7
 install:
-  - python bootstrap.py --buildout-version=2.9.3 --setuptools-version=33.1.1
+  - virtualenv .
+  - bin/pip install -r requirements.txt
   - bin/buildout
 script:
 - bin/test
