@@ -3,8 +3,9 @@ language: python
 python:
   - 2.7
 install:
-  - python bootstrap.py
-  - bin/buildout -N -q
+  - virtualenv .
+  - bin/pip install -r requirements.txt
+  - bin/buildout
 script:
 - bin/test
 - bin/i18ndude find-untranslated src/i18ndude/tests/input/test1.pt
