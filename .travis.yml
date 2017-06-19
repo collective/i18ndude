@@ -3,8 +3,8 @@ language: python
 python:
   - 2.7
 install:
-  - python bootstrap.py
-  - bin/buildout -N -q
+  - python bootstrap.py --buildout-version=2.9.3 --setuptools-version=36.0.1
+  - bin/buildout
 script:
 - bin/test
 - bin/i18ndude find-untranslated src/i18ndude/tests/input/test1.pt
