@@ -2,8 +2,10 @@ import StringIO
 import xml.sax
 import re
 
+
 IGNORE_UNTRANSLATED = 'i18n:ignore'
 IGNORE_UNTRANSLATED_ATTRIBUTES = 'i18n:ignore-attributes'
+CHAMELEON_SUBST = re.compile('^\${.*}$')
 
 
 def _translatable(data):
@@ -202,18 +204,10 @@ class Handler(xml.sax.ContentHandler):
                         # including literal content, that does not need to be
                         # translated.
                         pass
-                    obj = re.match('\${.*}', data)
-                    if obj:
-                        stripped = data.replace(
-                            obj.group(0), '').replace(' ', '')
-                        if len(stripped):
-                            self.log('i18n:translate missing for this:\n'
-                                     '"""\n%s\n"""' % (data,), severity)
-                        else:
-                            pass
-                    else:
-                        self.log('i18n:translate missing for this:\n'
-                                 '"""\n%s\n"""' % (data,), severity)
+                    elif not CHAMELEON_SUBST.match(data):
+                        self.log(
+                            'i18n:translate missing for this:\n'
+                            '"""\n%s\n"""' % (data,), severity)
 
         if self._i18nlevel != 0:
             self._i18nlevel -= 1
