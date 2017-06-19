@@ -1,5 +1,6 @@
 import StringIO
 import xml.sax
+import re
 
 IGNORE_UNTRANSLATED = 'i18n:ignore'
 IGNORE_UNTRANSLATED_ATTRIBUTES = 'i18n:ignore-attributes'
@@ -201,6 +202,15 @@ class Handler(xml.sax.ContentHandler):
                         # including literal content, that does not need to be
                         # translated.
                         pass
+                    obj = re.match('\${.*}', data)
+                    if obj:
+                        stripped = data.replace(
+                            obj.group(0), '').replace(' ', '')
+                        if len(stripped):
+                            self.log('i18n:translate missing for this:\n'
+                                     '"""\n%s\n"""' % (data,), severity)
+                        else:
+                            pass
                     else:
                         self.log('i18n:translate missing for this:\n'
                                  '"""\n%s\n"""' % (data,), severity)
