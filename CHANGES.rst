@@ -12,6 +12,8 @@ New:
   like Plone does for translating the dynamically calculated review state.)
   [Netroxen, maurits]
 
+- Find untranslated attributes now also checks for 'placeholder' attributes on
+  input tags.
 
 4.1 (2016-12-02)
 ----------------
