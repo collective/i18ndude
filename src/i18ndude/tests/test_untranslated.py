@@ -109,6 +109,13 @@ class TestUntranslated(unittest.TestCase):
             'placeholder attribute of <input> lacks i18n:attributes',
             result_with_untranslated_placeholder)
 
+    def test_ignore_translated_placeholder_attribute(self):
+        result_with_translated_placeholder = find_untranslated(
+            '<div><input type="text" i18n:attributes="placeholder" placeholder="search for bar"/></div>')
+        self.assertNotIn(
+            'placeholder attribute of <input> lacks i18n:attributes',
+            result_with_translated_placeholder)
+
 
 class TestUntranslatedScript(unittest.TestCase):
 
