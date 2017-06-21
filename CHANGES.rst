@@ -6,6 +6,12 @@ Changelog
 
 New:
 
+- In ``find-untranslated``, do not report items that get replaced by Chameleon syntax.
+  So ``<span>${view/test}</span>`` will no longer get flagged as missing a translation.
+  (Note that you still *can* add ``i18n:translate`` if it makes sense,
+  like Plone does for translating the dynamically calculated review state.)
+  [Netroxen, maurits]
+
 - Find untranslated attributes now also checks for 'placeholder' attributes on
   input tags.
 
