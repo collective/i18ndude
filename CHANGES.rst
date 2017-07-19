@@ -4,6 +4,10 @@ Changelog
 4.2.1 (unreleased)
 ------------------
 
+- Support Chameleon repeat syntax in templates.
+  Fixes `issue #36 <https://github.com/collective/i18ndude/issues/36>`_.
+  [maurits]
+
 - Moved ``plone.i18n`` dependency to a ``plone`` extra.
   This is only used for getting language names in the ``list`` command.
   We now fall back to using the language name that is in the ``po`` files.
