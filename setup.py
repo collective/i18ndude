@@ -9,7 +9,6 @@ install_requires = [
     'zope.tal >= 3.5.2',
     'zope.interface >= 3.3',
     'zope.i18nmessageid >= 3.3',
-    'plone.i18n',
     'ordereddict',
     'lxml',
 ]
@@ -52,6 +51,9 @@ setup(
     zip_safe=False,
     test_suite='i18ndude.tests',
     install_requires=install_requires,
+    extras_require={
+        'plone': ['plone.i18n'],
+    },
     entry_points={
         'console_scripts': [
             'i18ndude=i18ndude.script:main',

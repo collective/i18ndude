@@ -66,7 +66,12 @@ def output_table(out, languagelist, total):
             table += print_row(out[code]['percentage'], out[code]['desc'])
             del out[code]
         else:
-            desc = '%s (%s)' % (languagelist.get(code)['name'], code)
+            lang = languagelist.get(code)
+            if lang is None:
+                name = code
+            else:
+                name = lang['name']
+            desc = '%s (%s)' % (name, code)
             table += print_row(0, desc)
 
     body += _TABLE % dict(table=table)
@@ -78,7 +83,12 @@ def output_table(out, languagelist, total):
             table += print_row(out[code]['percentage'], out[code]['desc'])
             del out[code]
         else:
-            desc = '%s (%s)' % (languagelist.get(code)['name'], code)
+            lang = languagelist.get(code)
+            if lang is None:
+                name = code
+            else:
+                name = lang['name']
+            desc = '%s (%s)' % (name, code)
             table += print_row(0, desc)
 
     body += _TABLE % dict(table=table)
@@ -116,7 +126,12 @@ def output_list(out, languagelist, total):
             aligned_print(out[code]['percentage'], out[code]['desc'])
             del out[code]
         else:
-            desc = '%s (%s)' % (languagelist.get(code)['name'], code)
+            lang = languagelist.get(code)
+            if lang is None:
+                name = code
+            else:
+                name = lang['name']
+            desc = '%s (%s)' % (name, code)
             aligned_print(0, desc)
 
     print '\nTier 2:\n'
@@ -125,7 +140,12 @@ def output_list(out, languagelist, total):
             aligned_print(out[code]['percentage'], out[code]['desc'])
             del out[code]
         else:
-            desc = '%s (%s)' % (languagelist.get(code)['name'], code)
+            lang = languagelist.get(code)
+            if lang is None:
+                name = code
+            else:
+                name = lang['name']
+            desc = '%s (%s)' % (name, code)
             aligned_print(0, desc)
 
     print '\nTier 3:\n'
@@ -138,8 +158,11 @@ def output_list(out, languagelist, total):
 
 
 def make_listing(pot, pos, table=False):
-    from plone.i18n.locales.languages import LanguageAvailability
-    languagelist = LanguageAvailability().getLanguages(combined=True)
+    try:
+        from plone.i18n.locales.languages import LanguageAvailabilityXXX
+        languagelist = LanguageAvailability().getLanguages(combined=True)
+    except ImportError:
+        languagelist = {}
 
     msgids = pot.keys()
     total = len(msgids)
