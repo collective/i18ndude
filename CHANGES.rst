@@ -1,8 +1,10 @@
 Changelog
 =========
 
-4.2.1 (unreleased)
-------------------
+4.3 (unreleased)
+----------------
+
+New:
 
 - Support Chameleon repeat syntax in templates.
   Fixes `issue #36 <https://github.com/collective/i18ndude/issues/36>`_.
