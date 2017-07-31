@@ -8,6 +8,8 @@ from zope.tal.talgenerator import TALGenerator
 from zope.tal.translationcontext import DEFAULT_DOMAIN
 from zope.tal.translationcontext import TranslationContext
 
+import re
+
 
 class DudeGenerator(TALGenerator):
 
@@ -238,3 +240,21 @@ class DudeGenerator(TALGenerator):
         self.todoPush(todo)
         if isend:
             self.emitEndElement(name, isend, position=position)
+
+    def emitRepeat(self, arg):
+        try:
+            super(DudeGenerator, self).emitRepeat(arg)
+        except TALError:
+            # Could be Chameleon syntax.
+            # It might be okay to simply return, as we are not really
+            # interested in compiling everything.  But we can try.
+            # We look for tal:repeat="   (a,b,c) python:something"
+            # in a way similar to zope.tal.
+            m = re.match("(?s)\s*(\(.+\))\s+(.*)\Z", arg)
+            if not m:
+                raise TALError("invalid repeat syntax: " + repr(arg),
+                               self.position)
+            name, expr = m.group(1, 2)
+            cexpr = self.compileExpression(expr)
+            program = self.popProgram()
+            self.emit("loop", name, cexpr, program)
