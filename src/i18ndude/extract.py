@@ -22,8 +22,7 @@ __docformat__ = 'restructuredtext'
 
 from .pygettext import safe_eval, normalize, make_escapes
 from zope.i18nmessageid import Message
-from zope.interface import implements
-import codecs
+from zope.interface import implementer
 import fnmatch
 import os
 import sys
@@ -38,6 +37,18 @@ from i18ndude.generator import DudeGenerator
 
 DEFAULT_CHARSET = 'utf-8'
 DEFAULT_ENCODING = '8bit'
+PY3 = sys.version_info > (3,)
+
+# Sigh. The `tokenize.tokenize()` API deprecated in py22 is actually the
+# py36 API, but not in a py27 backward compatible way. And the py27 API
+# `tokenize.generate_tokens()` apparently exists, but is undocumented and
+# chokes in py36 in a forward incompatible way.
+
+if PY3:
+    unicode = str
+    py2orpy3_tokenize = tokenize.tokenize
+else:
+    py2orpy3_tokenize = tokenize.generate_tokens
 
 # Modified header, which is more suitable for any project
 
@@ -86,13 +97,15 @@ msgstr ""
 '''
 
 
+@implementer(IPOTEntry)
 class POTEntry(object):
     r"""This class represents a single message entry in the POT file.
 
+    >>> import sys
     >>> make_escapes(0)
     >>> class FakeFile(object):
     ...     def write(self, data):
-    ...         print data,
+    ...         sys.stdout.write(data)
 
     Let's create a message entry:
 
@@ -130,8 +143,6 @@ class POTEntry(object):
     <BLANKLINE>
     """
 
-    implements(IPOTEntry)
-
     def __init__(self, msgid, comments=None):
         self.msgid = msgid
         self.comments = comments or ''
@@ -162,10 +173,10 @@ class POTEntry(object):
         return cmp(self.comments, other.comments)
 
 
+@implementer(IPOTMaker)
 class POTMaker(object):
     """This class inserts sets of strings into a POT file.
     """
-    implements(IPOTMaker)
 
     def __init__(self, output_fn, path):
         self._output_filename = output_fn
@@ -215,6 +226,7 @@ class POTMaker(object):
         file.close()
 
 
+@implementer(ITokenEater)
 class TokenEater(object):
     """This is almost 100% taken from `pygettext.py`, except that I
     removed all option handling and output a dictionary.
@@ -226,42 +238,44 @@ class TokenEater(object):
     `tokenize`.
 
     >>> import tokenize
-    >>> from StringIO import StringIO
+    >>> from io import BytesIO
 
     We feed it a (fake) file:
 
-    >>> file = StringIO(
+    >>> file = BytesIO((
     ...     "_(u'hello ${name}', u'buenos dias', {'name': 'Bob'}); "
     ...     "_(u'hi ${name}', mapping={'name': 'Bob'})"
-    ...     )
-    >>> tokenize.tokenize(file.readline, eater)
+    ...     ).encode('utf-8'))
+    >>> g = py2orpy3_tokenize(file.readline)
+    >>> for ttype, tstring, stup, etup, line in g:
+    ...     eater(ttype, tstring, stup, etup, line)
 
     The catalog of collected message ids contains our example
 
     >>> catalog = eater.getCatalog()
-    >>> items = catalog.items()
-    >>> items.sort()
-    >>> items
-    [(u'hello ${name}', [(None, 1)]), (u'hi ${name}', [(None, 1)])]
+    >>> items = sorted(list(catalog.items()))
+    >>> expect = [(u'hello ${name}', [(None, 1)]),
+    ...           (u'hi ${name}', [(None, 1)])]
+    >>> items == expect
+    True
 
     The key in the catalog is not a unicode string, it's a real
     message id with a default value:
 
     >>> msgid = items.pop(0)[0]
-    >>> msgid
-    u'hello ${name}'
-    >>> msgid.default
-    u'buenos dias'
+    >>> msgid == u'hello ${name}'
+    True
+    >>> msgid.default == u'buenos dias'
+    True
 
     >>> msgid = items.pop(0)[0]
-    >>> msgid
-    u'hi ${name}'
-    >>> msgid.default
-    u''
+    >>> msgid == u'hi ${name}'
+    True
+    >>> msgid.default == u''
+    True
 
     Note that everything gets converted to unicode.
     """
-    implements(ITokenEater)
 
     def __init__(self):
         self.__messages = {}
@@ -377,11 +391,14 @@ class TokenEater(object):
                     location[0] + ':' + str(location[1])
                     for location in self.__messages[msg].keys()
                 ])
-                print >> sys.stderr, "Warning: msgid '%s' in %s already exists " \
-                    "with a different default (bad: %s, should be: %s)\n" \
-                    "The references for the existent value are:\n%s\n" % \
+                # XXX this does not appear to have any test coverage
+                # the actual warnings are emitted by zope.tal
+                sys.stderr.write(
+                    "Warning: msgid '%s' in %s already exists "
+                    "with a different default (bad: %s, should be: %s)\n"
+                    "The references for the existent value are:\n%s\n" %
                     (msg, self.__curfile + ':' + str(lineno),
-                     msg.default, existing_msg.default, references)
+                     msg.default, existing_msg.default, references))
         entry = (self.__curfile, lineno)
         self.__messages.setdefault(msg, {})[entry] = isdocstring
 
@@ -418,15 +435,16 @@ def find_files(dir, pattern, exclude=()):
     if isinstance(dir, str):
         folders = (dir, )
 
-    def visit(files, dirname, names):
+    def visit(files, dirpath, names):
         for ex in exclude:
-            names[:] = filter(lambda x: not fnmatch.fnmatch(x, ex), names)
-        files += [os.path.join(dirname, name)
+            names[:] = [x for x in names if not fnmatch.fnmatch(x, ex)]
+        files += [os.path.join(dirpath, name)
                   for name in fnmatch.filter(names, pattern)]
 
     for folder in folders:
         if os.path.isdir(folder):
-            os.path.walk(folder, visit, files)
+            for dirpath, dirnames, filenames in os.walk(folder):
+                visit(files, dirpath, filenames)
         else:
             if fnmatch.filter([folder], pattern):
                 files.append(folder)
@@ -448,14 +466,16 @@ def py_strings(dir, domain="none", exclude=()):
             '*.*py',
             exclude=('extract.py', 'pygettext.py') + tuple(exclude)
         ):
-        fp = codecs.open(filename, 'r', DEFAULT_CHARSET)
+        fp = open(filename, 'rb')  # tokenize expects bytes
         try:
             eater.set_filename(filename)
             try:
-                tokenize.tokenize(fp.readline, eater)
+                g = py2orpy3_tokenize(fp.readline)
+                for ttype, tstring, stup, etup, line in g:
+                    eater(ttype, tstring, stup, etup, line)
             except tokenize.TokenError as e:
-                print >> sys.stderr, '%s: %s, line %d, column %d' % (
-                    e[0], filename, e[1][0], e[1][1])
+                sys.stderr.write('%s: %s, line %d, column %d' % (
+                    e[0], filename, e[1][0], e[1][1]))
         finally:
             fp.close()
     # One limitation of the Python message extractor is that it cannot
@@ -471,10 +491,10 @@ def zcml_strings(dir, domain="zope", site_zcml=None):
     """
     from zope.app.appsetup import config
     import zope
-    dirname = os.path.dirname
+    dirpath = os.path.dirpath
     if site_zcml is None:
         # TODO this assumes a checkout directory structure
-        site_zcml = os.path.join(dirname(dirname(dirname(zope.__file__))),
+        site_zcml = os.path.join(dirpath(dirpath(dirpath(zope.__file__))),
                                  "site.zcml")
     context = config(site_zcml, features=("devmode",), execute=False)
     return context.i18n_strings.get(domain, {})
@@ -525,10 +545,10 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
                     POTALInterpreter(program, macros, engine, stream=Devnull(),
                                      metal=False)()
                 except:  # Hee hee, I love bare excepts!
-                    print 'There was an error processing', filename
+                    print('There was an error processing', filename)
                     traceback.print_exc()
             else:
-                print 'There was an error processing', filename
+                print('There was an error processing', filename)
                 traceback.print_exc()
 
     # See whether anything in the domain was found

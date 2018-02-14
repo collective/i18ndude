@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 from i18ndude import catalog
 from i18ndude import utils
-from utils import PACKAGE_HOME
+from .utils import PACKAGE_HOME
 import os
+import sys
 import tempfile
 import unittest
 import warnings
+
+PY3 = sys.version_info > (3,)
+if PY3:
+    unicode = str
 
 
 class TestGlobal(unittest.TestCase):
@@ -98,7 +103,7 @@ class TestMessageCatalogInit(unittest.TestCase):
             'Plural-Forms': 'nplurals=1; plural=0;',
             'Project-Id-Version': 'i18ndude',
             'Preferred-Encodings': 'utf-8 latin1',
-            'Last-Translator': 'Unicödé Guy',
+            'Last-Translator': u'Unicödé Guy',
             'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
             'POT-Creation-Date': '2005-08-01 12:00+0000',
             'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
@@ -479,22 +484,18 @@ class TestMessagePTReader(unittest.TestCase):
             warnings.simplefilter("always")
             # This call will give a warning from zope.tal.
             ptr.read()
-            # From zope.tal 4.0.0 onwards it is a proper warning that
-            # we can catch.  Before that, it was just a print
-            # statement.
-            if len(log) == 1:
-                message = log[0].message
-                with tempfile.TemporaryFile('w+') as printfile:
-                    print >> printfile, message
-                    printfile.seek(0)
-                    contents = printfile.read()
-                    # Check that a few key elements are in the
-                    # warning, without wanting to check the exact
-                    # wording, as this can easily change.
-                    self.assertTrue("already exists with a different default"
-                                    in contents)
-                    self.assertTrue("bad: Buzzer, should be: Buzz"
-                                    in contents)
+            self.assertGreaterEqual(len(log), 1, log)
+            contents = '\n'.join([str(x.message) for x in log])
+            # Check that a few key elements are in the
+            # warning, without wanting to check the exact
+            # wording, as this can easily change.
+            self.assertTrue("already exists with a different default"
+                            in contents, 'missing "already exists"')
+            self.assertTrue("bad: b'Buzzer', should be: b'Buzz'"  # py36
+                            in contents or
+                            "bad: Buzzer, should be: Buzz"  # py27
+                            in contents,
+                            u'bad Buzzer not in contents: {}'.format(contents))
 
         out = ptr.catalogs['testing']
         for key in out:
@@ -528,7 +529,7 @@ class TestMessagePYReader(unittest.TestCase):
             u'Out1': self.me(u'Out1', msgstr='running', references=[filepath + ':7'])  # noqa
         }
 
-    def test_read(self):
+    def test_read_py(self):
         pyr = catalog.PYReader(self.input, 'testing')
         pyr.read()
         out = pyr.catalogs['testing']

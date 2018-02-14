@@ -52,7 +52,7 @@ class ZCMLParser(object):
         try:
             tree = etree.parse(filename)
         except Exception as e:
-            print u"There was an error in parsing %s: %s" % (filename, e)
+            print(u"There was an error in parsing %s: %s" % (filename, e))
             sys.exit(0)
         elem = tree.getroot()
         domain = elem.get(I18N_DOMAIN, None)

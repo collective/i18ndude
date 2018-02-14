@@ -29,6 +29,9 @@ import xml.sax
 
 from i18ndude import common, untranslated, catalog, visualisation, utils
 
+PY3 = sys.version_info > (3,)
+if PY3:
+    unicode = str
 
 # Define a parent parser for the wrapping arguments.  This is shared
 # by a few commands.  Note: if you use this parser, you need to call
@@ -63,8 +66,8 @@ def parse_wrapping_arguments(arguments):
 
 def short_usage(code, msg=''):
     if msg:
-        print >> sys.stderr, msg
-    print >> sys.stderr, u"Type i18ndude -h<Enter> to see the help."
+        sys.stderr.write(msg)
+    sys.stderr.write(u"Type i18ndude -h<Enter> to see the help.")
     sys.exit(code)
 
 
@@ -85,7 +88,7 @@ def filter_isfile(files):
             result += filter_isfile(subdirs)
 
         elif not os.path.isfile(name):
-            print >> sys.stderr, (
+            sys.stderr.write(
                 'Warning: %s is not a file or is ignored.' % name)
 
         else:
@@ -144,7 +147,6 @@ def find_untranslated(arguments):
         handler = untranslated.NoSummaryVerboseHandler(parser)
 
     parser.setContentHandler(handler)
-
     errors = 0
     for filename in filter_isfile(arguments.files):  # parse file by file
         with open(filename) as myfile:
@@ -166,7 +168,7 @@ def find_untranslated(arguments):
             try:
                 parser.parse(content)
             except KeyboardInterrupt:
-                print >> sys.stderr, 'Interrupted by user.'
+                sys.stderr.write('Interrupted by user.')
                 sys.exit(1)
             except xml.sax.SAXException as error:
                 file_errors.append(error)
@@ -453,9 +455,9 @@ def sync(arguments):
         writer = catalog.POWriter(file, po)
         writer.write(msgstrToComment=False, sync=True)
 
-        print '%s: %s added, %s removed' % (po.filename,
+        print('%s: %s added, %s removed' % (po.filename,
                                             len(added_msgids),
-                                            len(removed_msgids))
+                                            len(removed_msgids)))
         file.close()
 
 

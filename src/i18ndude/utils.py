@@ -242,7 +242,7 @@ def prepare_cli_documentation(data):
 
     result.append('')
     open(target, 'wb').write('\n'.join(result))
-    print "Wrote command line documentation to", target
+    print("Wrote command line documentation to", target)
 
     # If there is a diff, we want to commit it.
     from zest.releaser import choose
@@ -251,11 +251,11 @@ def prepare_cli_documentation(data):
     diff_cmd = vcs.cmd_diff()
     diff = execute_command(diff_cmd)
     if diff.strip():
-        print "The %r:\n\n%s\n" % (diff_cmd, diff)
+        print("The %r:\n\n%s\n" % (diff_cmd, diff))
         if ask("OK to commit this"):
             msg = "Wrote command line documentation."
             commit_cmd = vcs.cmd_commit(msg)
-            print execute_command(commit_cmd)
+            print(execute_command(commit_cmd))
 
 
 def quote(s):
@@ -265,3 +265,27 @@ def quote(s):
         return '"%s"' % s
     else:
         return s
+
+
+def undouble_unicode_escape(value):
+    try:
+        # handle triply escaped python2
+        value = value.decode('utf-8')
+    except Exception:
+        pass
+
+    try:
+        # handle triply escaped python3
+        value = value.encode('raw_unicode_escape').decode('utf-8')
+    except Exception:
+        pass
+
+    try:
+        # doubly escaped
+        return value.encode('raw_unicode_escape').decode('utf-8')
+    except UnicodeDecodeError:
+        # normal unicode, either from input or first pass
+        return value
+    except Exception:
+        # object, whatever
+        return value

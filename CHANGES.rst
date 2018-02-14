@@ -1,20 +1,29 @@
 Changelog
 =========
 
-4.3.1 (unreleased)
+5.0.0 (unreleased)
 ------------------
 
 Breaking changes:
 
-- *add item here*
+- Drop support for python 2.6 and older. Retain python2.7 support.
+  [gyst]
 
 New features:
 
-- *add item here*
+- Support python 3.6, 2.5, 3.4, pypy and pypy3.
+  [gyst]
 
 Bug fixes:
 
-- *add item here*
+- Fixed many unicode/string/bytes handling problems.
+  There's probably still some unfixed that need finding, given that
+  test coverage is only 63%.
+  [gyst]
+
+Todo:
+
+- i18ndude/pygettext.py:159: DeprecationWarning: the imp module is deprecated in favour of importlib. This does not cause any breakage though.
 
 
 4.3 (2017-07-31)

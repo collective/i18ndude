@@ -105,7 +105,7 @@ def output_table(out, languagelist, total):
     body += _TABLE % dict(table=table)
     template = _TEMPLATE % dict(body=body)
 
-    print template
+    print(template)
 
 
 def aligned_print(percentage, desc):
@@ -113,14 +113,14 @@ def aligned_print(percentage, desc):
         percentage = '  %d' % percentage
     elif percentage < 100:
         percentage = ' %d' % percentage
-    print "%s%% - %s" % (percentage, desc)
+    print("%s%% - %s" % (percentage, desc))
 
 
 def output_list(out, languagelist, total):
-    print "Messages: %s\n" % total
+    print("Messages: %s\n" % total)
 
-    print 'Tier 1:\n'
-    print '100% - English (en)'
+    print('Tier 1:\n')
+    print('100% - English (en)')
     for code in GROUP1:
         if code in out:
             aligned_print(out[code]['percentage'], out[code]['desc'])
@@ -134,7 +134,7 @@ def output_list(out, languagelist, total):
             desc = '%s (%s)' % (name, code)
             aligned_print(0, desc)
 
-    print '\nTier 2:\n'
+    print('\nTier 2:\n')
     for code in GROUP2:
         if code in out:
             aligned_print(out[code]['percentage'], out[code]['desc'])
@@ -148,7 +148,7 @@ def output_list(out, languagelist, total):
             desc = '%s (%s)' % (name, code)
             aligned_print(0, desc)
 
-    print '\nTier 3:\n'
+    print('\nTier 3:\n')
     group3 = sorted(out.values())
     for value in group3:
         perc = value['percentage']

@@ -1,6 +1,11 @@
 from lxml import etree
-from StringIO import StringIO
+from io import StringIO
 import re
+
+import sys
+PY3 = sys.version_info > (3,)
+if PY3:
+    unicode = str
 
 # These are included in the file if missing.
 DEFAULT_DECL = {
@@ -56,11 +61,11 @@ def prepare_xml(file):
                 content[m:] +
                 '</body></html>')
 
-    return StringIO(content.strip())
+    return StringIO(unicode(content.strip()))
 
 
 def tree_content(tree):
-    content = etree.tostring(tree)
+    content = etree.tostring(tree).decode()
     if content is None:
         return
     return StringIO(content.strip())
@@ -83,7 +88,8 @@ def present_file_contents(filename):
     errors = []
     # First try our (t)rusty old way, as that reports the original line
     # numbers.
-    yield prepare_xml(open(filename))
+    with open(filename) as fh:
+        yield prepare_xml(fh)
     # Then try to parse as nice xml.
     # If that fails, try to parse it as html.
     for parser in (None, HTML_PARSER):

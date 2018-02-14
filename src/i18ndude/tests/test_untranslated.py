@@ -4,21 +4,30 @@ import os
 import sys
 import unittest
 import xml.sax
-import StringIO
+import io
 import i18ndude.untranslated
 from argparse import Namespace
 from i18ndude.script import find_untranslated as script
 from i18ndude.tests.utils import suppress_stdout
 
 TEST_DIR = os.path.dirname(__file__)
+PY3 = sys.version_info > (3,)
+if PY3:
+    unicode = str
+    unicode_StringIO = io.StringIO
+else:
+    import StringIO
+    # io.StringIO in python2 (but not in python3) raises:
+    # TypeError: unicode argument expected, got 'str'
+    unicode_StringIO = StringIO.StringIO
 
 
 def find_untranslated(input):
-    out = StringIO.StringIO()
+    out = unicode_StringIO()
     parser = xml.sax.make_parser(['expat'])
     handler = i18ndude.untranslated.VerboseHandler(parser, out)
     parser.setContentHandler(handler)
-    parser.parse(StringIO.StringIO(input))
+    parser.parse(unicode_StringIO(input))
     return out.getvalue()
 
 
@@ -135,7 +144,7 @@ class TestUntranslatedScript(unittest.TestCase):
 
     def test_script_template_4(self):
         path = os.path.join(TEST_DIR, 'input', 'test4.pt')
-        output = StringIO.StringIO()
+        output = unicode_StringIO()
         old_stdout = sys.stdout
         sys.stdout = output
         try:
