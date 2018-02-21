@@ -242,7 +242,6 @@ class SilentHandler(Handler):
         self._out.write('%s: %s warnings, %s errors'
                         % (self._filename, self._stats['WARNING'],
                            self._stats['ERROR']))
-        self._out.write()
 
 
 class VerboseHandler(Handler):
@@ -281,7 +280,7 @@ class NoSummaryVerboseHandler(Handler):
             self._parser.getColumnNumber(),
             severity,
             msg)))
-        self._out.write()
+        self._out.write('\n')
 
     def endDocument(self):
         pass
