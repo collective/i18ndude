@@ -6,11 +6,11 @@ from setuptools import setup, find_packages
 version = '5.0.0dev0'
 
 install_requires = [
-    'zope.tal >= 4.3.0',
-    'zope.interface >= 3.3',
-    'zope.i18nmessageid >= 3.3',
-    'ordereddict',
     'lxml',
+    'ordereddict ; python_version<"3.1"',
+    'zope.i18nmessageid >= 3.3',
+    'zope.interface >= 3.3',
+    'zope.tal >= 4.3.0',
 ]
 
 if sys.version_info < (2, 7):
