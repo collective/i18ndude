@@ -211,12 +211,12 @@ class MessageCatalog(OrderedDict):
             return
         for (key, val) in dict.items():
             if getattr(val, 'msgid', None) is not None \
-               and not isinstance(val.msgid, str):
+               and not isinstance(val.msgid, unicode):
                 val.msgid = val.msgid.decode(self.encoding)
             if getattr(val, 'msgstr', None) is not None \
-               and not isinstance(val.msgstr, str):
+               and not isinstance(val.msgstr, unicode):
                 val.msgstr = val.msgstr.decode(self.encoding)
-            if isinstance(key, str):
+            if isinstance(key, unicode):
                 self[key] = val
             else:
                 self[key.decode(self.encoding)] = val
