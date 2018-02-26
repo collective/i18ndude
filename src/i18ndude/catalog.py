@@ -214,7 +214,7 @@ class MessageCatalog(OrderedDict):
                and not isinstance(val.msgid, str):
                 val.msgid = val.msgid.decode(self.encoding)
             if getattr(val, 'msgstr', None) is not None \
-               and not isinstance(val.msgid, str):
+               and not isinstance(val.msgstr, str):
                 val.msgstr = val.msgstr.decode(self.encoding)
             if isinstance(key, str):
                 self[key] = val

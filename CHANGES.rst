@@ -11,7 +11,7 @@ Breaking changes:
 
 New features:
 
-- Support python 3.6, 2.5, 3.4, pypy and pypy3.
+- Support python 3.6, 3.5, 3.4, pypy and pypy3.
   [gyst]
 
 Bug fixes:
