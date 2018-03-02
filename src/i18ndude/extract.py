@@ -383,7 +383,7 @@ class TokenEater(object):
             default = unicode(default)
         msg = Message(msg, default=default)
         if msg in self.__messages:
-            messages = self.__messages.keys()
+            messages = list(self.__messages.keys())
             idx = messages.index(msg)
             existing_msg = messages[idx]
             if msg.default != existing_msg.default:
