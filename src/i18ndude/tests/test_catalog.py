@@ -397,7 +397,7 @@ class TestMessagePoWriter(unittest.TestCase):
         # the test po file.
         orig_wrap = utils.WRAP
         utils.WRAP = True
-        fd = open(self.output, 'wb')
+        fd = open(self.output, 'w')
         pow = catalog.POWriter(fd, self.catalog)
         pow.write(sort=True)
         fd.close()
@@ -424,7 +424,7 @@ class TestMessagePoWriter(unittest.TestCase):
             )
 
     def test_writeSpecialComments(self):
-        fd = open(self.output2, 'wb')
+        fd = open(self.output2, 'w')
         pow = catalog.POWriter(fd, self.catalog2)
         pow.write(sort=True)
         fd.close()

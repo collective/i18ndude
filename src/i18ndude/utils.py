@@ -241,7 +241,7 @@ def prepare_cli_documentation(data):
         result.extend(indent(res))
 
     result.append('')
-    open(target, 'wb').write('\n'.join(result))
+    open(target, 'w').write('\n'.join(result))
     print("Wrote command line documentation to", target)
 
     # If there is a diff, we want to commit it.

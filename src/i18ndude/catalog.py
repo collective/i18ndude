@@ -489,6 +489,11 @@ class POWriter:
         """encode a given unicode type or string type to string type
         in encoding output_encoding
         """
+        if PY3:
+            return line
+        # all of the below is a python2-only unicode hack
+        # just goes to show why python3 was needed
+
         content_type = self._msgctl.mime_header.get(
             'Content-Type', 'text/plain; charset=utf-8')
         charset = content_type.split('=')
@@ -512,7 +517,7 @@ class POWriter:
         if string:
             string = string.strip()
             file.write(self._encode(string))
-        file.write(b'\n')
+        file.write('\n')
 
     def write(self, sort=True, msgstrToComment=False, sync=False):
         """Start writing to file."""
