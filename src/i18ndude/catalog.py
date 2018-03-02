@@ -256,7 +256,9 @@ class MessageCatalog(OrderedDict):
                              msgstr,
                              self[msgid].msgstr,
                              u'\n'.join(self[msgid].references))
-                sys.stderr.write(msg.encode('utf-8'))
+                if not PY3:
+                    msg = msg.encode('utf-8')
+                sys.stderr.write(msg)
             if comments:
                 comments = [
                     c for c in comments if c not in self[msgid].comments]
@@ -288,7 +290,9 @@ class MessageCatalog(OrderedDict):
                 ids.append(key)
             elif mergewarn:
                 message = 'Merge-Warning: Key is already in target-catalog: %s'\
-                    % key.encode('utf-8')
+                    % key
+                if not PY3:
+                    message = message.encode('utf-8')
                 sys.stderr.write(message)
 
         return ids
@@ -354,6 +358,7 @@ class MessageCatalog(OrderedDict):
         return removed_ids
 
     def _initialize_with(self, filename):
+        # reading in text mode, but likely to contain bytes
         file = open(filename)
         parser = POParser(file)
         parser.read()
@@ -549,7 +554,6 @@ class POWriter:
         """Writes the messages out."""
         f = self._file
         ids = sorted(self._msgctl.keys())
-
         for id in ids:
             entry = self._msgctl[id]
             self._print_entry(
