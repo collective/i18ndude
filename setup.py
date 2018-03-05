@@ -7,16 +7,10 @@ version = '5.0.0.dev0'
 
 install_requires = [
     'lxml',
-    'ordereddict ; python_version<"3.1"',
     'zope.i18nmessageid >= 3.3',
     'zope.interface >= 3.3',
     'zope.tal >= 4.3.0',
 ]
-
-if sys.version_info < (2, 7):
-    # Python 2.7 contains argparse.  For earlier versions we need to
-    # add it as a dependency.
-    install_requires.append('argparse')
 
 setup(
     name='i18ndude',
