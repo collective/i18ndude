@@ -342,8 +342,9 @@ class MessageCatalog(OrderedDict):
         removed_ids = []
         for key in self.keys():
             if key not in ids:
-                del self[key]
                 removed_ids.append(key)
+        for key in removed_ids:
+            del self[key]
         return removed_ids
 
     def accept_fct(self, fct):
@@ -353,8 +354,9 @@ class MessageCatalog(OrderedDict):
         removed_ids = []
         for key in self.keys():
             if not fct(key, self[key].msgstr):
-                del self[key]
                 removed_ids.append(key)
+        for key in removed_ids:
+            del self[key]
         return removed_ids
 
     def _initialize_with(self, filename):
