@@ -3,14 +3,14 @@ import sys
 
 from setuptools import setup, find_packages
 
-version = '4.3.1.dev0'
+version = '5.0.0.dev0'
 
 install_requires = [
-    'zope.tal >= 3.5.2',
-    'zope.interface >= 3.3',
-    'zope.i18nmessageid >= 3.3',
-    'ordereddict',
     'lxml',
+    'ordereddict ; python_version<"3.1"',
+    'zope.i18nmessageid >= 3.3',
+    'zope.interface >= 3.3',
+    'zope.tal >= 4.3.0',
 ]
 
 if sys.version_info < (2, 7):
@@ -35,7 +35,16 @@ setup(
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: Implementation',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Framework :: Zope3',
         'Topic :: Utilities',
     ],
     keywords='Plone i18n zpt',

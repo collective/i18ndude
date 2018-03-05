@@ -16,9 +16,9 @@ i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
 Compatibility
 -------------
 
-i18ndude works with Python 2.6 and 2.7.  It is expected to work with
-Python 2.4 and 2.5 too, but it may be tricky to get the proper
-versions of its dependencies that work with those Python versions.
+i18ndude works with Python 2.7, 3.5, 3.5, 3.6, pypy and pypy3.
+Older versions are not supported anymore, use the i18ndude 4.x series
+if you need that.
 
 i18ndude uses a few zope packages.  If you install i18ndude using a
 buildout, you may want to pin their versions to the ones in the
@@ -27,10 +27,7 @@ with:
 http://download.zope.org/zopetoolkit/index/1.1.6/ztk-versions.cfg
 
 If you use a separate buildout for i18ndude, you may want to update
-the ``zope.tal`` version to 4.0.0 or higher, with fixes a possible
-UnicodeDecodeError while printing a warning when a msgid already
-exists.  If you happen to hit that corner case, the new version should
-help.
+the ``zope.tal`` version to 4.3.0 or higher.
 
 If you add i18ndude to a buildout that handles a Zope, CMF or Plone
 site, you probably already have versions pinned so then you do not

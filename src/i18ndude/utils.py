@@ -1,5 +1,8 @@
 import os
 import subprocess
+import sys
+
+PY3 = sys.version_info > (3,)
 
 # Two parameters determine the wrapping of lines.  If WRAP is False,
 # no wrapping is done.  If WRAP is True, the lines will be wrapped at
@@ -241,8 +244,8 @@ def prepare_cli_documentation(data):
         result.extend(indent(res))
 
     result.append('')
-    open(target, 'wb').write('\n'.join(result))
-    print "Wrote command line documentation to", target
+    open(target, 'w').write('\n'.join(result))
+    print("Wrote command line documentation to", target)
 
     # If there is a diff, we want to commit it.
     from zest.releaser import choose
@@ -251,11 +254,11 @@ def prepare_cli_documentation(data):
     diff_cmd = vcs.cmd_diff()
     diff = execute_command(diff_cmd)
     if diff.strip():
-        print "The %r:\n\n%s\n" % (diff_cmd, diff)
+        print("The %r:\n\n%s\n" % (diff_cmd, diff))
         if ask("OK to commit this"):
             msg = "Wrote command line documentation."
             commit_cmd = vcs.cmd_commit(msg)
-            print execute_command(commit_cmd)
+            print(execute_command(commit_cmd))
 
 
 def quote(s):
@@ -265,3 +268,71 @@ def quote(s):
         return '"%s"' % s
     else:
         return s
+
+
+def undouble_unicode_escape(value):
+    """ The mother of all hacks.
+    This tries to work around unicode/string confusion between
+    python2 and python3 while opening files in text mode that contain
+    bytes, or strings, that represent UTF-8 encoded unicode, or various
+    levels of escaped UTF-8 representing unicode, or whatever...
+
+    All of this is end-of-pipe window dressing to work around the confusion
+    in the i18ndude code base about filehandles, unicode, printing to stdout
+    and then redirecting stdout to filehandles again and then ... etc.
+    """
+
+    debug = lambda x: ''  # print(x)
+
+    # first pass -- handle triply escaped python2
+    try:
+        value = value.decode('raw_unicode_escape')
+    except UnicodeEncodeError:
+        debug("1-- UnicodeEncodeError on {}".format(repr(value)))
+        # py2: 'ascii' codec can't encode characters
+        pass
+    except AttributeError:
+        debug("1-- AttributeError on {}".format(repr(value)))
+        # py3: 'str' object has no attribute 'decode'
+        # object or str, we don't know yet, keep processing
+        pass
+
+    # second pass -- handle triply escaped python3
+    try:
+        value = value.encode('raw_unicode_escape').decode('utf-8')
+    except UnicodeDecodeError:
+        debug("2-- UnicodeDecodeError on {}".format(repr(value)))
+        pass
+    except UnicodeEncodeError:
+        debug("2-- UnicodeEncodeError on {}".format(repr(value)))
+        # py2: 'ascii' codec can't encode characters
+        pass
+    except AttributeError:
+        debug("2-- AttributeError on {}".format(repr(value)))
+        debug("--2: returning {}".format(value))
+        return value  # object
+
+    # third pass --
+    try:
+        # doubly encoded?
+        value = value.encode('raw_unicode_escape').decode('utf-8')
+    except UnicodeDecodeError:
+        # normal unicode, either from input or first pass
+        debug("3-- UnicodeDecodeError on {}".format(repr(value)))
+        pass
+
+    # fourth pass - suffices in python3
+    value = value.encode('raw_unicode_escape').decode('raw_unicode_escape')
+
+    # fifth pass - needed in python2.7 only for escaped encoded
+    try:
+        value = value.decode('raw_unicode_escape')
+    except UnicodeEncodeError:
+        # py27 UnicodeEncodeError: 'ascii' codec can't encode character
+        pass
+    except AttributeError:
+        # py36 AttributeError: 'str' object has no attribute 'decode
+        pass
+
+    debug("--final: returning {}".format(repr(value)))
+    return value

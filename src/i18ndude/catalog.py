@@ -2,12 +2,17 @@
 from i18ndude.utils import quote
 from i18ndude.utils import wrapAndQuoteString
 from i18ndude.utils import wrapString
-from ordereddict import OrderedDict
+from i18ndude.utils import undouble_unicode_escape
+from collections import OrderedDict
 from zope.i18nmessageid import Message
 import os
 import re
 import sys
 import time
+
+PY3 = sys.version_info > (3,)
+if PY3:
+    unicode = str
 
 DEFAULT_PO_HEADER = [
     '--- PLEASE EDIT THE LINES BELOW CORRECTLY ---',
@@ -59,7 +64,7 @@ class MessageEntry:
         """Build a MessageEntry.
         """
         self.msgid = msgid
-        self.msgstr = msgstr
+        self.msgstr = undouble_unicode_escape(msgstr)
         self.references = references
         self.automatic_comments = automatic_comments
         self.comments = comments
@@ -78,9 +83,13 @@ class MessageEntry:
     def __eq__(self, other):
         """ Compare a MessageEntry to another one"""
         assert isinstance(other, MessageEntry)
-        if self.msgid == other.msgid and self.msgstr == other.msgstr and \
-                self.references == other.references and self.automatic_comments == \
-                other.automatic_comments and self.comments == other.comments:
+        if (
+                self.msgid == other.msgid and
+                self.msgstr == other.msgstr and
+                self.references == other.references and
+                self.automatic_comments == other.automatic_comments and
+                self.comments == other.comments
+        ):
             return True
         return False
 
@@ -152,7 +161,7 @@ class MessageCatalog(OrderedDict):
     def __init__(self, filename=None, domain=None):
         """Build a MessageCatalog, either by reading from a .po-file or
         specifying a domain."""
-        OrderedDict.__init__(self, None)
+        OrderedDict.__init__(self)
 
         # XOR
         assert not (filename and domain)
@@ -201,11 +210,16 @@ class MessageCatalog(OrderedDict):
         if dict is None:
             return
         for (key, val) in dict.items():
-            if getattr(val, 'msgid', None) is not None:
+            if getattr(val, 'msgid', None) is not None \
+               and not isinstance(val.msgid, unicode):
                 val.msgid = val.msgid.decode(self.encoding)
-            if getattr(val, 'msgstr', None) is not None:
+            if getattr(val, 'msgstr', None) is not None \
+               and not isinstance(val.msgstr, unicode):
                 val.msgstr = val.msgstr.decode(self.encoding)
-            self[key.decode(self.encoding)] = val
+            if isinstance(key, unicode):
+                self[key] = val
+            else:
+                self[key.decode(self.encoding)] = val
 
     def add(self, msgid, msgstr='',
             comments=[], references=[], automatic_comments=[]):
@@ -232,6 +246,8 @@ class MessageCatalog(OrderedDict):
             # template, and the same msgid with a different default in a Python
             # file
             if msgstr != self[msgid].msgstr:
+                # XXX this does not appear to have any test coverage
+                # the actual warnings are emitted by zope.tal
                 msg = u"Warning: msgid '%s' in %s already exists " \
                       u"with a different default (bad: %s, should be: %s)\n" \
                       u"The references for the existent value are:\n%s\n"
@@ -240,7 +256,9 @@ class MessageCatalog(OrderedDict):
                              msgstr,
                              self[msgid].msgstr,
                              u'\n'.join(self[msgid].references))
-                print >> sys.stderr, msg.encode('utf-8')
+                if not PY3:
+                    msg = msg.encode('utf-8')
+                sys.stderr.write(msg)
             if comments:
                 comments = [
                     c for c in comments if c not in self[msgid].comments]
@@ -271,9 +289,11 @@ class MessageCatalog(OrderedDict):
                          automatic_comments=entry.automatic_comments)
                 ids.append(key)
             elif mergewarn:
-                print >> sys.stderr,\
-                    'Merge-Warning: Key is already in target-catalog: %s'\
-                    % key.encode('utf-8')
+                message = 'Merge-Warning: Key is already in target-catalog: %s'\
+                    % key
+                if not PY3:
+                    message = message.encode('utf-8')
+                sys.stderr.write(message)
 
         return ids
 
@@ -338,13 +358,14 @@ class MessageCatalog(OrderedDict):
         return removed_ids
 
     def _initialize_with(self, filename):
+        # reading in text mode, but likely to contain bytes
         file = open(filename)
         parser = POParser(file)
         parser.read()
         file.close()
         header = parser.msgdict.get('')
         if header is None:
-            print >> sys.stderr, (
+            sys.stderr.write(
                 "%s misses 'msgid \"\"' and 'msgstr \"\"' "
                 "near the top. Will be fixed." % filename)
         else:
@@ -353,7 +374,7 @@ class MessageCatalog(OrderedDict):
                 self._parse_mime_header(header.msgstr)
                 del parser.msgdict['']
             except KeyError:
-                print >> sys.stderr, "%s lacks MIME header." % filename
+                sys.stderr.write("%s lacks MIME header." % filename)
         # Update the file after the header has been read.
         self.update(parser.msgdict)
 
@@ -473,6 +494,11 @@ class POWriter:
         """encode a given unicode type or string type to string type
         in encoding output_encoding
         """
+        if PY3:
+            return line
+        # all of the below is a python2-only unicode hack
+        # just goes to show why python3 was needed
+
         content_type = self._msgctl.mime_header.get(
             'Content-Type', 'text/plain; charset=utf-8')
         charset = content_type.split('=')
@@ -493,11 +519,10 @@ class POWriter:
 
     def _printToFile(self, file, string):
         """ Print wrapper which allows to specifiy an output encoding"""
-        if not string:
-            print >> file
-            return
-        string = string.strip()
-        print >> file, self._encode(string)
+        if string:
+            string = string.strip()
+            file.write(self._encode(string))
+        file.write('\n')
 
     def write(self, sort=True, msgstrToComment=False, sync=False):
         """Start writing to file."""
@@ -529,7 +554,6 @@ class POWriter:
         """Writes the messages out."""
         f = self._file
         ids = sorted(self._msgctl.keys())
-
         for id in ids:
             entry = self._msgctl[id]
             self._print_entry(
@@ -672,7 +696,7 @@ class PTReader:
         The MessageCatalogs can after this call be accessed through attribute
         ``catalogs``, which indexes the MessageCatalogs by their domain.
         """
-        from extract import tal_strings
+        from .extract import tal_strings
         tal = tal_strings(self.path, domain=self.domain,
                           exclude=self.exclude + ('tests', 'docs'))
 
@@ -692,9 +716,10 @@ class PTReader:
 
     def _add_msg(self, msgid, msgstr, comments, filename, automatic_comments,
                  domain):
+
         if not domain:
-            print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
-                (msgid, filename)
+            sys.stderr.write('No domain name for msgid "%s" in %s\n' %
+                             (msgid, filename))
             return
 
         if domain not in self.catalogs:
@@ -728,7 +753,7 @@ class PYReader:
         readable error message.
         """
 
-        from extract import py_strings
+        from .extract import py_strings
         py = py_strings(self.path, self.domain,
                         exclude=self.exclude + ('tests', ))
 
@@ -744,8 +769,8 @@ class PYReader:
     def _add_msg(self, msgid, msgstr, comments, references, automatic_comments,
                  domain):
         if not domain:
-            print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
-                (msgid, references)
+            sys.stderr.write('No domain name for msgid "%s" in %s\n' %
+                             (msgid, references))
             return
 
         if domain not in self.catalogs:
@@ -778,7 +803,7 @@ class GSReader(object):
         readable error message.
         """
 
-        from gsextract import gs_strings
+        from .gsextract import gs_strings
         gs = gs_strings(self.path, self.domain,
                         exclude=self.exclude + ('tests', ))
 
@@ -795,8 +820,8 @@ class GSReader(object):
     def _add_msg(self, msgid, msgstr, comments, references, automatic_comments,
                  domain):
         if not domain:
-            print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
-                (msgid, references)
+            sys.stderr.write('No domain name for msgid "%s" in %s\n' %
+                             (msgid, references))
             return
 
         if domain not in self.catalogs:
@@ -829,7 +854,7 @@ class ZCMLReader(object):
         readable error message.
         """
 
-        from zcmlextract import zcml_strings
+        from .zcmlextract import zcml_strings
         zcml = zcml_strings(self.path, self.domain,
                             exclude=self.exclude + ('tests', ))
 
@@ -846,8 +871,8 @@ class ZCMLReader(object):
     def _add_msg(self, msgid, msgstr, comments, references, automatic_comments,
                  domain):
         if not domain:
-            print >> sys.stderr, 'No domain name for msgid "%s" in %s\n' % \
-                (msgid, references)
+            sys.stderr.write('No domain name for msgid "%s" in %s\n' %
+                             (msgid, references))
             return
 
         if domain not in self.catalogs:

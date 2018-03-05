@@ -3,9 +3,11 @@
 *.pyc
 *.pyo
 *.swp
+.coverage*
 .installed.cfg
 .mr.developer.cfg
 .Python
+.tox/
 bin
 build
 develop-eggs
@@ -13,10 +15,12 @@ dist
 download
 eggs
 fake-eggs
+htmlcov/
 include
 local
 lib
 parts
 pip-selfcheck.json
+pyvenv.cfg
 src/zope.tal
 var

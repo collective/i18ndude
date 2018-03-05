@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from i18ndude.utils import wrapAndQuoteString
 from i18ndude.utils import wrapString
+from i18ndude.utils import undouble_unicode_escape
 import i18ndude.utils
 import unittest
 
@@ -100,7 +101,50 @@ class TestUtils(unittest.TestCase):
             self.fail("wrapAndQuoteString raised UnicodeEncodeError unexpectedly!")  # noqa
 
 
+class TestUndoubleEscape(unittest.TestCase):
+
+    def test_roundtrip_string(self):
+        self.assertEqual(undouble_unicode_escape('foo'), 'foo')
+
+    def test_roundtrip_simple_unicode(self):
+        self.assertEqual(undouble_unicode_escape(u'foo'), u'foo')
+
+    def test_roundtrip_complex_unicode(self):
+        goodname = u'Kılıçaslan'
+        self.assertEqual(undouble_unicode_escape(goodname), goodname)
+
+    def test_encoded(self):
+        garbled = u'K\u0131l\u0131\xe7aslan'
+        goodname = u'Kılıçaslan'
+        self.assertEqual(undouble_unicode_escape(garbled), goodname)
+
+    def test_double_encoded(self):
+        garbled = u'K\xc4\xb1l\xc4\xb1\xc3\xa7aslan'
+        goodname = u'Kılıçaslan'
+        self.assertEqual(undouble_unicode_escape(garbled), goodname)
+
+    def test_triple_encoded(self):
+        garbled = 'K\xc3\x84\xc2\xb1l\xc3\x84\xc2\xb1\xc3\x83\xc2\xa7aslan'
+        goodname = u'Kılıçaslan'
+        self.assertEqual(undouble_unicode_escape(garbled), goodname)
+
+    def test_object(self):
+        NO_VALUE = object()
+        self.assertEqual(undouble_unicode_escape(NO_VALUE), NO_VALUE)
+
+    def test_encoded_escaped_kili(self):
+        garbled = 'K\\u0131l\\u0131\xe7aslan'  # actually: bytes
+        goodname = u'Kılıçaslan'
+        self.assertEqual(undouble_unicode_escape(garbled), goodname)
+
+    def test_encoded_escaped_seen_in_wild(self):
+        garbled = 'msgstr "Polo\\u017eka ${title} byla odstran\\u011bna."'
+        goodname = u'msgstr "Položka ${title} byla odstraněna."'
+        self.assertEqual(undouble_unicode_escape(garbled), goodname)
+
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestUtils))
+    suite.addTest(unittest.makeSuite(TestUndoubleEscape))
     return suite

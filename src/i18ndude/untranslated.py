@@ -1,7 +1,11 @@
-import StringIO
+import io
 import xml.sax
 import re
 
+import sys
+PY3 = sys.version_info > (3,)
+if PY3:
+    unicode = str
 
 IGNORE_UNTRANSLATED = 'i18n:ignore'
 IGNORE_UNTRANSLATED_ATTRIBUTES = 'i18n:ignore-attributes'
@@ -152,7 +156,7 @@ class Handler(xml.sax.ContentHandler):
     def __init__(self, parser, out=None):
         self._parser = parser
         if out is None:
-            self._out = StringIO.StringIO()
+            self._out = io.StringIO()
         else:
             self._out = out
         self._filename = 'Undefined'
@@ -160,10 +164,10 @@ class Handler(xml.sax.ContentHandler):
     def show_output(self):
         value = self._out.getvalue().strip()
         if value:
-            print(value.encode('utf-8') + b'\n')
+            print(unicode(value) + u'\n')
 
     def clear_output(self):
-        self._out = StringIO.StringIO()
+        self._out = io.StringIO()
 
     def log(self, msg, severity):
         """Severity may be one out of 'WARNING', 'ERROR' or 'FATAL'."""
@@ -228,16 +232,16 @@ class SilentHandler(Handler):
         Handler.log(self, msg, severity)
 
         if severity == 'FATAL':
-            print >> self._out, 'Fatal error in document %s' % self._filename
-            print >> self._out
+            self._out.write('Fatal error in document %s' % self._filename)
+            self._out.write('\n')
 
     def endDocument(self):
         if not (self._stats['WARNING'] or self._stats['ERROR']):
             return
 
-        print >> self._out, '%s: %s warnings, %s errors' \
-            % (self._filename, self._stats['WARNING'], self._stats['ERROR'])
-        print >> self._out
+        self._out.write('%s: %s warnings, %s errors'
+                        % (self._filename, self._stats['WARNING'],
+                           self._stats['ERROR']))
 
 
 class VerboseHandler(Handler):
@@ -245,24 +249,24 @@ class VerboseHandler(Handler):
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
-        print >> self._out, \
-            '%s:%s:%s:\n-%s- - %s' % (self._filename,
-                                      self._parser.getLineNumber(),
-                                      self._parser.getColumnNumber(),
-                                      severity,
-                                      msg)
+        self._out.write(unicode('%s:%s:%s:\n-%s- - %s\n' % (
+            self._filename,
+            self._parser.getLineNumber(),
+            self._parser.getColumnNumber(),
+            severity,
+            msg)))
 
         if severity == 'FATAL':
             char = '='
         else:
             char = '-'
-        print >> self._out, char * 79
+        self._out.write(unicode(char * 79) + '\n')
 
     def endDocument(self):
-        print >> self._out, \
-            'Processing of %s finished. (%s warnings, %s errors)' \
-            % (self._filename, self._stats['WARNING'], self._stats['ERROR'])
-        print >> self._out, '=' * 79
+        self._out.write(unicode(
+            'Processing of %s finished. (%s warnings, %s errors)\n'
+            % (self._filename, self._stats['WARNING'], self._stats['ERROR'])))
+        self._out.write(unicode('=' * 79) + '\n')
 
 
 class NoSummaryVerboseHandler(Handler):
@@ -270,13 +274,13 @@ class NoSummaryVerboseHandler(Handler):
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
-        print >> self._out, \
-            '%s:%s:%s:\n-%s- - %s' % (self._filename,
-                                      self._parser.getLineNumber(),
-                                      self._parser.getColumnNumber(),
-                                      severity,
-                                      msg)
-        print >> self._out
+        self._out.write(unicode('%s:%s:%s:\n-%s- - %s' % (
+            self._filename,
+            self._parser.getLineNumber(),
+            self._parser.getColumnNumber(),
+            severity,
+            msg)))
+        self._out.write('\n')
 
     def endDocument(self):
         pass
