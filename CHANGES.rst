@@ -4,7 +4,7 @@ Changelog
 5.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Create universal Python wheel.  [maurits]
 
 
 5.0.0 (2018-03-05)
