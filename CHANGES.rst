@@ -16,6 +16,9 @@ New features:
 
 Bug fixes:
 
+- Removed ``ordereddict`` and ```argparse`` dependencies completely.
+  [maurits]
+
 - Fixed many unicode/string/bytes handling problems.
   There's probably still some unfixed that need finding, given that
   test coverage is only 63%.
