@@ -5,7 +5,7 @@ Changelog
 ------------------
 
 - Fixed some possible UnicodeDecodeErrors in find-untranslated.
-  Fixes `issue 52 <https://github.com/collective/i18ndude/issues/52`_.
+  Fixes `issue 52 <https://github.com/collective/i18ndude/issues/52>`_.
   [maurits]
 
 
