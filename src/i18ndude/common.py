@@ -61,7 +61,14 @@ def prepare_xml(file):
                 content[m:] +
                 '</body></html>')
 
-    return StringIO(unicode(content.strip()))
+    content = content.strip()
+    if not isinstance(content, unicode):
+        try:
+            content = content.decode('utf-8')
+        except UnicodeDecodeError:
+            print('ERROR: {} not decodable as utf-8'.format(file.name))
+            content = u''
+    return StringIO(content)
 
 
 def tree_content(tree):
