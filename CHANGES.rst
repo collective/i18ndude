@@ -4,7 +4,9 @@ Changelog
 5.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed some possible UnicodeDecodeErrors in find-untranslated.
+  Fixes `issue 52 <https://github.com/collective/i18ndude/issues/52`_.
+  [maurits]
 
 
 5.0.1 (2018-03-05)

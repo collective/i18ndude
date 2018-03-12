@@ -164,7 +164,13 @@ class Handler(xml.sax.ContentHandler):
     def show_output(self):
         value = self._out.getvalue().strip()
         if value:
-            print(unicode(value) + u'\n')
+            if not isinstance(value, unicode):
+                value = value.decode('utf-8')
+            # Note: if value contains non-ascii and we redirect stdout
+            # or pipe the output through 'grep', we get a UnicodeEncodeError.
+            # Solution: export PYTHONIOENCODING=utf-8
+            # See https://stackoverflow.com/questions/492483
+            print(value + u'\n')
 
     def clear_output(self):
         self._out = io.StringIO()
@@ -280,7 +286,7 @@ class NoSummaryVerboseHandler(Handler):
             self._parser.getColumnNumber(),
             severity,
             msg)))
-        self._out.write('\n')
+        self._out.write(u'\n')
 
     def endDocument(self):
         pass
