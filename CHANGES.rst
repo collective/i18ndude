@@ -4,6 +4,9 @@ Changelog
 5.0.3 (unreleased)
 ------------------
 
+- Fixed another possible UnicodeDecodeError in find-untranslated.
+  [maurits]
+
 - ``find-untranslated`` no longer complains about attributes with chameleon syntax.
   An html tag with ``title="${context/Description}"`` is no longer
   marked as having an untranslated title tag.
