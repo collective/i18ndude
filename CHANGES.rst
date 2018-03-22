@@ -14,7 +14,11 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- ``find-untranslated`` no longer complains about attributes with chameleon syntax.
+  An html tag with ``title="${context/Description}"`` is no longer
+  marked as having an untranslated title tag.
+  Fixes `issue 53 <https://github.com/collective/i18ndude/issues/53>`_.
+  [maurits]
 
 
 4.3 (2017-07-31)
