@@ -4,7 +4,11 @@ Changelog
 5.0.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- ``find-untranslated`` no longer complains about attributes with chameleon syntax.
+  An html tag with ``title="${context/Description}"`` is no longer
+  marked as having an untranslated title tag.
+  Fixes `issue 53 <https://github.com/collective/i18ndude/issues/53>`_.
+  [maurits]
 
 
 5.0.2 (2018-03-12)
