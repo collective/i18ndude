@@ -4,7 +4,10 @@ Changelog
 5.0.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- In the ``list`` command, show only languages with existing po files,
+  ordered by percentage.  A new ``--tiered`` option uses the traditional
+  behavior with languages in a specific order in three tiers.
+  [maurits]
 
 
 5.0.2 (2018-03-12)
