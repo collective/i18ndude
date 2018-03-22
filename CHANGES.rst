@@ -9,6 +9,19 @@ Changelog
   behavior with languages in a specific order in three tiers.
   [maurits]
 
+- Sort files that we extract messages from.
+  On Linux they were already sorted, but not on Mac, leading to a test failure.
+  [maurits]
+
+- Fixed another possible UnicodeDecodeError in find-untranslated.
+  [maurits]
+
+- ``find-untranslated`` no longer complains about attributes with chameleon syntax.
+  An html tag with ``title="${context/Description}"`` is no longer
+  marked as having an untranslated title tag.
+  Fixes `issue 53 <https://github.com/collective/i18ndude/issues/53>`_.
+  [maurits]
+
 
 5.0.2 (2018-03-12)
 ------------------

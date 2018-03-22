@@ -448,7 +448,7 @@ def find_files(dir, pattern, exclude=()):
         else:
             if fnmatch.filter([folder], pattern):
                 files.append(folder)
-    return files
+    return sorted(files)
 
 # We don't want to assume a default domain of Zope
 # def py_strings(dir, domain="zope", exclude=()):

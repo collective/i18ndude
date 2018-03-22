@@ -150,7 +150,12 @@ def find_untranslated(arguments):
     errors = 0
     for filename in filter_isfile(arguments.files):  # parse file by file
         with open(filename) as myfile:
-            if not myfile.read().strip():
+            try:
+                if not myfile.read().strip():
+                    continue
+            except UnicodeDecodeError:
+                print('ERROR: UnicodeDecodeError while reading {}'.format(
+                    filename))
                 continue
         # Reinitialize the handler, resetting errors.
         handler.set_filename(filename)
