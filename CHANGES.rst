@@ -4,6 +4,10 @@ Changelog
 5.0.3 (unreleased)
 ------------------
 
+- Sort files that we extract messages from.
+  On Linux they were already sorted, but not on Mac, leading to a test failure.
+  [maurits]
+
 - Fixed another possible UnicodeDecodeError in find-untranslated.
   [maurits]
 
