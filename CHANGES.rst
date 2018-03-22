@@ -14,6 +14,10 @@ New features:
 
 Bug fixes:
 
+- Sort files that we extract messages from.
+  On Linux they were already sorted, but not on Mac, leading to a test failure.
+  [maurits]
+
 - ``find-untranslated`` no longer complains about attributes with chameleon syntax.
   An html tag with ``title="${context/Description}"`` is no longer
   marked as having an untranslated title tag.
