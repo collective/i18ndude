@@ -1,0 +1,8 @@
+<div foo="fine" alt="fine" title="${context/Description}">${context/Title}</div>
+<img foo="fine" alt="${context/Description}" title="${context/Description}" />
+<input foo="fine" alt="fine" placeholder="${context/Description}"
+       type="text" value="fine" title="${context/Description}" />
+<input foo="fine" alt="fine" type="submit" value="${context/Description}"
+       title="${context/Description}" />
+<input foo="fine" alt="fine" type="button" value="${context/Description}"
+       title="${context/Description}" />

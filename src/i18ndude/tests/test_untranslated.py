@@ -156,6 +156,13 @@ class TestUntranslatedScript(unittest.TestCase):
         # A specific line should be reported as missing an i18n.
         self.assertIn('{}:16'.format(path), output.getvalue())
 
+    def test_script_chameleon(self):
+        path = os.path.join(TEST_DIR, 'input', 'chameleon.pt')
+        with suppress_stdout():
+            result = script(Namespace(
+                silent=False, nosummary=False, files=[path]))
+        self.assertEqual(result, 0)
+
     def test_script_directory(self):
         path = os.path.join(TEST_DIR, 'input')
         with suppress_stdout():

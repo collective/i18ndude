@@ -74,6 +74,10 @@ def _tal_replaced_content(tag, attrs):
 def _tal_replaced_attr(attrs, attr):
     # Is the attribute replaced by tal?
     if 'tal:attributes' not in attrs and 'attributes' not in attrs:
+        # Not replaced by tal, but could be chameleon syntax.
+        value = attrs.get(attr, '')
+        if CHAMELEON_SUBST.match(value):
+            return True
         return False
     talattrs = [talattr.strip().split()[0] for talattr in
                 attrs['tal:attributes'].split(';') if talattr]
