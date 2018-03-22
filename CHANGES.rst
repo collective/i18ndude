@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0.3 (unreleased)
+5.1.0 (unreleased)
 ------------------
 
 - In the ``list`` command, show only languages with existing po files,
