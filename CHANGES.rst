@@ -4,10 +4,14 @@ Changelog
 5.1.0 (unreleased)
 ------------------
 
+New features:
+
 - In the ``list`` command, show only languages with existing po files,
   ordered by percentage.  A new ``--tiered`` option uses the traditional
   behavior with languages in a specific order in three tiers.
   [maurits]
+
+Bug fixes:
 
 - Sort files that we extract messages from.
   On Linux they were already sorted, but not on Mac, leading to a test failure.
