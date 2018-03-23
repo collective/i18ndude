@@ -36,3 +36,21 @@ need to add an ``extends`` line.
 You can also use ``pip`` or ``easy_install`` to install it.  With
 ``pip`` you may want to create a ``requirements.txt`` based on that
 ztk versions list.
+
+``UnicodeEncodeError``
+----------------------
+
+When running some ``i18ndude`` commands, you might get a ``UnicodeEncodeError``.
+This can especially happen when ``i18ndude`` prints the result and you redirect the output or pipe it.
+This is tricky, maybe impossible, to solve in ``i18ndude`` itself.
+See this related `question on stackoverflow <https://stackoverflow.com/questions/492483/setting-the-correct-encoding-when-piping-stdout-in-python>`_.
+This question points to a solution that you yourself can do when you encounter this.
+In the (Unix-like) shell, do this::
+
+    export PYTHONIOENCODING=utf-8
+
+This fixes UnicodeEncodeErrors when piping or redirecting output that contains non-ascii.
+I (Maurits) have this line in my bash profile now.
+
+Note: if you get a ``UnicodeDecodeError``, so 'decode' instead of 'encode', then it may be something that needs fixing in ``i18ndude``.
+Please `report <https://github.com/collective/i18ndude/issues>`_ it then.
