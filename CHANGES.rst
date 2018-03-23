@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.3.1 (unreleased)
+4.4.0 (unreleased)
 ------------------
 
 Breaking changes:
@@ -10,7 +10,10 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- In the ``list`` command, show only languages with existing po files,
+  ordered by percentage.  A new ``--tiered`` option uses the traditional
+  behavior with languages in a specific order in three tiers.
+  [maurits]
 
 Bug fixes:
 
