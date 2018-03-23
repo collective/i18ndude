@@ -4,10 +4,6 @@ Changelog
 4.4.0 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - In the ``list`` command, show only languages with existing po files,
