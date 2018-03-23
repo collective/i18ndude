@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-version = '4.3.1.dev0'
+version = '4.4.0'
 
 install_requires = [
     'zope.tal >= 3.5.2',
