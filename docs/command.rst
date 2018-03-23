@@ -213,18 +213,27 @@ list
 
 ::
 
-  usage: i18ndude list [-h] -p product [product ...] [-t]
+  usage: i18ndude list [-h] -p product [product ...] [-t] [--tiered]
 
       This will create a simple listing that displays how much of the
       combined products pot's is translated for each language. Run this
       from the directory containing the pot-files. The product name is
       normally a domain name.
+
+      By default we show the languages of existing po files,
+      ordered by percentage.
+
+      With the --tiered option, we split the languages in three tiers or groups,
+      the first two with languages that Plone was traditionally translated in,
+      in a hardcoded order, followed by other languages.
+      This was the default output for years.
       
 
   optional arguments:
     -h, --help            show this help message and exit
     -p product [product ...], --products product [product ...]
-    -t, --table
+    -t, --table           Output as html table
+    --tiered              Show in traditional three-tiered order
 
 trmerge
 -------
