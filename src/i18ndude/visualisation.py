@@ -1,3 +1,8 @@
+from operator import itemgetter
+
+
+# For the '--tiered' option, we use the IGNORE, GROUP1 and GROUP2 options.
+# This was the only way for years.
 IGNORE = frozenset(('zh', 'sr-Latn', ))
 
 GROUP1 = [
@@ -53,54 +58,66 @@ def print_row(percentage, desc):
     )
 
 
-def output_table(out, languagelist, total):
+def sort_languages(values):
+    return sorted(values, key=itemgetter('percentage'), reverse=True)
+
+
+def output_table(out, languagelist, total, tiered):
     body = ''
     table = ''
 
     body += "<h1>Messages: %s</h1>\n" % total
-    body += '<h2>Tier 1:</h2>\n'
 
-    table += print_row(100, 'English (en)')
-    for code in GROUP1:
-        if code in out:
-            table += print_row(out[code]['percentage'], out[code]['desc'])
-            del out[code]
-        else:
-            lang = languagelist.get(code)
-            if lang is None:
-                name = code
+    if not tiered:
+        for value in sort_languages(out.values()):
+            perc = value['percentage']
+            if perc == 0:
+                continue
+            table += print_row(perc, value['desc'])
+    else:
+        body += '<h2>Tier 1:</h2>\n'
+
+        table += print_row(100, 'English (en)')
+        for code in GROUP1:
+            if code in out:
+                table += print_row(out[code]['percentage'], out[code]['desc'])
+                del out[code]
             else:
-                name = lang['name']
-            desc = '%s (%s)' % (name, code)
-            table += print_row(0, desc)
+                lang = languagelist.get(code)
+                if lang is None:
+                    name = code
+                else:
+                    name = lang['name']
+                desc = '%s (%s)' % (name, code)
+                table += print_row(0, desc)
 
-    body += _TABLE % dict(table=table)
-    table = ''
+        body += _TABLE % dict(table=table)
+        table = ''
 
-    body += '\n<h2>Tier 2:</h2>\n'
-    for code in GROUP2:
-        if code in out:
-            table += print_row(out[code]['percentage'], out[code]['desc'])
-            del out[code]
-        else:
-            lang = languagelist.get(code)
-            if lang is None:
-                name = code
+        body += '\n<h2>Tier 2:</h2>\n'
+        for code in GROUP2:
+            if code in out:
+                table += print_row(out[code]['percentage'], out[code]['desc'])
+                del out[code]
             else:
-                name = lang['name']
-            desc = '%s (%s)' % (name, code)
-            table += print_row(0, desc)
+                lang = languagelist.get(code)
+                if lang is None:
+                    name = code
+                else:
+                    name = lang['name']
+                desc = '%s (%s)' % (name, code)
+                table += print_row(0, desc)
 
-    body += _TABLE % dict(table=table)
-    table = ''
+        body += _TABLE % dict(table=table)
+        table = ''
 
-    body += '\n<h2>Tier 3:</h2>\n'
-    group3 = sorted(out.values())
-    for value in group3:
-        perc = value['percentage']
-        if perc == 0:
-            continue
-        table += print_row(perc, value['desc'])
+        body += '\n<h2>Tier 3:</h2>\n'
+        group3 = sorted(out.values())
+        for value in group3:
+            perc = value['percentage']
+            if perc == 0:
+                continue
+            table += print_row(perc, value['desc'])
 
     body += _TABLE % dict(table=table)
     template = _TEMPLATE % dict(body=body)
@@ -116,8 +133,15 @@ def aligned_print(percentage, desc):
     print("%s%% - %s" % (percentage, desc))
 
 
-def output_list(out, languagelist, total):
+def output_list(out, languagelist, total, tiered):
     print("Messages: %s\n" % total)
+    if not tiered:
+        for value in sort_languages(out.values()):
+            perc = value['percentage']
+            if perc == 0:
+                continue
+            aligned_print(perc, value['desc'])
+        return
 
     print('Tier 1:\n')
     print('100% - English (en)')
@@ -140,6 +164,7 @@ def output_list(out, languagelist, total):
             aligned_print(out[code]['percentage'], out[code]['desc'])
             del out[code]
         else:
+            continue
             lang = languagelist.get(code)
             if lang is None:
                 name = code
@@ -157,7 +182,7 @@ def output_list(out, languagelist, total):
         aligned_print(perc, value['desc'])
 
 
-def make_listing(pot, pos, table=False):
+def make_listing(pot, pos, table=False, tiered=False):
     try:
         from plone.i18n.locales.languages import LanguageAvailabilityXXX
         languagelist = LanguageAvailability().getLanguages(combined=True)
@@ -170,7 +195,7 @@ def make_listing(pot, pos, table=False):
 
     for po in [p for p in pos if p.mime_header['Language-Code'] != 'en']:
         code = po.mime_header.get('Language-Code')
-        if code in IGNORE:
+        if tiered and code in IGNORE:
             continue
         name = po.mime_header.get('Language-Name')
         language = languagelist.get(code)
@@ -192,6 +217,6 @@ def make_listing(pot, pos, table=False):
 
     total = len(msgids)
     if table:
-        output_table(values.copy(), languagelist, total)
+        output_table(values.copy(), languagelist, total, tiered)
     else:
-        output_list(values.copy(), languagelist, total)
+        output_list(values.copy(), languagelist, total, tiered)

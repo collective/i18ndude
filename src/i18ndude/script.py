@@ -623,6 +623,14 @@ def list_parser(subparsers):
     combined products pot's is translated for each language. Run this
     from the directory containing the pot-files. The product name is
     normally a domain name.
+
+    By default we show the languages of existing po files,
+    ordered by percentage.
+
+    With the --tiered option, we split the languages in three tiers or groups,
+    the first two with languages that Plone was traditionally translated in,
+    in a hardcoded order, followed by other languages.
+    This was the default output for years.
     """
     parser = subparsers.add_parser(
         'list',
@@ -631,7 +639,12 @@ def list_parser(subparsers):
     )
     parser.add_argument('-p', '--products', metavar='product', nargs='+',
                         required=True)
-    parser.add_argument('-t', '--table', action='store_true')
+    parser.add_argument(
+        '-t', '--table', action='store_true',
+        help="Output as html table")
+    parser.add_argument(
+        '--tiered', action='store_true',
+        help="Show in traditional three-tiered order")
     parser.set_defaults(func=arg_list)
     return parser
 
@@ -639,6 +652,7 @@ def list_parser(subparsers):
 def arg_list(arguments):
     table = arguments.table
     products = arguments.products
+    tiered = arguments.tiered
 
     # get all the files
     pos = {}
@@ -684,7 +698,8 @@ def arg_list(arguments):
     for key in keys:
         po_catalogs.append(po_ctls[key])
 
-    visualisation.make_listing(pot_ctl, po_catalogs, table=table)
+    visualisation.make_listing(
+        pot_ctl, po_catalogs, table=table, tiered=tiered)
 
 
 def main():
