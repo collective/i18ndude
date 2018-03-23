@@ -14,7 +14,10 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- In the readme, suggest ``export PYTHONIOENCODING=utf-8`` to fix ``UnicodeEncodeErrors``.
+  (Note: not ``UnicodeDecodeErrors``.)
+  Fixes `issue 55 <https://github.com/collective/i18ndude/issues/55>`_.
+  [maurits]
 
 
 5.1.0 (2018-03-23)
