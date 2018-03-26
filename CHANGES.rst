@@ -14,6 +14,11 @@ New features:
 
 Bug fixes:
 
+- Fixed ``plone.i18n`` import.
+  It was a conditional import to change the names of languages in the list, so nothing serious.
+  But it always failed.
+  [maurits]
+
 - In the readme, suggest ``export PYTHONIOENCODING=utf-8`` to fix ``UnicodeEncodeErrors``.
   (Note: not ``UnicodeDecodeErrors``.)
   Fixes `issue 55 <https://github.com/collective/i18ndude/issues/55>`_.

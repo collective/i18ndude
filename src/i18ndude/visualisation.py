@@ -184,7 +184,7 @@ def output_list(out, languagelist, total, tiered):
 
 def make_listing(pot, pos, table=False, tiered=False):
     try:
-        from plone.i18n.locales.languages import LanguageAvailabilityXXX
+        from plone.i18n.locales.languages import LanguageAvailability
         languagelist = LanguageAvailability().getLanguages(combined=True)
     except ImportError:
         languagelist = {}
