@@ -49,7 +49,7 @@ setup(
     url='https://github.com/collective/i18ndude',
     license='GPL',
     package_dir={'': 'src'},
-    packages=find_packages('src', exclude=['ez_setup']),
+    packages=find_packages('src', ),
     include_package_data=True,
     zip_safe=False,
     test_suite='i18ndude.tests',
