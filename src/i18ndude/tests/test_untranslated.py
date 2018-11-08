@@ -125,6 +125,19 @@ class TestUntranslated(unittest.TestCase):
             'placeholder attribute of <input> lacks i18n:attributes',
             result_with_translated_placeholder)
 
+    def test_find_untranslated_aria_label_attribute(self):
+        result_with_untranslated_aria_label = find_untranslated(
+            '<div><button aria-label="cookies"/></div>')
+        self.assertIn(
+            'aria-label attribute of <button> lacks i18n:attributes',
+            result_with_untranslated_aria_label)
+
+        result_with_translated_aria_label = find_untranslated(
+            '<div><button aria-label="cookies" i18n:attributes="aria-label"/></div>')
+        self.assertNotIn(
+            'lacks i18n:attributes',
+            result_with_translated_aria_label)
+
 
 class TestUntranslatedScript(unittest.TestCase):
 

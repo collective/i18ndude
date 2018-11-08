@@ -10,7 +10,7 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Add check for untranslated aria-label attributes on all elements. [janjaapdriessen]
 
 Bug fixes:
 

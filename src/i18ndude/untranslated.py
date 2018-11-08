@@ -129,18 +129,19 @@ def attr_validator(tag, attrs, logfct):
           i18ned.
     """
 
-    # 1)
     if not _valid_i18ned_attr('title', attrs):
         logfct('title attribute of <%s> lacks i18n:attributes' % tag,
                'ERROR')
 
-    # 2)
+    if not _valid_i18ned_attr('aria-label', attrs):
+        logfct('aria-label attribute of <%s> lacks i18n:attributes' % tag,
+               'ERROR')
+
     if tag == 'img':
         if not _valid_i18ned_attr('alt', attrs):
             logfct('alt attribute of <img> lacks i18n:attributes',
                    'ERROR')
 
-    # 3)
     if tag == 'input' and \
               'type' in attrs.keys() and \
               attrs['type'] in ('submit', 'button'):
@@ -148,7 +149,6 @@ def attr_validator(tag, attrs, logfct):
             logfct('value attribute of <... submit/button> lacks '
                    'i18n:attribute', 'ERROR')
 
-    # 4)
     if tag == 'input' and 'placeholder' in attrs.keys():
         if not _valid_i18ned_attr('placeholder', attrs):
             logfct('placeholder attribute of <%s> lacks i18n:attributes' % tag,
