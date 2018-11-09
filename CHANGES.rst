@@ -4,10 +4,6 @@ Changelog
 5.2.0 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Add check for untranslated aria-label attributes on all elements. [janjaapdriessen]
