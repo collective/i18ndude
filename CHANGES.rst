@@ -4,7 +4,10 @@ Changelog
 5.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- No longer test on Python 3.4 and 3.5.  Do test on 3.7.
+  Current test matrix: 2.7, 3.6, 3.7, pypy, pypy3.
+  See `issue 66 <https://github.com/collective/i18ndude/issues/66>`_.
+  [maurits]
 
 
 5.2.0 (2018-11-09)
