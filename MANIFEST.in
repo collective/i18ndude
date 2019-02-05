@@ -3,3 +3,6 @@ graft src
 graft docs
 global-exclude *.pyc
 prune src/zope.tal
+include pyproject.toml
+recursive-exclude news *
+exclude news
