@@ -18,3 +18,4 @@ script:
 - bin/python setup.py test
 - bin/i18ndude find-untranslated src/i18ndude/tests/input/test1.pt
 - bin/i18ndude find-untranslated src/i18ndude/tests || echo 'find-untranslated is expected to give errors for missing translations'
+- bin/i18ndude

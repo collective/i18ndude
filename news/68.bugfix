@@ -1,0 +1,2 @@
+[namespace-func-issue-68 e85e156] Fixed error on some Python versions when calling 'bin/i18ndude' without arguments. [maurits]
+ 2 files changed, 6 insertions(+)
