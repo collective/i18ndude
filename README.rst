@@ -20,22 +20,8 @@ i18ndude works with Python 2.7, 3.6, 3.7, pypy and pypy3.
 Older versions are not supported anymore, use the i18ndude 4.x series
 if you need that.
 
-i18ndude uses a few zope packages.  If you install i18ndude using a
-buildout, you may want to pin their versions to the ones in the
-current latest ztk (Zope Tool Kit) versions, as that is what we test
-with:
-http://download.zope.org/zopetoolkit/index/1.1.6/ztk-versions.cfg
-
-If you use a separate buildout for i18ndude, you may want to update
-the ``zope.tal`` version to 4.3.0 or higher.
-
-If you add i18ndude to a buildout that handles a Zope, CMF or Plone
-site, you probably already have versions pinned so then you do not
-need to add an ``extends`` line.
-
-You can also use ``pip`` or ``easy_install`` to install it.  With
-``pip`` you may want to create a ``requirements.txt`` based on that
-ztk versions list.
+You can install ``i18ndude`` with Buildout or ``pip``.
+With ``pip`` you may want to look at our `requirements.txt <https://github.com/collective/i18ndude/blob/master/requirements.txt>`_.
 
 ``UnicodeEncodeError``
 ----------------------
