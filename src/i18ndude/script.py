@@ -728,7 +728,14 @@ def main():
     list_parser(subparsers)
     trmerge_parser(subparsers)
     # Parse the arguments.
-    arguments = parser.parse_args(sys.argv[1:])
+    sys_args = sys.argv[1:]
+    if not sys_args:
+        # Plain 'bin/i18ndude' may fail in some Python versions.
+        # See https://github.com/collective/i18ndude/issues/68
+        # Pretend that 'bin/i18ndude --help' was called.
+        # This makes sense in general anyway.
+        sys_args = ['--help']
+    arguments = parser.parse_args(sys_args)
     # Special handling for the wrapping arguments, if any.
     parse_wrapping_arguments(arguments)
     # Call the function of the chosen command with the arguments.
