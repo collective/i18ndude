@@ -16,7 +16,7 @@ i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
 Compatibility
 -------------
 
-i18ndude works with Python 2.7, 3.5, 3.5, 3.6, pypy and pypy3.
+i18ndude works with Python 2.7, 3.6, 3.7, pypy and pypy3.
 Older versions are not supported anymore, use the i18ndude 4.x series
 if you need that.
 
