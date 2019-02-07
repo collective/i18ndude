@@ -1,3 +1,0 @@
-When no arguments are given, show the help.
-This fixes error on some Python versions when calling 'bin/i18ndude' without arguments.
-[maurits]

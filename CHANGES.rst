@@ -8,6 +8,23 @@ Changelog
 
 .. towncrier release notes start
 
+5.3.0 (2019-02-07)
+------------------
+
+New features:
+
+
+- Replaced buildout with pip for setting up test environment. No longer test on
+  Python 3.4 and 3.5. Do test on 3.7. Current test matrix: 2.7, 3.6, 3.7, pypy,
+  pypy3. [maurits] (#66)
+
+
+Bug fixes:
+
+
+- When no arguments are given, show the help. This fixes error on some Python
+  versions when calling 'bin/i18ndude' without arguments. [maurits] (#68)
+
 
 5.2.0 (2018-11-09)
 ------------------
