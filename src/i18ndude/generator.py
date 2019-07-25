@@ -10,6 +10,8 @@ from zope.tal.translationcontext import TranslationContext
 
 import re
 
+NOT_ALLOWED_IN_NAME = re.compile('\W')
+
 
 class DudeGenerator(TALGenerator):
 
@@ -75,6 +77,11 @@ class DudeGenerator(TALGenerator):
             raise I18NError(
                 "i18n:name can only occur inside a translation unit",
                 position)
+
+        if varname and NOT_ALLOWED_IN_NAME.search(varname):
+            raise I18NError(
+                "i18n:name cannot contain non-word characters "
+                "(spaces, punctuation)", position)
 
         if i18ndata and not msgid:
             raise I18NError("i18n:data must be accompanied by i18n:translate",

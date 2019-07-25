@@ -10,6 +10,7 @@ if PY3:
 IGNORE_UNTRANSLATED = 'i18n:ignore'
 IGNORE_UNTRANSLATED_ATTRIBUTES = 'i18n:ignore-attributes'
 CHAMELEON_SUBST = re.compile('^\${.*}$')
+NOT_ALLOWED_IN_NAME = re.compile('\W')
 
 
 def _translatable(data):
@@ -153,6 +154,11 @@ def attr_validator(tag, attrs, logfct):
         if not _valid_i18ned_attr('placeholder', attrs):
             logfct('placeholder attribute of <%s> lacks i18n:attributes' % tag,
                    'ERROR')
+
+    name = attrs.get('i18n:name')
+    if name and NOT_ALLOWED_IN_NAME.search(name):
+        logfct('invalid non-word characters (space, punctuation) '
+               'in i18n:name="{}"'.format(name), 'ERROR')
 
 
 class Handler(xml.sax.ContentHandler):
