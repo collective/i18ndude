@@ -10,7 +10,7 @@ from zope.tal.translationcontext import TranslationContext
 
 import re
 
-NOT_ALLOWED_IN_NAME = re.compile('\W')
+NOT_ALLOWED_IN_NAME = re.compile('[^\w-]')
 
 
 class DudeGenerator(TALGenerator):

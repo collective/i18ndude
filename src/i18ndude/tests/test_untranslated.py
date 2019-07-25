@@ -151,6 +151,12 @@ class TestUntranslated(unittest.TestCase):
             'invalid non-word characters (space, punctuation) in i18n:name',
             result_with_slash_in_name)
         self.assertIn('1 errors', result_with_slash_in_name)
+        result_with_dash_in_name = find_untranslated(
+            '<div i18n:translate="">Something <span i18n:name="x_foo-x_bar">amiss</span></div>')
+        self.assertNotIn(
+            'invalid non-word characters (space, punctuation) in i18n:name',
+            result_with_dash_in_name)
+        self.assertIn('0 errors', result_with_dash_in_name)
 
 
 class TestUntranslatedScript(unittest.TestCase):
