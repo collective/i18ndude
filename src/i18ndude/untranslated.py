@@ -9,8 +9,8 @@ if PY3:
 
 IGNORE_UNTRANSLATED = 'i18n:ignore'
 IGNORE_UNTRANSLATED_ATTRIBUTES = 'i18n:ignore-attributes'
-CHAMELEON_SUBST = re.compile('^\${.*}$')
-NOT_ALLOWED_IN_NAME = re.compile('[^\w-]')
+CHAMELEON_SUBST = re.compile(r'^\${.*}$')
+NOT_ALLOWED_IN_NAME = re.compile(r'[^\w-]')
 
 
 def _translatable(data):

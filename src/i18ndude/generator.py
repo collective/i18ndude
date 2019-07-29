@@ -10,7 +10,8 @@ from zope.tal.translationcontext import TranslationContext
 
 import re
 
-NOT_ALLOWED_IN_NAME = re.compile('[^\w-]')
+
+NOT_ALLOWED_IN_NAME = re.compile(r'[^\w-]')
 
 
 class DudeGenerator(TALGenerator):
@@ -257,7 +258,7 @@ class DudeGenerator(TALGenerator):
             # interested in compiling everything.  But we can try.
             # We look for tal:repeat="   (a,b,c) python:something"
             # in a way similar to zope.tal.
-            m = re.match("(?s)\s*(\(.+\))\s+(.*)\Z", arg)
+            m = re.match(r"(?s)\s*(\(.+\))\s+(.*)\Z", arg)
             if not m:
                 raise TALError("invalid repeat syntax: " + repr(arg),
                                self.position)
