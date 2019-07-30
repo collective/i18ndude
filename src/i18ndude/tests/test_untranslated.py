@@ -138,6 +138,21 @@ class TestUntranslated(unittest.TestCase):
             'lacks i18n:attributes',
             result_with_translated_aria_label)
 
+    def test_find_untranslated_disallows_nonword_chars_in_i18n_name(self):
+        error = 'invalid non-word characters (space, punctuation) in i18n:name'
+        result_with_space_in_name = find_untranslated(
+            '<div i18n:translate="">Something <span i18n:name="xfoo xbar">amiss</span></div>')
+        self.assertIn(error, result_with_space_in_name)
+        self.assertIn('1 errors', result_with_space_in_name)
+        result_with_slash_in_name = find_untranslated(
+            '<div i18n:translate="">Something <span i18n:name="xfoo/xbar">amiss</span></div>')
+        self.assertIn(error, result_with_slash_in_name)
+        self.assertIn('1 errors', result_with_slash_in_name)
+        result_with_dash_in_name = find_untranslated(
+            '<div i18n:translate="">Something <span i18n:name="x_foo-x_bar">amiss</span></div>')
+        self.assertNotIn(error, result_with_dash_in_name)
+        self.assertIn('0 errors', result_with_dash_in_name)
+
 
 class TestUntranslatedScript(unittest.TestCase):
 

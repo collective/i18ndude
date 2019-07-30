@@ -1,0 +1,2 @@
+- Disallow non-word characters (but do allow dashes) in i18n:name
+  attributes when running `find-untranslated` code analysis [gyst]

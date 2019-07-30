@@ -464,7 +464,7 @@ class TestMessagePTReader(unittest.TestCase):
         second_filename = self.input + os.sep + 'test3.pt'
         self.output = {
             u'Buzz': self.me(u'Buzz', references=[filename + ':21']),
-            u'${foo} ${bar}': self.me(u'${foo} ${bar}', references=[filename + ':26']),  # noqa
+            u'${foo} ${with-dash-and_underscore}': self.me(u'${foo} ${with-dash-and_underscore}', references=[filename + ':26']),  # noqa
             u'dig_this': self.me(u'dig_this', msgstr=u'Dig this', references=[filename + ':52']),  # noqa
             u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=[filename + ':29', filename + ':31']),  # noqa
             u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=[filename + ':15', second_filename + ':15']),  # noqa

@@ -11,6 +11,9 @@ from zope.tal.translationcontext import TranslationContext
 import re
 
 
+NOT_ALLOWED_IN_NAME = re.compile(r'[^\w-]')
+
+
 class DudeGenerator(TALGenerator):
 
     """Custom Generator that does not raise template errors.
@@ -75,6 +78,11 @@ class DudeGenerator(TALGenerator):
             raise I18NError(
                 "i18n:name can only occur inside a translation unit",
                 position)
+
+        if varname and NOT_ALLOWED_IN_NAME.search(varname):
+            raise I18NError(
+                "i18n:name cannot contain non-word characters "
+                "(spaces, punctuation)", position)
 
         if i18ndata and not msgid:
             raise I18NError("i18n:data must be accompanied by i18n:translate",
@@ -250,7 +258,7 @@ class DudeGenerator(TALGenerator):
             # interested in compiling everything.  But we can try.
             # We look for tal:repeat="   (a,b,c) python:something"
             # in a way similar to zope.tal.
-            m = re.match("(?s)\s*(\(.+\))\s+(.*)\Z", arg)
+            m = re.match(r"(?s)\s*(\(.+\))\s+(.*)\Z", arg)
             if not m:
                 raise TALError("invalid repeat syntax: " + repr(arg),
                                self.position)
