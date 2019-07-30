@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+5.3.1 (2019-07-30)
+------------------
+
+Bug fixes:
+
+
+- Disallow non-word characters (but do allow dashes) in ``i18n:name``
+  attributes when running ``find-untranslated`` code analysis. [gyst] (#71)
+
+
 5.3.0 (2019-02-07)
 ------------------
 
