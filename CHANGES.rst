@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+5.3.2 (2020-02-25)
+------------------
+
+Bug fixes:
+
+
+- Added hint in ``rebuild-pot`` help about unwanted domains in Python files.
+  [maurits] (#49)
+- Fixed filter command on Python 3.7, and possibly earlier.
+  [maurits] (#75)
+
+
 5.3.1 (2019-07-30)
 ------------------
 
