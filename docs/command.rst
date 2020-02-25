@@ -87,6 +87,16 @@ rebuild-pot
       domain from the Domain header in the given pot file and keep the
       headers from the file as base for a new pot file.
 
+      Note that in Python files we simply look for text within an underscore
+      method: _("...").  We do not know which domain this is.
+      If this finds text from a domain that you do not want to find,
+      you should give the underscore method for the unwanted domain
+      a different name, for example:
+
+        from zope.i18nmessageid import MessageFactory
+        PMF = MessageFactory("plone")
+        PMF("...")
+
       If you give me an additional pot-file with the --merge <filename>
       option, I try to merge these msgids into the target-pot file
       afterwards. If a msgid already exists in the ones I found in the
