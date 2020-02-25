@@ -512,9 +512,15 @@ def filter(arguments):
     f1_ctl = catalog.MessageCatalog(filename=arguments.file1)
     f2_ctl = catalog.MessageCatalog(filename=arguments.file2)
 
+    # On Python 3.7 we can get an error if we delete immediately:
+    # RuntimeError: OrderedDict mutated during iteration
+    # So first gather items in a list.  That is better anyway.
+    to_delete = []
     for msgid in f1_ctl.keys():
         if msgid in f2_ctl:
-            del f1_ctl[msgid]
+            to_delete.append(msgid)
+    for msgid in to_delete:
+        del f1_ctl[msgid]
 
     writer = catalog.POWriter(sys.stdout, f1_ctl)
     writer.write(sort=False, msgstrToComment=True)
