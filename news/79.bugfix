@@ -1,0 +1,3 @@
+Drop 3.4 and 3.5 support, which we were not testing since a year.
+Test our 3.8 support.
+[maurits]
