@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+5.3.3 (2020-04-22)
+------------------
+
+Bug fixes:
+
+
+- Drop 3.4 and 3.5 support, which we were not testing since a year.
+  Test our 3.8 support.
+  [maurits] (#79)
+
+
 5.3.2 (2020-02-25)
 ------------------
 
