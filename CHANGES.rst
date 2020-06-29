@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+5.3.4 (2020-06-29)
+------------------
+
+Bug fixes:
+
+
+- The list command was wrongly showing 100% translated when the translations were at 99%.
+  [vincentfretin] (#81)
+
+
 5.3.3 (2020-04-22)
 ------------------
 
