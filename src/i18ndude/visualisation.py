@@ -211,8 +211,6 @@ def make_listing(pot, pos, table=False, tiered=False):
                     value += 1
 
         percentage = int(value / (total * 1.0) * 100)
-        if percentage == 99:
-            percentage = 100
         values[code] = dict(percentage=percentage, desc=desc)
 
     total = len(msgids)
