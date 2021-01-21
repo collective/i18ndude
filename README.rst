@@ -9,6 +9,10 @@ Introduction
 
 i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
 
+.. image:: https://github.com/collective/i18ndude/workflows/Tests/badge.svg
+    :alt: GitHub Actions badge
+    :target: https://github.com/collective/i18ndude/actions
+
 
 Compatibility
 -------------

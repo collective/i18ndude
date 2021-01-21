@@ -5,9 +5,10 @@
 # bin/i18ndude find-untranslated src/i18ndude/tests || echo 'find-untranslated is expected to give errors for missing translations'
 # I work around this by creating a shell script that tox copies to the tox envs.
 #
-# This script expects to be called with the path to the i18ndude script and the i18ndude/tests directory.
+# This script expects to be called with the path to the i18ndude script.
+# It takes the directory of the test script itself and looks for test files there.
 I18NDUDE=$1
-TESTS_DIR=$2
+TESTS_DIR=$(dirname $(realpath $0))
 INPUT_DIR="$TESTS_DIR/input"
 
 # First we call it with one file in there for which it should not find problems.
