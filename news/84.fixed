@@ -1,0 +1,1 @@
+Do not raise AttributeError when content is None, fixes #84.

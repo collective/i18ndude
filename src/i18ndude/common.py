@@ -72,10 +72,10 @@ def prepare_xml(file):
 
 
 def tree_content(tree):
-    content = etree.tostring(tree).decode()
+    content = etree.tostring(tree)
     if content is None:
         return
-    return StringIO(content.strip())
+    return StringIO(content.decode().strip())
 
 
 def present_file_contents(filename):
