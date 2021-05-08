@@ -1,9 +1,2 @@
-'i18ndude rebuild-pot --exlude="name1 name2"` now also accepts
-directory names for exclusion. This does not support wildcard globs
-for directories, but it does support substring match if the exlusion
-contains a / slash.
-
-Excluding a directory name will exclude all files in and below the
-given directory. You can either specify an exact directory name "bar"
-(will match foo/bar/baz but not foobar/barbaz), or a path "foo/bar"
-(will match foo/bar/baz and foo/barbaz) for exclusion.
+'i18ndude rebuild-pot --exlude="name1 name2"` now also accepts directory names for exclusion.
+Excluding a directory name will exclude all files in and below the given directory.
