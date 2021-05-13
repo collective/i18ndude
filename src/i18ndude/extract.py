@@ -436,6 +436,12 @@ def find_files(dir, pattern, exclude=()):
         folders = (dir, )
 
     def visit(files, dirpath, names):
+        # exclude dirnames
+        dirnames = dirpath.split(os.path.sep)
+        for ex in exclude:
+            if ex in dirnames:
+                return
+        # exclude filenames and regexps for those
         for ex in exclude:
             names[:] = [x for x in names if not fnmatch.fnmatch(x, ex)]
         files += [os.path.join(dirpath, name)
