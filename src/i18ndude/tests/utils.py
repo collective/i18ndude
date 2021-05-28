@@ -17,8 +17,7 @@ def package_home(globals_dict):
 GLOBALS = globals()
 PACKAGE_HOME = os.path.dirname(package_home(GLOBALS))
 
-if not PACKAGE_HOME.endswith('tests'):
-    PACKAGE_HOME = os.path.join(PACKAGE_HOME, 'tests')
+TESTDATA_DIR = os.path.join(PACKAGE_HOME, 'testdata')
 
 
 @contextmanager
