@@ -8,8 +8,8 @@
 # This script expects to be called with the path to the i18ndude script.
 # It takes the directory of the test script itself and looks for test files there.
 I18NDUDE=$1
-TESTS_DIR=$(dirname $(realpath $0))
-INPUT_DIR="$TESTS_DIR/input"
+TESTDATA_DIR="$(dirname $(realpath $0))/testdata"
+INPUT_DIR="$TESTDATA_DIR/input"
 
 # First we call it with one file in there for which it should not find problems.
 GOOD_FILE="$INPUT_DIR/test1.pt"
