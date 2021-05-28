@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from i18ndude import catalog
 from i18ndude import utils
-from .utils import PACKAGE_HOME
+from .utils import TESTDATA_DIR
 import os
 import sys
 import unittest
@@ -86,8 +86,8 @@ class TestMessageCatalogInit(unittest.TestCase):
     def setUp(self):
         self.mc = catalog.MessageCatalog
         self.me = catalog.MessageEntry
-        self.file = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
-        self.emptyfile = os.path.join(PACKAGE_HOME, 'input', 'empty-en.po')
+        self.file = os.path.join(TESTDATA_DIR, 'input', 'test-en.po')
+        self.emptyfile = os.path.join(TESTDATA_DIR, 'input', 'empty-en.po')
 
         self.commentary_header = [
             'Translation of test.pot to English',
@@ -351,8 +351,8 @@ class TestMessageCatalogSync(unittest.TestCase):
 
     def setUp(self):
         mc = catalog.MessageCatalog
-        self.potfile = os.path.join(PACKAGE_HOME, 'input', 'synctest.pot')
-        self.pofile = os.path.join(PACKAGE_HOME, 'input', 'synctest-de.po')
+        self.potfile = os.path.join(TESTDATA_DIR, 'input', 'synctest.pot')
+        self.pofile = os.path.join(TESTDATA_DIR, 'input', 'synctest-de.po')
         self.pot = mc(filename=self.potfile)
         self.po = mc(filename=self.pofile)
 
@@ -379,11 +379,11 @@ class TestMessagePoWriter(unittest.TestCase):
 
     def setUp(self):
         mc = catalog.MessageCatalog
-        self.input = os.path.join(PACKAGE_HOME, 'input', 'test-en.po')
-        self.output = os.path.join(PACKAGE_HOME, 'output', 'test-en.po')
-        self.input2 = os.path.join(PACKAGE_HOME, 'input', 'test2-en.po')
-        self.expectedOutput2 = os.path.join(PACKAGE_HOME, 'input', 'test2_expected-en.po')  # noqa
-        self.output2 = os.path.join(PACKAGE_HOME, 'output', 'test2-en.po')
+        self.input = os.path.join(TESTDATA_DIR, 'input', 'test-en.po')
+        self.output = os.path.join(TESTDATA_DIR, 'output', 'test-en.po')
+        self.input2 = os.path.join(TESTDATA_DIR, 'input', 'test2-en.po')
+        self.expectedOutput2 = os.path.join(TESTDATA_DIR, 'input', 'test2_expected-en.po')  # noqa
+        self.output2 = os.path.join(TESTDATA_DIR, 'output', 'test2-en.po')
         self.catalog = mc(filename=self.input)
         self.catalog2 = mc(filename=self.input2)
         if os.path.exists(self.output):
@@ -458,7 +458,7 @@ class TestMessagePTReader(unittest.TestCase):
 
     def setUp(self):
         self.me = catalog.MessageEntry
-        self.input = os.path.join(PACKAGE_HOME, 'input')
+        self.input = os.path.join(TESTDATA_DIR, 'input')
         filename = self.input + os.sep + 'test1.pt'
         second_filename = self.input + os.sep + 'test3.pt'
         self.output = {
@@ -513,7 +513,7 @@ class TestMessagePYReader(unittest.TestCase):
 
     def setUp(self):
         self.me = catalog.MessageEntry
-        dirpath = os.path.join(PACKAGE_HOME, 'input')
+        dirpath = os.path.join(TESTDATA_DIR, 'input')
         filepath = os.path.join(dirpath, 'test2.py')
         self.input = dirpath
         self.output = {
@@ -552,7 +552,7 @@ class TestMessageGSReader(unittest.TestCase):
 
     def setUp(self):
         self.me = catalog.MessageEntry
-        dirpath = os.path.join(PACKAGE_HOME, 'input')
+        dirpath = os.path.join(TESTDATA_DIR, 'input')
         filepath = os.path.join(dirpath, 'test.xml')
         self.input = dirpath
         self.output = {
@@ -588,7 +588,7 @@ class TestMessageZCMLReader(unittest.TestCase):
 
     def setUp(self):
         self.me = catalog.MessageEntry
-        dirpath = os.path.join(PACKAGE_HOME, 'input')
+        dirpath = os.path.join(TESTDATA_DIR, 'input')
         filepath = os.path.join(dirpath, 'test.zcml')
         self.input = dirpath
         self.output = {
