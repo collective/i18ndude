@@ -8,6 +8,28 @@ Changelog
 
 .. towncrier release notes start
 
+5.4.0 (2021-05-28)
+------------------
+
+New features:
+
+
+- ``i18ndude rebuild-pot --exclude="name1 name2"`` now also accepts directory names for exclusion.
+  Excluding a directory name will exclude all files in and below the given directory,
+  but only if the directory name exactly matches a exclusion name (no globs, no substring match).
+  This change now also results in the hardcoded exclusions for 'tests' and 'docs' to actually work. (#86)
+
+
+Bug fixes:
+
+
+- Test with GitHub Actions instead of Travis CI.
+  [maurits] (#83)
+- Support Python 3.9.  No code changes were needed.
+  [maurits] (#83)
+- Do not raise AttributeError when content is None. (#84)
+
+
 5.3.4 (2020-06-29)
 ------------------
 
