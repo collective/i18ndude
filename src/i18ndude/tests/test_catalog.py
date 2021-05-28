@@ -4,7 +4,6 @@ from i18ndude import utils
 from .utils import PACKAGE_HOME
 import os
 import sys
-import tempfile
 import unittest
 import warnings
 
