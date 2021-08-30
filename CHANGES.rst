@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+5.4.1 (2021-08-30)
+------------------
+
+Bug fixes:
+
+
+- Support the define syntax from Chameleon.
+  This is for the unpacking syntax, for example ``tal:define="(text,url) python:view.linkinfo"``.
+  This avoids ``TALError: invalid define syntax`` when extracting messages from templates that use this.
+  [maurits] (#36)
+
+
 5.4.0 (2021-05-28)
 ------------------
 
