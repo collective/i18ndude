@@ -266,3 +266,9 @@ class DudeGenerator(TALGenerator):
             cexpr = self.compileExpression(expr)
             program = self.popProgram()
             self.emit("loop", name, cexpr, program)
+
+    def emitDefines(self, defines):
+        # Originally we did not have this method, so the one from zope.tal was used.
+        # This could give a 'TALError: invalid define syntax'.
+        # For the define case, we can actually ignore everything.
+        return

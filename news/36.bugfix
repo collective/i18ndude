@@ -1,0 +1,4 @@
+Support the define syntax from Chameleon.
+This is for the unpacking syntax, for example ``tal:define="(text,url) python:view.linkinfo"``.
+This avoids ``TALError: invalid define syntax`` when extracting messages from templates that use this.
+[maurits]

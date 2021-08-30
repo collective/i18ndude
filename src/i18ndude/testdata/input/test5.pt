@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="testing">
+<head>
+</head>
+<body>
+<!-- Some tests for rebuild-pot and Chameleon syntax -->
+<ul tal:repeat="(outer, inner) python:[('ch1', ['par11', 'par12']), ('ch2', ['par21'])]">
+  <li>${outer}</li>
+  <ul><li tal:repeat="inn inner">${inn}</li></ul>
+  <span i18n:translate="">rebuild-pot should not complain about Chameleon repeat syntax.</span>
+</ul>
+<div tal:define="(text,url) python:view.linkinfo">
+  <span i18n:translate="">rebuild-pot should not complain about Chameleon define syntax.</span>
+  <a href="${text}">${url}</a>
+</div>
+</body>
+</html>
