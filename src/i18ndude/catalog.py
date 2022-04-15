@@ -451,7 +451,7 @@ class POParser:
             if line not in self.automatic_comments:
                 self.automatic_comments.append(line)
         elif line.startswith('#'):
-            line = line[1:].strip()
+            line = line[1:].rstrip()
             ls = line.startswith
             if ls(ORIGINAL_COMMENT) or ls(DEFAULT_COMMENT):
                 line = line.replace(ORIGINAL_COMMENT, DEFAULT_COMMENT)
@@ -587,10 +587,7 @@ class POWriter:
         for comment in comments:
             if not comment.startswith(', fuzzy')\
                     and not comment.startswith(' , fuzzy'):
-                if comment.startswith('#'):
-                    self._printToFile(f, '#%s' % comment)
-                else:
-                    self._printToFile(f, '# %s' % comment)
+                self._printToFile(f, '#%s' % comment)
             else:
                 fuzzy = True
 
