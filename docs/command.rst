@@ -35,7 +35,7 @@ find-untranslated
 
 ::
 
-  usage: i18ndude find-untranslated [-h] [-s] [-n] [files [files ...]]
+  usage: i18ndude find-untranslated [-h] [-s] [-n] [files ...]
 
       Provide a list of ZPT filenames and I will output a report of places
       where I suspect untranslated messages, i.e. tags for which
@@ -73,7 +73,7 @@ rebuild-pot
                               filename [-c domain] [-m filename]
                               [--merge2 filename]
                               [--exclude "<ignore1> <ignore2> ..."]
-                              [path [path ...]]
+                              [path ...]
 
       Given a pot-file via the --pot option you can specify one or more
       directories which including all sub-folders will be searched for
