@@ -27,14 +27,14 @@ class TestGlobal(unittest.TestCase):
     def test_originalComment(self):
         self.assertEqual(
             catalog.ORIGINAL_COMMENT,
-            'Original: ',
+            ' Original: ',
             'Wrong original comment constant'
         )
 
     def test_defaultComment(self):
         self.assertEqual(
             catalog.DEFAULT_COMMENT,
-            'Default: ',
+            ' Default: ',
             'Wrong default comment constant'
         )
 
@@ -90,8 +90,8 @@ class TestMessageCatalogInit(unittest.TestCase):
         self.emptyfile = os.path.join(TESTDATA_DIR, 'input', 'empty-en.po')
 
         self.commentary_header = [
-            'Translation of test.pot to English',
-            'Hanno Schlichting <schlichting@bakb.net>, 2005']
+            ' Translation of test.pot to English',
+            ' Hanno Schlichting <schlichting@bakb.net>, 2005']
 
         self.mimeheader = {
             'Language-Code': 'en',
@@ -113,8 +113,8 @@ class TestMessageCatalogInit(unittest.TestCase):
                 'msgid1',
                 msgstr='msgstr1',
                 references=['file1', 'file2'],
-                automatic_comments=['Default: "msgstr1"'],
-                comments=['comment1']),
+                automatic_comments=[' Default: "msgstr1"'],
+                comments=[' comment1']),
 
             u'msgid2': self.me(
                 'msgid2',
@@ -125,7 +125,7 @@ class TestMessageCatalogInit(unittest.TestCase):
                 'msgid3',
                 msgstr='\\n\\nmsgstr\\n3',
                 references=['file3'],
-                comments=['comment3']),
+                comments=[' comment3']),
 
             u'msgid4': self.me(
                 'msgid4',
@@ -135,7 +135,7 @@ class TestMessageCatalogInit(unittest.TestCase):
             u'msgid5': self.me(
                 'msgid5',
                 msgstr='msgstr5',
-                comments=['comment5']),
+                comments=[' comment5']),
 
             u'msgid6': self.me(
                 'msgid6',
@@ -170,7 +170,7 @@ class TestMessageCatalogInit(unittest.TestCase):
                 'msgid for unicode text with comment',
                 msgstr=u'unicode msgstr \xb7\xb7\xb7',
                 references=['./folder/file_unicode'],
-                automatic_comments=['Default: [···]']),
+                automatic_comments=[' Default: [···]']),
 
             u'msgid for text with german umlaut': self.me(
                 'msgid for text with german umlaut',
@@ -191,10 +191,10 @@ class TestMessageCatalogInit(unittest.TestCase):
                  msgstr=("Of course we can fix that. After all: i18ndude is "
                          "awesome, as I am sure you all agree."),
                  comments=[
-                     ("https://github.com/collective/i18ndude/issues/3 "
+                     (" https://github.com/collective/i18ndude/issues/3 "
                       "complains about long lines. But long comment lines "
                       "should be left intact."),
-                     ("Note that the unix msgattrib command can wrap or "
+                     (" Note that the unix msgattrib command can wrap or "
                       "unwrap long lines in po files.")]),
 
             u'msgid_with_long_lines_including_backslash_n.': self.me(

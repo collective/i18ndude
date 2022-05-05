@@ -37,8 +37,8 @@ MAX_OCCUR = 3  # maximum number of occurrences listed
 # Set it to None to list all occurences
 
 
-ORIGINAL_COMMENT = 'Original: '
-DEFAULT_COMMENT = 'Default: '
+ORIGINAL_COMMENT = ' Original: '
+DEFAULT_COMMENT = ' Default: '
 
 
 def now():
@@ -444,7 +444,7 @@ class POParser:
         elif line.startswith('#:'):
             self.references.append(line[2:].strip())
         elif line.startswith('#.'):
-            line = line[2:].strip()
+            line = line[2:].rstrip()
             ls = line.startswith
             if ls(ORIGINAL_COMMENT):
                 line = line.replace(ORIGINAL_COMMENT, DEFAULT_COMMENT)
@@ -539,7 +539,7 @@ class POWriter:
 
         # header
         for line in ctl.commentary_header:
-            self._printToFile(f, '# %s' % line)
+            self._printToFile(f, '#%s' % line)
 
         if not ctl.mime_header:  # mime-header n/a
             self._printToFile(f, False)
@@ -606,7 +606,7 @@ class POWriter:
             msgstr = msgstr.replace('&#9632;', u'\u25A0')
             msgstr = msgstr.replace('&#9675;', u'\u25CB')
             msgstr = msgstr.replace('&#9679;', u'\u25CF')
-            self._printToFile(f, '#. %s"%s"' % (DEFAULT_COMMENT, msgstr))
+            self._printToFile(f, '#.%s"%s"' % (DEFAULT_COMMENT, msgstr))
             msgstr = ''
 
         # used in sync to filter duplicate default comments
@@ -619,7 +619,7 @@ class POWriter:
                 automatic_comments.remove(default_comments[0])
 
         for ac in automatic_comments:
-            self._printToFile(f, '#. %s' % ac)
+            self._printToFile(f, '#.%s' % ac)
 
         # key is the filename, value is the filename or filename:lineno
         refs = {}
