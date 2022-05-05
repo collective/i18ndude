@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+5.4.2 (2022-05-05)
+------------------
+
+Bug fixes:
+
+
+- Leading spaces in comments are kept stable. (#91)
+- Test on Python 3.10. No code changes needed.  [maurits] (#310)
+
+
 5.4.1 (2021-08-30)
 ------------------
 
