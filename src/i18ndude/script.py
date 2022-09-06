@@ -250,6 +250,13 @@ def rebuild_pot_parser(subparsers):
     filenames) which should not be included by using the --exclude argument,
     which takes a whitespace delimited list of files (or regular expressions
     for files).
+
+    By default we add a comment showing references to file paths and line numbers
+    that contain the message, like this:
+
+        #: ./browser.py:32
+
+    You can suppress the line numbers by using the --no-line-endings option.
     """
     parser = subparsers.add_parser(
         'rebuild-pot',
@@ -265,6 +272,8 @@ def rebuild_pot_parser(subparsers):
     parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
     parser.add_argument(
         '--exclude', metavar='"<ignore1> <ignore2> ..."', default='')
+    parser.add_argument('--no-line-numbers', action="store_true",
+                        dest='no_line_numbers', required=False)
     parser.add_argument('path', nargs='*')
     parser.set_defaults(func=rebuild_pot)
     return parser
@@ -281,6 +290,7 @@ def rebuild_pot(arguments):
     merge2_fn = arguments.merge2_fn
     if merge2_fn == merge_fn:
         merge2_fn = False
+    no_line_numbers = arguments.no_line_numbers
     path = arguments.path
 
     try:
@@ -293,10 +303,18 @@ def rebuild_pot(arguments):
             merge_ctl = catalog.MessageCatalog(filename=merge_fn)
         if merge2_fn:
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
-        ptreader = catalog.PTReader(path, create_domain, exclude=exclude)
-        pyreader = catalog.PYReader(path, create_domain, exclude=exclude)
-        gsreader = catalog.GSReader(path, create_domain, exclude=exclude)
-        zcmlreader = catalog.ZCMLReader(path, create_domain, exclude=exclude)
+        ptreader = catalog.PTReader(
+            path, create_domain, exclude=exclude, no_line_numbers=no_line_numbers
+        )
+        pyreader = catalog.PYReader(
+            path, create_domain, exclude=exclude, no_line_numbers=no_line_numbers
+        )
+        gsreader = catalog.GSReader(
+            path, create_domain, exclude=exclude, no_line_numbers=no_line_numbers
+        )
+        zcmlreader = catalog.ZCMLReader(
+            path, create_domain, exclude=exclude, no_line_numbers=no_line_numbers
+        )
     except IOError as e:
         short_usage(0, 'I/O Error: %s' % e)
 
