@@ -22,10 +22,6 @@ setup(
                       open("CHANGES.rst").read()),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'Framework :: Plone',
-        'Framework :: Zope2',
-        'Framework :: Zope :: 4',
-        'Framework :: Zope3',
         'Environment :: Console',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Operating System :: OS Independent',
