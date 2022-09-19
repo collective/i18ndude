@@ -682,13 +682,13 @@ class PTReader:
     """Reads in a list of page templates.
     """
 
-    def __init__(self, path, domain='none', exclude=(), no_line_numbers=False):
+    def __init__(self, path, domain='none', exclude=(), include_line_numbers=True):
 
         self.domain = domain
         self.catalogs = {}  # keyed by domain name
         self.path = path
         self.exclude = exclude
-        self.no_line_numbers = no_line_numbers
+        self.include_line_numbers = include_line_numbers
 
     def read(self):
         """Reads in from all given ZPTs and builds up MessageCatalogs accordingly.
@@ -705,10 +705,10 @@ class PTReader:
             msgstr = msgid.default or ''
 
             if msgid and msgid != '${DYNAMIC_CONTENT}':
-                if self.no_line_numbers:
-                    filenames = sorted(set([l[0] for l in tal[msgid]]))
-                else:
+                if self.include_line_numbers:
                     filenames = [l[0] + ':' + str(l[1]) for l in tal[msgid]]
+                else:
+                    filenames = sorted(set([l[0] for l in tal[msgid]]))
                 self._add_msg(msgid,
                               msgstr,
                               [],
@@ -738,13 +738,13 @@ class PYReader:
     """Reads in a list of python scripts.
     """
 
-    def __init__(self, path, domain, exclude=(), no_line_numbers=False):
+    def __init__(self, path, domain, exclude=(), include_line_numbers=True):
 
         self.domain = domain
         self.catalogs = {}  # keyed by domain name
         self.path = path
         self.exclude = exclude
-        self.no_line_numbers = no_line_numbers
+        self.include_line_numbers = include_line_numbers
 
     def read(self):
         """Reads in from all given PYs and builds up MessageCatalogs
@@ -763,10 +763,10 @@ class PYReader:
                         exclude=self.exclude + ('tests', ))
 
         for msgid in py:
-            if self.no_line_numbers:
-                filenames = sorted(set([l[0] for l in py[msgid]]))
-            else:
+            if self.include_line_numbers:
                 filenames = [l[0] + ':' + str(l[1]) for l in py[msgid]]
+            else:
+                filenames = sorted(set([l[0] for l in py[msgid]]))
             self._add_msg(msgid,
                           msgid.default or '',
                           [],
@@ -794,13 +794,13 @@ class GSReader(object):
     """Reads in a list of GenericSetup profile files.
     """
 
-    def __init__(self, path, domain, exclude=(), no_line_numbers=False):
+    def __init__(self, path, domain, exclude=(), include_line_numbers=True):
         self.domain = domain
         self.catalogs = {}  # keyed by domain name
         self.path = path
         self.exclude = exclude
         # Note: the current extractor does not give us line numbers at all.
-        self.no_line_numbers = no_line_numbers
+        self.include_line_numbers = include_line_numbers
 
     def read(self):
         """Reads in from all given xml's and builds up MessageCatalogs
@@ -847,12 +847,12 @@ class ZCMLReader(object):
     """Reads in a list of ZCML files.
     """
 
-    def __init__(self, path, domain, exclude=(), no_line_numbers=False):
+    def __init__(self, path, domain, exclude=(), include_line_numbers=True):
         self.domain = domain
         self.catalogs = {}  # keyed by domain name
         self.path = path
         self.exclude = exclude
-        self.no_line_numbers = no_line_numbers
+        self.include_line_numbers = include_line_numbers
 
     def read(self):
         """Reads in from all given zcml's and builds up MessageCatalogs
@@ -874,7 +874,7 @@ class ZCMLReader(object):
             for msgid in zcml[domain]:
                 # We only have one filename.
                 filename = msgid[2]
-                if self.no_line_numbers:
+                if not self.include_line_numbers:
                     filename = filename.split(":")[0]
                 self._add_msg(msgid[0],
                               msgid[1],

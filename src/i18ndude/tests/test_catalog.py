@@ -480,7 +480,7 @@ class TestMessagePTReader(unittest.TestCase):
             u'rebuild-pot should not complain about Chameleon define syntax.': me(u'rebuild-pot should not complain about Chameleon define syntax.', references=[filename5]),  # noqa
         }
 
-        ptr = catalog.PTReader(input_, domain='testing', no_line_numbers=True)
+        ptr = catalog.PTReader(input_, domain='testing', include_line_numbers = False)
         with warnings.catch_warnings(record=True) as log:
             warnings.simplefilter("always")
             # This call will give a warning from zope.tal.
@@ -510,7 +510,7 @@ class TestMessagePTReader(unittest.TestCase):
                             (out[key], output[key]))
         self.assertEqual(len(out), len(output))
 
-    def test_read_with_line_numbers(self):
+    def test_read_include_line_numbers(self):
         me = catalog.MessageEntry
         input_ = os.path.join(TESTDATA_DIR, 'input')
         filename = input_ + os.sep + 'test1.pt'
@@ -584,7 +584,7 @@ class TestMessagePYReader(unittest.TestCase):
             u'Out1': me(u'Out1', msgstr='running', references=[filepath])  # noqa
         }
 
-        pyr = catalog.PYReader(input_, 'testing', no_line_numbers=True)
+        pyr = catalog.PYReader(input_, 'testing', include_line_numbers = False)
         pyr.read()
         out = pyr.catalogs['testing']
         for key in out:
@@ -602,7 +602,7 @@ class TestMessagePYReader(unittest.TestCase):
             )
         self.assertEqual(len(out), len(output))
 
-    def test_read_py_with_line_numbers(self):
+    def test_read_py_include_line_numbers(self):
         me = catalog.MessageEntry
         dirpath = os.path.join(TESTDATA_DIR, 'input')
         filepath = os.path.join(dirpath, 'test2.py')
@@ -702,7 +702,7 @@ class TestMessageZCMLReader(unittest.TestCase):
                         references=[filepath]),
         }
 
-        reader = catalog.ZCMLReader(input_, 'plone', no_line_numbers=True)
+        reader = catalog.ZCMLReader(input_, 'plone', include_line_numbers = False)
         reader.read()
         out = reader.catalogs['plone']
         for key in out:
@@ -720,7 +720,7 @@ class TestMessageZCMLReader(unittest.TestCase):
             )
         self.assertEqual(len(out), len(output))
 
-    def test_read_with_line_numbers(self):
+    def test_read_include_line_numbers(self):
         me = catalog.MessageEntry
         dirpath = os.path.join(TESTDATA_DIR, 'input')
         filepath = os.path.join(dirpath, 'test.zcml')

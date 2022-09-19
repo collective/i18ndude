@@ -256,7 +256,10 @@ def rebuild_pot_parser(subparsers):
 
         #: ./browser.py:32
 
-    You can suppress the line numbers by using the --no-line-endings option.
+    You can suppress the line numbers by using the --no-line-numbers option.
+    The default might change in the future.  If you love line numbers, you can
+    add --line-numbers to be sure you keep them when you get a newer version
+    of i18ndude.  If you specify both options, the last one wins.
     """
     parser = subparsers.add_parser(
         'rebuild-pot',
@@ -272,8 +275,13 @@ def rebuild_pot_parser(subparsers):
     parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
     parser.add_argument(
         '--exclude', metavar='"<ignore1> <ignore2> ..."', default='')
-    parser.add_argument('--no-line-numbers', action="store_true",
-                        dest='no_line_numbers', required=False)
+    # You can switch line numbers on or off.  Both options store their value
+    # in include_line_numbers.  The order is important:
+    # the last one here wins, both in this file and on the command line.
+    parser.add_argument('--no-line-numbers', action="store_false",
+                        dest='include_line_numbers', required=False)
+    parser.add_argument('--line-numbers', action="store_true",
+                        dest='include_line_numbers', required=False)
     parser.add_argument('path', nargs='*')
     parser.set_defaults(func=rebuild_pot)
     return parser
@@ -290,7 +298,7 @@ def rebuild_pot(arguments):
     merge2_fn = arguments.merge2_fn
     if merge2_fn == merge_fn:
         merge2_fn = False
-    no_line_numbers = arguments.no_line_numbers
+    include_line_numbers = arguments.include_line_numbers
     path = arguments.path
 
     try:
@@ -303,18 +311,15 @@ def rebuild_pot(arguments):
             merge_ctl = catalog.MessageCatalog(filename=merge_fn)
         if merge2_fn:
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
-        ptreader = catalog.PTReader(
-            path, create_domain, exclude=exclude, no_line_numbers=no_line_numbers
-        )
-        pyreader = catalog.PYReader(
-            path, create_domain, exclude=exclude, no_line_numbers=no_line_numbers
-        )
-        gsreader = catalog.GSReader(
-            path, create_domain, exclude=exclude, no_line_numbers=no_line_numbers
-        )
-        zcmlreader = catalog.ZCMLReader(
-            path, create_domain, exclude=exclude, no_line_numbers=no_line_numbers
-        )
+        reader_args = (path, create_domain)
+        reader_kwargs = {
+            "exclude": exclude,
+            "include_line_numbers": include_line_numbers,
+        }
+        ptreader = catalog.PTReader(*reader_args, **reader_kwargs)
+        pyreader = catalog.PYReader(*reader_args, **reader_kwargs)
+        gsreader = catalog.GSReader(*reader_args, **reader_kwargs)
+        zcmlreader = catalog.ZCMLReader(*reader_args, **reader_kwargs)
     except IOError as e:
         short_usage(0, 'I/O Error: %s' % e)
 
