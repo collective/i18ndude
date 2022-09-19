@@ -403,14 +403,14 @@ class TestMessagePoWriter(unittest.TestCase):
         # Restore original value.
         utils.WRAP = orig_wrap
 
-        input = open(self.input, 'r')
+        input_ = open(self.input, 'r')
         output = open(self.output, 'r')
 
         # compare line by line
-        inlines = input.readlines()
+        inlines = input_.readlines()
         outlines = enumerate(output.readlines())
 
-        input.close()
+        input_.close()
         output.close()
 
         for i, result in outlines:
@@ -456,32 +456,31 @@ class TestMessagePoWriter(unittest.TestCase):
 
 class TestMessagePTReader(unittest.TestCase):
 
-    def setUp(self):
-        self.me = catalog.MessageEntry
-        self.input = os.path.join(TESTDATA_DIR, 'input')
-        filename = self.input + os.sep + 'test1.pt'
-        filename3 = self.input + os.sep + 'test3.pt'
-        filename5 = self.input + os.sep + 'test5.pt'
-        self.output = {
-            u'Buzz': self.me(u'Buzz', references=[filename + ':21']),
-            u'${foo} ${with-dash-and_underscore}': self.me(u'${foo} ${with-dash-and_underscore}', references=[filename + ':26']),  # noqa
-            u'dig_this': self.me(u'dig_this', msgstr=u'Dig this', references=[filename + ':52']),  # noqa
-            u'text_buzz': self.me(u'text_buzz', msgstr=u'Buzz', references=[filename + ':29', filename + ':31']),  # noqa
-            u'some_alt': self.me(u'some_alt', msgstr=u'Some alt', references=[filename + ':15', filename3 + ':15']),  # noqa
-            u'title_some_alt': self.me(u'title_some_alt', msgstr=u'Some title', references=[filename + ':15']),  # noqa
-            u'Job started at ${datetime} by user ${userid}.': self.me(u'Job started at ${datetime} by user ${userid}.', references=[filename + ':46']),  # noqa
-            u'spacing': self.me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename + ':37']),  # noqa
-            u'spacing_strong': self.me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename + ':41']),  # noqa
-            u'<tt>domain</tt> is one of the <em>local domains</em>:': self.me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':49']),  # noqa
-            u'odd': self.me(u'odd', references=[filename + ':58']),
-            u'even': self.me(u'even', references=[filename + ':59']),
-            u'Test for issue 15, html5 attributes without value': self.me(u'Test for issue 15, html5 attributes without value', references=[filename + ':62']),  # noqa
-            u'rebuild-pot should not complain about Chameleon repeat syntax.': self.me(u'rebuild-pot should not complain about Chameleon repeat syntax.', references=[filename5 + ':16']),  # noqa
-            u'rebuild-pot should not complain about Chameleon define syntax.': self.me(u'rebuild-pot should not complain about Chameleon define syntax.', references=[filename5 + ':19']),  # noqa
+    def test_read_no_line_numbers(self):
+        me = catalog.MessageEntry
+        input_ = os.path.join(TESTDATA_DIR, 'input')
+        filename = input_ + os.sep + 'test1.pt'
+        filename3 = input_ + os.sep + 'test3.pt'
+        filename5 = input_ + os.sep + 'test5.pt'
+        output = {
+            u'Buzz': me(u'Buzz', references=[filename]),
+            u'${foo} ${with-dash-and_underscore}': me(u'${foo} ${with-dash-and_underscore}', references=[filename]),  # noqa
+            u'dig_this': me(u'dig_this', msgstr=u'Dig this', references=[filename]),  # noqa
+            u'text_buzz': me(u'text_buzz', msgstr=u'Buzz', references=[filename]),  # noqa
+            u'some_alt': me(u'some_alt', msgstr=u'Some alt', references=[filename, filename3]),  # noqa
+            u'title_some_alt': me(u'title_some_alt', msgstr=u'Some title', references=[filename]),  # noqa
+            u'Job started at ${datetime} by user ${userid}.': me(u'Job started at ${datetime} by user ${userid}.', references=[filename]),  # noqa
+            u'spacing': me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename]),  # noqa
+            u'spacing_strong': me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename]),  # noqa
+            u'<tt>domain</tt> is one of the <em>local domains</em>:': me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename]),  # noqa
+            u'odd': me(u'odd', references=[filename]),
+            u'even': me(u'even', references=[filename]),
+            u'Test for issue 15, html5 attributes without value': me(u'Test for issue 15, html5 attributes without value', references=[filename]),  # noqa
+            u'rebuild-pot should not complain about Chameleon repeat syntax.': me(u'rebuild-pot should not complain about Chameleon repeat syntax.', references=[filename5]),  # noqa
+            u'rebuild-pot should not complain about Chameleon define syntax.': me(u'rebuild-pot should not complain about Chameleon define syntax.', references=[filename5]),  # noqa
         }
 
-    def test_read(self):
-        ptr = catalog.PTReader(self.input, domain='testing')
+        ptr = catalog.PTReader(input_, domain='testing', include_line_numbers = False)
         with warnings.catch_warnings(record=True) as log:
             warnings.simplefilter("always")
             # This call will give a warning from zope.tal.
@@ -502,137 +501,268 @@ class TestMessagePTReader(unittest.TestCase):
         out = ptr.catalogs['testing']
         for key in out:
             self.assertTrue(
-                key in self.output,
+                key in output,
                 'Failure in pt parsing.\nUnexpected msgid: %s' % key
             )
-        for key in self.output:
-            self.assertTrue(out[key] == self.output[key],
+        for key in output:
+            self.assertTrue(out[key] == output[key],
                             'Failure in pt parsing.\nGot:%s\nExpected:%s' %
-                            (out[key], self.output[key]))
-        self.assertEqual(len(out), len(self.output))
+                            (out[key], output[key]))
+        self.assertEqual(len(out), len(output))
+
+    def test_read_include_line_numbers(self):
+        me = catalog.MessageEntry
+        input_ = os.path.join(TESTDATA_DIR, 'input')
+        filename = input_ + os.sep + 'test1.pt'
+        filename3 = input_ + os.sep + 'test3.pt'
+        filename5 = input_ + os.sep + 'test5.pt'
+        output = {
+            u'Buzz': me(u'Buzz', references=[filename + ':21']),
+            u'${foo} ${with-dash-and_underscore}': me(u'${foo} ${with-dash-and_underscore}', references=[filename + ':26']),  # noqa
+            u'dig_this': me(u'dig_this', msgstr=u'Dig this', references=[filename + ':52']),  # noqa
+            u'text_buzz': me(u'text_buzz', msgstr=u'Buzz', references=[filename + ':29', filename + ':31']),  # noqa
+            u'some_alt': me(u'some_alt', msgstr=u'Some alt', references=[filename + ':15', filename3 + ':15']),  # noqa
+            u'title_some_alt': me(u'title_some_alt', msgstr=u'Some title', references=[filename + ':15']),  # noqa
+            u'Job started at ${datetime} by user ${userid}.': me(u'Job started at ${datetime} by user ${userid}.', references=[filename + ':46']),  # noqa
+            u'spacing': me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename + ':37']),  # noqa
+            u'spacing_strong': me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename + ':41']),  # noqa
+            u'<tt>domain</tt> is one of the <em>local domains</em>:': me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':49']),  # noqa
+            u'odd': me(u'odd', references=[filename + ':58']),
+            u'even': me(u'even', references=[filename + ':59']),
+            u'Test for issue 15, html5 attributes without value': me(u'Test for issue 15, html5 attributes without value', references=[filename + ':62']),  # noqa
+            u'rebuild-pot should not complain about Chameleon repeat syntax.': me(u'rebuild-pot should not complain about Chameleon repeat syntax.', references=[filename5 + ':16']),  # noqa
+            u'rebuild-pot should not complain about Chameleon define syntax.': me(u'rebuild-pot should not complain about Chameleon define syntax.', references=[filename5 + ':19']),  # noqa
+        }
+
+        ptr = catalog.PTReader(input_, domain='testing')
+        with warnings.catch_warnings(record=True) as log:
+            warnings.simplefilter("always")
+            # This call will give a warning from zope.tal.
+            ptr.read()
+            self.assertGreaterEqual(len(log), 1, log)
+            contents = '\n'.join([str(x.message) for x in log])
+            # Check that a few key elements are in the
+            # warning, without wanting to check the exact
+            # wording, as this can easily change.
+            self.assertTrue("already exists with a different default"
+                            in contents, 'missing "already exists"')
+            self.assertTrue("bad: b'Buzzer', should be: b'Buzz'"  # py36
+                            in contents or
+                            "bad: Buzzer, should be: Buzz"  # py27
+                            in contents,
+                            u'bad Buzzer not in contents: {}'.format(contents))
+
+        out = ptr.catalogs['testing']
+        for key in out:
+            self.assertTrue(
+                key in output,
+                'Failure in pt parsing.\nUnexpected msgid: %s' % key
+            )
+        for key in output:
+            self.assertTrue(out[key] == output[key],
+                            'Failure in pt parsing.\nGot:%s\nExpected:%s' %
+                            (out[key], output[key]))
+        self.assertEqual(len(out), len(output))
 
 
 class TestMessagePYReader(unittest.TestCase):
 
-    def setUp(self):
-        self.me = catalog.MessageEntry
+    def test_read_py_no_line_numbers(self):
+        me = catalog.MessageEntry
         dirpath = os.path.join(TESTDATA_DIR, 'input')
         filepath = os.path.join(dirpath, 'test2.py')
-        self.input = dirpath
-        self.output = {
-            u'Zero': self.me(u'Zero', references=[filepath + ':4']),
-            u'One': self.me(u'One', references=[filepath + ':5']),
-            u'msgid_three': self.me(u'msgid_three', msgstr='Three', references=[filepath + ':10']),  # noqa
-            u'msgid_four': self.me(u'msgid_four', msgstr='Four ${map}', references=[filepath + ':13']),  # noqa
-            u'msgid_five': self.me(u'msgid_five', msgstr=u"五番目", references=[filepath + ':17']),  # noqa
-            u'msgid_six': self.me(u'msgid_six', msgstr=u"\nLine 1\nLine 2\nLine 3\n", references=[filepath + ':19']),  # noqa
+        input_ = dirpath
+        output = {
+            u'Zero': me(u'Zero', references=[filepath]),
+            u'One': me(u'One', references=[filepath]),
+            u'msgid_three': me(u'msgid_three', msgstr='Three', references=[filepath]),  # noqa
+            u'msgid_four': me(u'msgid_four', msgstr='Four ${map}', references=[filepath]),  # noqa
+            u'msgid_five': me(u'msgid_five', msgstr=u"五番目", references=[filepath]),  # noqa
+            u'msgid_six': me(u'msgid_six', msgstr=u"\nLine 1\nLine 2\nLine 3\n", references=[filepath]),  # noqa
             # XXX This should not be found as it's in a different domain
             # instead it recognizes the domain as a msgstr now
-            u'Out1': self.me(u'Out1', msgstr='running', references=[filepath + ':7'])  # noqa
+            u'Out1': me(u'Out1', msgstr='running', references=[filepath])  # noqa
         }
 
-    def test_read_py(self):
-        pyr = catalog.PYReader(self.input, 'testing')
+        pyr = catalog.PYReader(input_, 'testing', include_line_numbers = False)
         pyr.read()
         out = pyr.catalogs['testing']
         for key in out:
             self.assertTrue(
-                key in self.output,
+                key in output,
                 'Failure in py parsing.\nUnexpected msgid: %s' % key)
-        for key in self.output:
+        for key in output:
             self.assertTrue(
                 out.get(key, False),
-                'Failure in py parsing.\nMissing:%s' % self.output.get(key))
+                'Failure in py parsing.\nMissing:%s' % output.get(key))
             self.assertTrue(
-                out.get(key) == self.output.get(key),
+                out.get(key) == output.get(key),
                 'Failure in py parsing.\nGot:%s\nExpected:%s' %
-                (out.get(key), self.output.get(key))
+                (out.get(key), output.get(key))
             )
-        self.assertEqual(len(out), len(self.output))
+        self.assertEqual(len(out), len(output))
+
+    def test_read_py_include_line_numbers(self):
+        me = catalog.MessageEntry
+        dirpath = os.path.join(TESTDATA_DIR, 'input')
+        filepath = os.path.join(dirpath, 'test2.py')
+        input_ = dirpath
+        output = {
+            u'Zero': me(u'Zero', references=[filepath + ':4']),
+            u'One': me(u'One', references=[filepath + ':5']),
+            u'msgid_three': me(u'msgid_three', msgstr='Three', references=[filepath + ':10']),  # noqa
+            u'msgid_four': me(u'msgid_four', msgstr='Four ${map}', references=[filepath + ':13']),  # noqa
+            u'msgid_five': me(u'msgid_five', msgstr=u"五番目", references=[filepath + ':17']),  # noqa
+            u'msgid_six': me(u'msgid_six', msgstr=u"\nLine 1\nLine 2\nLine 3\n", references=[filepath + ':19']),  # noqa
+            # XXX This should not be found as it's in a different domain
+            # instead it recognizes the domain as a msgstr now
+            u'Out1': me(u'Out1', msgstr='running', references=[filepath + ':7'])  # noqa
+        }
+
+        pyr = catalog.PYReader(input_, 'testing')
+        pyr.read()
+        out = pyr.catalogs['testing']
+        for key in out:
+            self.assertTrue(
+                key in output,
+                'Failure in py parsing.\nUnexpected msgid: %s' % key)
+        for key in output:
+            self.assertTrue(
+                out.get(key, False),
+                'Failure in py parsing.\nMissing:%s' % output.get(key))
+            self.assertTrue(
+                out.get(key) == output.get(key),
+                'Failure in py parsing.\nGot:%s\nExpected:%s' %
+                (out.get(key), output.get(key))
+            )
+        self.assertEqual(len(out), len(output))
 
 
 class TestMessageGSReader(unittest.TestCase):
 
-    def setUp(self):
-        self.me = catalog.MessageEntry
+    def test_read_no_line_numbers(self):
+        # GSReader has actually never supported line numbers.
+        me = catalog.MessageEntry
         dirpath = os.path.join(TESTDATA_DIR, 'input')
         filepath = os.path.join(dirpath, 'test.xml')
-        self.input = dirpath
-        self.output = {
+        input_ = dirpath
+        output = {
             u'RSS feed':
-                self.me(u'RSS feed',
+                me(u'RSS feed',
                         references=[filepath]),
             u'Print this':
-                self.me(u'Print this',
+                me(u'Print this',
                         references=[filepath]),
         }
 
-    def test_read(self):
-        reader = catalog.GSReader(self.input, 'plone')
+        reader = catalog.GSReader(input_, 'plone')
         reader.read()
         out = reader.catalogs['plone']
         for key in out:
             self.assertTrue(
-                key in self.output,
+                key in output,
                 'Failure in gs parsing.\nUnexpected msgid: %s' % key)
-        for key in self.output:
+        for key in output:
             self.assertTrue(
                 out.get(key, False),
-                'Failure in gs parsing.\nMissing:%s' % self.output.get(key))
+                'Failure in gs parsing.\nMissing:%s' % output.get(key))
             self.assertTrue(
-                out.get(key) == self.output.get(key),
+                out.get(key) == output.get(key),
                 'Failure in gs parsing.\nGot:%s\nExpected:%s' %
-                (out.get(key), self.output.get(key))
+                (out.get(key), output.get(key))
             )
-        self.assertEqual(len(out), len(self.output))
+        self.assertEqual(len(out), len(output))
 
 
 class TestMessageZCMLReader(unittest.TestCase):
 
-    def setUp(self):
-        self.me = catalog.MessageEntry
+    def test_read_no_line_numbers(self):
+        me = catalog.MessageEntry
         dirpath = os.path.join(TESTDATA_DIR, 'input')
         filepath = os.path.join(dirpath, 'test.zcml')
-        self.input = dirpath
-        self.output = {
+        input_ = dirpath
+        output = {
             u'Plone Site':
-                self.me(u'Plone Site',
-                        references=[filepath + ':14']),
+                me(u'Plone Site',
+                        references=[filepath]),
             u'Profile for a default Plone.':
-                self.me(u'Profile for a default Plone.',
-                        references=[filepath + ':14']),
+                me(u'Profile for a default Plone.',
+                        references=[filepath]),
             u'Mandatory dependencies for a Plone site':
-                self.me(u'Mandatory dependencies for a Plone site',
-                        references=[filepath + ':22']),
+                me(u'Mandatory dependencies for a Plone site',
+                        references=[filepath]),
             u'Adds title and description fields.':
-                self.me(u'Adds title and description fields.',
-                        references=[filepath + ':42']),
+                me(u'Adds title and description fields.',
+                        references=[filepath]),
             u'Basic metadata':
-                self.me(u'Basic metadata',
-                        references=[filepath + ':42']),
+                me(u'Basic metadata',
+                        references=[filepath]),
             u'Content rule names should be translated.':
-                self.me(u'Content rule names should be translated.',
-                        references=[filepath + ':53']),
+                me(u'Content rule names should be translated.',
+                        references=[filepath]),
         }
 
-    def test_read(self):
-        reader = catalog.ZCMLReader(self.input, 'plone')
+        reader = catalog.ZCMLReader(input_, 'plone', include_line_numbers = False)
         reader.read()
         out = reader.catalogs['plone']
         for key in out:
             self.assertTrue(
-                key in self.output,
+                key in output,
                 'Failure in zcml parsing.\nUnexpected msgid: %s' % key)
-        for key in self.output:
+        for key in output:
             self.assertTrue(
                 out.get(key, False),
-                'Failure in zcml parsing.\nMissing:%s' % self.output.get(key))
+                'Failure in zcml parsing.\nMissing:%s' % output.get(key))
             self.assertTrue(
-                out.get(key) == self.output.get(key),
+                out.get(key) == output.get(key),
                 'Failure in zcml parsing.\nGot:%s\nExpected:%s' %
-                (out.get(key), self.output.get(key))
+                (out.get(key), output.get(key))
             )
-        self.assertEqual(len(out), len(self.output))
+        self.assertEqual(len(out), len(output))
+
+    def test_read_include_line_numbers(self):
+        me = catalog.MessageEntry
+        dirpath = os.path.join(TESTDATA_DIR, 'input')
+        filepath = os.path.join(dirpath, 'test.zcml')
+        input_ = dirpath
+        output = {
+            u'Plone Site':
+                me(u'Plone Site',
+                        references=[filepath + ':14']),
+            u'Profile for a default Plone.':
+                me(u'Profile for a default Plone.',
+                        references=[filepath + ':14']),
+            u'Mandatory dependencies for a Plone site':
+                me(u'Mandatory dependencies for a Plone site',
+                        references=[filepath + ':22']),
+            u'Adds title and description fields.':
+                me(u'Adds title and description fields.',
+                        references=[filepath + ':42']),
+            u'Basic metadata':
+                me(u'Basic metadata',
+                        references=[filepath + ':42']),
+            u'Content rule names should be translated.':
+                me(u'Content rule names should be translated.',
+                        references=[filepath + ':53']),
+        }
+
+        reader = catalog.ZCMLReader(input_, 'plone')
+        reader.read()
+        out = reader.catalogs['plone']
+        for key in out:
+            self.assertTrue(
+                key in output,
+                'Failure in zcml parsing.\nUnexpected msgid: %s' % key)
+        for key in output:
+            self.assertTrue(
+                out.get(key, False),
+                'Failure in zcml parsing.\nMissing:%s' % output.get(key))
+            self.assertTrue(
+                out.get(key) == output.get(key),
+                'Failure in zcml parsing.\nGot:%s\nExpected:%s' %
+                (out.get(key), output.get(key))
+            )
+        self.assertEqual(len(out), len(output))
 
 
 def test_suite():
