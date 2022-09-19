@@ -73,6 +73,7 @@ rebuild-pot
                               filename [-c domain] [-m filename]
                               [--merge2 filename]
                               [--exclude "<ignore1> <ignore2> ..."]
+                              [--no-line-numbers] [--line-numbers]
                               [path ...]
 
       Given a pot-file via the --pot option you can specify one or more
@@ -108,6 +109,16 @@ rebuild-pot
       filenames) which should not be included by using the --exclude argument,
       which takes a whitespace delimited list of files (or regular expressions
       for files).
+
+      By default we add a comment showing references to file paths and line numbers
+      that contain the message, like this:
+
+          #: ./browser.py:32
+
+      You can suppress the line numbers by using the --no-line-numbers option.
+      The default might change in the future.  If you love line numbers, you can
+      add --line-numbers to be sure you keep them when you get a newer version
+      of i18ndude.  If you specify both options, the last one wins.
       
 
   positional arguments:
@@ -123,6 +134,8 @@ rebuild-pot
     -m filename, --merge filename
     --merge2 filename
     --exclude "<ignore1> <ignore2> ..."
+    --no-line-numbers
+    --line-numbers
 
 merge
 -----
