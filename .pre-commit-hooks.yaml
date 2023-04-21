@@ -1,0 +1,8 @@
+- id: i18ndude
+  name: i18ndude
+  entry: i18ndude
+  language: python
+  files: ".*.(py|pt|zpt|zcml)$"
+  args: ["find-untranslated"]
+  require_serial: false
+  additional_dependencies: []
