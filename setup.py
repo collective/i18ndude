@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-version = '5.5.1.dev0'
+version = '6.0.0a1.dev0'
 
 install_requires = [
     'lxml',
