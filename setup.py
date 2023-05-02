@@ -48,6 +48,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     test_suite='i18ndude.tests',
+    python_requires=">=3.8",
     install_requires=install_requires,
     extras_require={
         'plone': ['plone.i18n'],

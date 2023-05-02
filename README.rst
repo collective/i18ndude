@@ -17,8 +17,8 @@ i18ndude performs various tasks related to ZPT's, Python Scripts and i18n.
 Compatibility
 -------------
 
-i18ndude works with Python 2.7, 3.6, 3.7, pypy and pypy3.
-Older versions are not supported anymore, use the i18ndude 4.x series
+i18ndude works with Python 3.8-3.11, and PyPy3.
+Older versions are not supported anymore, use the i18ndude 5.x series
 if you need that.
 
 You can install ``i18ndude`` with Buildout or ``pip``.
@@ -41,3 +41,15 @@ I (Maurits) have this line in my bash profile now.
 
 Note: if you get a ``UnicodeDecodeError``, so 'decode' instead of 'encode', then it may be something that needs fixing in ``i18ndude``.
 Please `report <https://github.com/collective/i18ndude/issues>`_ it then.
+
+Pre commit hook
+---------------
+
+Since version 6 we have a ``pre-commit`` hook available::
+
+    -   repo: https://github.com/collective/i18ndude
+        rev: "master"
+        hooks:
+        -   id: i18ndude
+
+For now it only finds the strings not marked for translation.
