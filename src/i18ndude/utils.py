@@ -213,7 +213,7 @@ def prepare_cli_documentation(data):
         result = []
         for line in text.splitlines():
             if line:
-                result.append('  ' + line)
+                result.append('  ' + line.decode())
             else:
                 result.append('')
         return result
