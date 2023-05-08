@@ -24,7 +24,7 @@ i18ndude
   Call i18ndude with one of the listed subcommands followed by
   --help to get help for that subcommand.
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
 
   subcommands:
@@ -57,7 +57,7 @@ find-untranslated
   positional arguments:
     files            list of ZPT filenames
 
-  optional arguments:
+  options:
     -h, --help       show this help message and exit
     -s, --silent     The report will only contain a summary of errors and
                      warnings for each file (or no output if there are no errors
@@ -124,7 +124,7 @@ rebuild-pot
   positional arguments:
     path
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --wrap                Wrap long lines.
     --no-wrap             Do not wrap long lines. This is the default.
@@ -154,7 +154,7 @@ merge
       in addition to the first one.
       
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --wrap                Wrap long lines.
     --no-wrap             Do not wrap long lines. This is the default.
@@ -180,7 +180,7 @@ sync
   positional arguments:
     pofilename
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --wrap                Wrap long lines.
     --no-wrap             Do not wrap long lines. This is the default.
@@ -202,7 +202,7 @@ filter
     file1
     file2
 
-  optional arguments:
+  options:
     -h, --help      show this help message and exit
     --wrap          Wrap long lines.
     --no-wrap       Do not wrap long lines. This is the default.
@@ -225,7 +225,7 @@ admix
     file1
     file2
 
-  optional arguments:
+  options:
     -h, --help      show this help message and exit
     --wrap          Wrap long lines.
     --no-wrap       Do not wrap long lines. This is the default.
@@ -252,7 +252,7 @@ list
       This was the default output for years.
       
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     -p product [product ...], --products product [product ...]
     -t, --table           Output as html table
@@ -285,7 +285,7 @@ trmerge
     file1
     file2
 
-  optional arguments:
+  options:
     -h, --help          show this help message and exit
     --wrap              Wrap long lines.
     --no-wrap           Do not wrap long lines. This is the default.
