@@ -8,6 +8,31 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.0a1 (2023-05-08)
+--------------------
+
+Breaking changes:
+
+
+- Drop support for Python 2.
+  Require Python 3.8+ (works with PyPy3 as well).
+  [gforcada, maurits] (#50)
+
+
+New features:
+
+
+- Add pre-commit hook, for now only to find the strings not marked for translation.
+  [gforcada] (#50)
+
+
+Bug fixes:
+
+
+- Fix encoding problem on `prepare_cli_documentation` command.
+  [gforcada] (#101)
+
+
 5.5.0 (2022-09-19)
 ------------------
 
