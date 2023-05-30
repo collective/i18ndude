@@ -2,7 +2,7 @@
   name: i18ndude
   entry: i18ndude
   language: python
-  files: ".*.(py|pt|zpt|zcml)$"
+  files: ".*.(pt|zpt)$"
   args: ["find-untranslated"]
   require_serial: false
   additional_dependencies: []
