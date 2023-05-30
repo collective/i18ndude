@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.0 (2023-05-30)
+------------------
+
+Bug fixes:
+
+
+- Fix pre-commit integration.
+  [gforcada] (#1)
+
+
 6.0.0a1 (2023-05-08)
 --------------------
 
