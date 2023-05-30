@@ -3,6 +3,6 @@
   entry: i18ndude
   language: python
   files: ".*.(pt|zpt)$"
-  args: ["find-untranslated"]
+  args: ["find-untranslated", "-n"]
   require_serial: false
   additional_dependencies: []
