@@ -148,7 +148,7 @@ def attr_validator(tag, attrs, logfct):
               attrs['type'] in ('submit', 'button'):
         if not _valid_i18ned_attr('value', attrs):
             logfct('value attribute of <... submit/button> lacks '
-                   'i18n:attribute', 'ERROR')
+                   'i18n:attributes', 'ERROR')
 
     if tag == 'input' and 'placeholder' in attrs.keys():
         if not _valid_i18ned_attr('placeholder', attrs):
