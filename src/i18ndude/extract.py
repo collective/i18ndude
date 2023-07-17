@@ -19,9 +19,19 @@ __docformat__ = 'restructuredtext'
 
 # INFO: This is a modified copy of zope3's zope.app.locales.extract (r71023).
 
-from .pygettext import safe_eval, normalize, make_escapes
+from .pygettext import make_escapes
+from .pygettext import normalize
+from .pygettext import safe_eval
+from i18ndude.generator import DudeGenerator
+
+# Modified, as we don't want a dependency on zope.app.locales
+# from zope.app.locales.interfaces import IPOTEntry, IPOTMaker, ITokenEater
+from i18ndude.interfaces import IPOTEntry
+from i18ndude.interfaces import IPOTMaker
+from i18ndude.interfaces import ITokenEater
 from zope.i18nmessageid import Message
 from zope.interface import implementer
+
 import fnmatch
 import os
 import sys
@@ -29,10 +39,6 @@ import time
 import tokenize
 import traceback
 
-# Modified, as we don't want a dependency on zope.app.locales
-# from zope.app.locales.interfaces import IPOTEntry, IPOTMaker, ITokenEater
-from i18ndude.interfaces import IPOTEntry, IPOTMaker, ITokenEater
-from i18ndude.generator import DudeGenerator
 
 DEFAULT_CHARSET = 'utf-8'
 DEFAULT_ENCODING = '8bit'
@@ -495,6 +501,7 @@ def zcml_strings(dir, domain="zope", site_zcml=None):
     """Retrieve all ZCML messages from `dir` that are in the `domain`.
     """
     from zope.app.appsetup import config
+
     import zope
     dirpath = os.path.dirpath
     if site_zcml is None:
@@ -510,8 +517,9 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
     """
     # We import zope.tal.talgettext here because we can't rely on the
     # right sys path until app_dir has run
-    from zope.tal.talgettext import POEngine, POTALInterpreter
     from zope.tal.htmltalparser import HTMLTALParser
+    from zope.tal.talgettext import POEngine
+    from zope.tal.talgettext import POTALInterpreter
     from zope.tal.talparser import TALParser
     engine = POEngine()
 

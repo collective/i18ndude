@@ -1,8 +1,8 @@
-import sys
-
+from i18ndude.extract import find_files
 from lxml import etree
 
-from i18ndude.extract import find_files
+import sys
+
 
 # Namespaces.
 ZOPE_NS = "http://namespaces.zope.org/zope"

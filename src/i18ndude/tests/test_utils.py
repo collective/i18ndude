@@ -1,6 +1,7 @@
+from i18ndude.utils import undouble_unicode_escape
 from i18ndude.utils import wrapAndQuoteString
 from i18ndude.utils import wrapString
-from i18ndude.utils import undouble_unicode_escape
+
 import i18ndude.utils
 import unittest
 

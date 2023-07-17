@@ -154,16 +154,18 @@ Options:
 If `inputfile' is -, standard input is read.
 """)
 
-import os
-import imp
-import sys
-import glob
-import time
+from functools import reduce
+
 import getopt
+import glob
+import imp
+import operator
+import os
+import sys
+import time
 import token
 import tokenize
-import operator
-from functools import reduce
+
 
 __version__ = '1.5'
 

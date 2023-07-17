@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 
+
 PY3 = sys.version_info > (3,)
 
 # Two parameters determine the wrapping of lines.  If WRAP is False,
@@ -249,7 +250,8 @@ def prepare_cli_documentation(data):
 
     # If there is a diff, we want to commit it.
     from zest.releaser import choose
-    from zest.releaser.utils import ask, execute_command
+    from zest.releaser.utils import ask
+    from zest.releaser.utils import execute_command
     vcs = choose.version_control()
     diff_cmd = vcs.cmd_diff()
     diff = execute_command(diff_cmd)

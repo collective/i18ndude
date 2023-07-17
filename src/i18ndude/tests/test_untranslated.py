@@ -1,14 +1,17 @@
 """Tests for finding untranslated prose.
 """
+from argparse import Namespace
+from i18ndude.script import find_untranslated as script
+from i18ndude.tests.utils import suppress_stdout
+from i18ndude.tests.utils import TESTDATA_DIR
+
+import i18ndude.untranslated
+import io
 import os
 import sys
 import unittest
 import xml.sax
-import io
-import i18ndude.untranslated
-from argparse import Namespace
-from i18ndude.script import find_untranslated as script
-from i18ndude.tests.utils import suppress_stdout, TESTDATA_DIR
+
 
 PY3 = sys.version_info > (3,)
 if PY3:
@@ -16,6 +19,7 @@ if PY3:
     unicode_StringIO = io.StringIO
 else:
     import StringIO
+
     # io.StringIO in python2 (but not in python3) raises:
     # TypeError: unicode argument expected, got 'str'
     unicode_StringIO = StringIO.StringIO

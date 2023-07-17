@@ -1,8 +1,10 @@
-from lxml import etree
 from io import StringIO
-import re
+from lxml import etree
 
+import re
 import sys
+
+
 PY3 = sys.version_info > (3,)
 if PY3:
     unicode = str

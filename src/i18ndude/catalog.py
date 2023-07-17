@@ -1,13 +1,15 @@
+from collections import OrderedDict
 from i18ndude.utils import quote
+from i18ndude.utils import undouble_unicode_escape
 from i18ndude.utils import wrapAndQuoteString
 from i18ndude.utils import wrapString
-from i18ndude.utils import undouble_unicode_escape
-from collections import OrderedDict
 from zope.i18nmessageid import Message
+
 import os
 import re
 import sys
 import time
+
 
 PY3 = sys.version_info > (3,)
 if PY3:

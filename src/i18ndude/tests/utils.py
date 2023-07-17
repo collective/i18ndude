@@ -1,6 +1,7 @@
+from contextlib import contextmanager
+
 import os
 import sys
-from contextlib import contextmanager
 
 
 def package_home(globals_dict):

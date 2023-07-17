@@ -1,10 +1,12 @@
+from .utils import TESTDATA_DIR
 from i18ndude import catalog
 from i18ndude import utils
-from .utils import TESTDATA_DIR
+
 import os
 import sys
 import unittest
 import warnings
+
 
 PY3 = sys.version_info > (3,)
 if PY3:

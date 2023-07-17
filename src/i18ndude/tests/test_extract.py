@@ -1,8 +1,9 @@
 """Tests for the message string extraction tool.
 """
 
-import unittest
 from doctest import DocTestSuite
+
+import unittest
 
 
 def test_suite():

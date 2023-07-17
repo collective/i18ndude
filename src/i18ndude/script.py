@@ -21,13 +21,18 @@
 
 # -----------------------------------------------------------------------------
 
+from i18ndude import catalog
+from i18ndude import common
+from i18ndude import untranslated
+from i18ndude import utils
+from i18ndude import visualisation
+
 import argparse
 import os
 import sys
 import textwrap
 import xml.sax
 
-from i18ndude import common, untranslated, catalog, visualisation, utils
 
 PY3 = sys.version_info > (3,)
 if PY3:
