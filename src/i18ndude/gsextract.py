@@ -4,15 +4,14 @@ from lxml import etree
 import sys
 
 
-I18N_NS = 'http://xml.zope.org/namespaces/i18n'
-I18N_DOMAIN = '{%s}domain' % I18N_NS
-I18N_TRANSLATE = '{%s}translate' % I18N_NS
-I18N_ATTRIBUTES = '{%s}attributes' % I18N_NS
+I18N_NS = "http://xml.zope.org/namespaces/i18n"
+I18N_DOMAIN = "{%s}domain" % I18N_NS
+I18N_TRANSLATE = "{%s}translate" % I18N_NS
+I18N_ATTRIBUTES = "{%s}attributes" % I18N_NS
 
 
 class GSParser:
-    """GenericSetup profile i18n parser.
-    """
+    """GenericSetup profile i18n parser."""
 
     def __init__(self):
         self.catalogs = {}
@@ -54,10 +53,9 @@ class GSParser:
                     else:
                         msgstr = ""
                     if msgid:
-                        self.catalogs[domain].append(
-                            (msgid, msgstr, self.filename))
+                        self.catalogs[domain].append((msgid, msgstr, self.filename))
             if attributes is not None:
-                attributes = attributes.strip().split(';')
+                attributes = attributes.strip().split(";")
                 for attr in attributes:
                     parts = attr.split()
                     if len(parts) == 2:
@@ -74,18 +72,16 @@ class GSParser:
                         else:
                             msgid = text
                             msgstr = ""
-                        self.catalogs[domain].append(
-                            (msgid, msgstr, self.filename))
+                        self.catalogs[domain].append((msgid, msgstr, self.filename))
 
     def getCatalogs(self):
         return self.catalogs
 
 
 def gs_strings(dir, domain="none", exclude=()):
-    """Retrieve all messages from `dir` that are in the `domain`.
-    """
+    """Retrieve all messages from `dir` that are in the `domain`."""
     parser = GSParser()
-    for filename in find_files(dir, '*.xml', exclude=tuple(exclude)):
+    for filename in find_files(dir, "*.xml", exclude=tuple(exclude)):
         parser.parse(filename)
 
     return parser.getCatalogs()

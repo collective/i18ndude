@@ -7,9 +7,8 @@ import unittest
 
 
 def test_suite():
-    return unittest.TestSuite((
-        DocTestSuite('i18ndude.extract'),
-    ))
+    return unittest.TestSuite((DocTestSuite("i18ndude.extract"),))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

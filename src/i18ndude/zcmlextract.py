@@ -9,16 +9,16 @@ ZOPE_NS = "http://namespaces.zope.org/zope"
 GS_NS = "http://namespaces.zope.org/genericsetup"
 MONKEY_NS = "http://namespaces.plone.org/monkey"
 # Directives using those namespaces.
-GS_EXPORT_STEP = '{%s}exportStep' % GS_NS
-GS_IMPORT_STEP = '{%s}importStep' % GS_NS
-GS_UPGRADE_DEPENDS = '{%s}upgradeDepends' % GS_NS
-GS_UPGRADE_STEP = '{%s}upgradeStep' % GS_NS
-GS_UPGRADE_STEPS = '{%s}upgradeSteps' % GS_NS
-INTERFACE = '{%s}interface' % ZOPE_NS
-MONKEY_PATCH = '{%s}patch' % MONKEY_NS
-PERMISSION = '{%s}permission' % ZOPE_NS
-I18N_DOMAIN = 'i18n_domain'
-RULE_TYPE = 'plone.contentrules.rule.interfaces.IRuleEventType'
+GS_EXPORT_STEP = "{%s}exportStep" % GS_NS
+GS_IMPORT_STEP = "{%s}importStep" % GS_NS
+GS_UPGRADE_DEPENDS = "{%s}upgradeDepends" % GS_NS
+GS_UPGRADE_STEP = "{%s}upgradeStep" % GS_NS
+GS_UPGRADE_STEPS = "{%s}upgradeSteps" % GS_NS
+INTERFACE = "{%s}interface" % ZOPE_NS
+MONKEY_PATCH = "{%s}patch" % MONKEY_NS
+PERMISSION = "{%s}permission" % ZOPE_NS
+I18N_DOMAIN = "i18n_domain"
+RULE_TYPE = "plone.contentrules.rule.interfaces.IRuleEventType"
 
 # These zcml directives should not be translated, because it is not useful.
 BLACKLISTED_DIRECTIVES = [
@@ -34,14 +34,13 @@ BLACKLISTED_DIRECTIVES = [
 # properties are translatable MessageIDs instead of simple TextLines.  So we
 # simply take all these properties:
 TRANSLATABLE_PROPERTIES = [
-    'description',
-    'title',
+    "description",
+    "title",
 ]
 
 
 class ZCMLParser:
-    """ZCML profile i18n parser.
-    """
+    """ZCML profile i18n parser."""
 
     def __init__(self):
         self.catalogs = {}
@@ -73,8 +72,8 @@ class ZCMLParser:
                 self.catalogs[domain] = []
             if elem.tag in BLACKLISTED_DIRECTIVES:
                 return
-            if elem.tag == INTERFACE and elem.get('type') == RULE_TYPE:
-                self.maybe_add(domain, elem, 'name')
+            if elem.tag == INTERFACE and elem.get("type") == RULE_TYPE:
+                self.maybe_add(domain, elem, "name")
             for key in TRANSLATABLE_PROPERTIES:
                 self.maybe_add(domain, elem, key)
 
@@ -87,18 +86,17 @@ class ZCMLParser:
         msgid = text
         msgstr = ""
         self.catalogs[domain].append(
-            (msgid, msgstr,
-             f'{self.filename}:{elem.sourceline}'))
+            (msgid, msgstr, f"{self.filename}:{elem.sourceline}")
+        )
 
     def getCatalogs(self):
         return self.catalogs
 
 
 def zcml_strings(dir, domain="none", exclude=()):
-    """Retrieve all messages from `dir` that are in the `domain`.
-    """
+    """Retrieve all messages from `dir` that are in the `domain`."""
     parser = ZCMLParser()
-    for filename in find_files(dir, '*.zcml', exclude=tuple(exclude)):
+    for filename in find_files(dir, "*.zcml", exclude=tuple(exclude)):
         parser.parse(filename)
 
     return parser.getCatalogs()

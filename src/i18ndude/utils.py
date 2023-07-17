@@ -14,25 +14,32 @@ WRAP = False
 
 
 def getPoFiles(product, all=False):
-    """Returns all product*.po files in the current folder.
-    """
+    """Returns all product*.po files in the current folder."""
     # First try old style i18n directory that has all .pot and .po files in
     # one directory.
     files = os.listdir(os.curdir)
     if all:
-        files = [file for file in files if file.startswith('%s-' % product)
-                 and file.endswith('.po')]
+        files = [
+            file
+            for file in files
+            if file.startswith("%s-" % product) and file.endswith(".po")
+        ]
     else:
-        files = [file for file in files if file.startswith('%s-' % product)
-                 and file.endswith('.po') and file != '%s-en.po' % product]
+        files = [
+            file
+            for file in files
+            if file.startswith("%s-" % product)
+            and file.endswith(".po")
+            and file != "%s-en.po" % product
+        ]
     if files:
         return files
     # We may be in a locales directory.
-    po_name = '%s.po' % product
+    po_name = "%s.po" % product
     files = []
-    for dirpath, dirnames, filenames in os.walk('.'):
+    for dirpath, dirnames, filenames in os.walk("."):
         # Look for LC_MESSAGES directories
-        if dirpath.split(os.path.sep)[-1] != 'LC_MESSAGES':
+        if dirpath.split(os.path.sep)[-1] != "LC_MESSAGES":
             continue
         if po_name in filenames:
             files.append(os.path.join(dirpath, po_name))
@@ -45,43 +52,43 @@ def getPotFiles(product=None, all=False):
     """
     files = os.listdir(os.curdir)
     if all:
-        files = [f for f in files if f.endswith('.pot')]
+        files = [f for f in files if f.endswith(".pot")]
     else:
         files = [
-            f for f in files
-            if f.endswith('.pot')
-            and not f[:-4].endswith('manual')
-            and not f[:-4].endswith('generated')
+            f
+            for f in files
+            if f.endswith(".pot")
+            and not f[:-4].endswith("manual")
+            and not f[:-4].endswith("generated")
         ]
     if product is not None:
-        files = [f for f in files if f.startswith('%s.pot' % product)]
+        files = [f for f in files if f.startswith("%s.pot" % product)]
     return files
 
 
 def getPoFilesAsCmdLine(product):
     files = getPoFiles(product)
-    filestring = ''
+    filestring = ""
     for file in files:
-        filestring += file + ' '
+        filestring += file + " "
     return filestring.rstrip()
 
 
 def getPoFilesByLanguageCode(lang):
-    """Returns all po files which ends with given language code.
-    """
+    """Returns all po files which ends with given language code."""
     files = os.listdir(os.curdir)
-    files = [file for file in files if file.endswith(
-        '.po') and file[:-3].endswith(lang)]
+    files = [
+        file for file in files if file.endswith(".po") and file[:-3].endswith(lang)
+    ]
     return files
 
 
 def getLanguage(product, file):
-    """Returns the language part of a po-file.
-    """
+    """Returns the language part of a po-file."""
     lang = None
-    if file.endswith('.po'):
+    if file.endswith(".po"):
         if file.startswith(product):
-            lang = '-'.join(file.split('-')[1:])[:-3]
+            lang = "-".join(file.split("-")[1:])[:-3]
         else:
             # Get directory name in case of locales structure:
             # lang/LC_MESSAGES/product.po
@@ -90,7 +97,7 @@ def getLanguage(product, file):
                 if lc_found:
                     lang = part
                     break
-                if part == 'LC_MESSAGES':
+                if part == "LC_MESSAGES":
                     lc_found = True
     return lang
 
@@ -100,17 +107,16 @@ def getProduct(file):
     domain-language.po.
     Example: atcontenttypes-pt-br.po
     """
-    assert file.endswith('.po') or file.endswith('.pot')
+    assert file.endswith(".po") or file.endswith(".pot")
 
-    file = file.split('.')[0]  # strip of ending
-    file = file.split('-')[0]  # only take product
+    file = file.split(".")[0]  # strip of ending
+    file = file.split("-")[0]  # only take product
 
     return file
 
 
 def wrapAndQuoteString(value):
-    """Wrap a string in multiple quoted lines.
-    """
+    """Wrap a string in multiple quoted lines."""
     if not value:
         return '""'
     # Wrap over multiple lines if needed.
@@ -142,21 +148,21 @@ def wrapString(value):
     max_len = MAX_WIDTH - 2
     # For a single line the maximum length is shorter, it has to account
     # for the 'msgstr ' that goes before the string.
-    single_line_max_len = max_len - len('msgstr ')
+    single_line_max_len = max_len - len("msgstr ")
     # Maybe we have it easy.
     if max_len <= 0 or len(value) <= single_line_max_len:
         return [value]
     # The line maybe is just in between max_len and single_line_max_len
     if len(value) <= max_len:
-        return ['', value]
+        return ["", value]
     # No, the value does not fit on one line.  This means we need to
     # reserve room for a space at the end of all but the last line.
     max_len -= 1
-    words = value.split(' ')
+    words = value.split(" ")
     len_words = len(words)
     # We always start with an empty first line
-    lines = ['']
-    line = ''
+    lines = [""]
+    line = ""
     for index, word in enumerate(words):
         if index == len_words - 1:
             # This is the last word.  The last line needs no space at
@@ -165,7 +171,7 @@ def wrapString(value):
         if not line:
             new_line = word
         else:
-            new_line = f'{line} {word}'
+            new_line = f"{line} {word}"
         if len(new_line) <= max_len or not line:
             # There is room or we had an empty line and the current
             # single word is already too large so we accept it as a
@@ -176,7 +182,7 @@ def wrapString(value):
         # There is no more room so we store the line.  If it is not
         # empty it should end with a space.
         if line:
-            line += ' '
+            line += " "
         lines.append(line)
         # Start a fresh line with the current word.
         line = word
@@ -191,13 +197,12 @@ def prepare_cli_documentation(data):
     This uses a hook from zest.releaser to update some documentation
     when doing a release.  See our setup.py and setup.cfg.
     """
-    if data['name'] != 'i18ndude':
+    if data["name"] != "i18ndude":
         # We're available everywhere, but we're only intended to be
         # used when we release i18ndude.
         return
-    target = os.path.join(data['workingdir'], 'docs',
-                          'command.rst')
-    marker = '.. ### AUTOGENERATED FROM HERE ###'
+    target = os.path.join(data["workingdir"], "docs", "command.rst")
+    marker = ".. ### AUTOGENERATED FROM HERE ###"
     result = []
     for line in open(target).readlines():
         line = line.rstrip()
@@ -205,50 +210,52 @@ def prepare_cli_documentation(data):
             break
         result.append(line)
     result.append(marker)
-    result.append('')
+    result.append("")
 
     def indent(text):
         result = []
         for line in text.splitlines():
             if line:
-                result.append('  ' + line.decode())
+                result.append("  " + line.decode())
             else:
-                result.append('')
+                result.append("")
         return result
 
-    base_cmd = 'bin/i18ndude'
+    base_cmd = "bin/i18ndude"
     # Add result off calling bin/i18ndude --help
-    result.append('i18ndude')
-    result.append('--------')
+    result.append("i18ndude")
+    result.append("--------")
     result.append("\n::\n")
-    res = subprocess.check_output([base_cmd, '--help'])
+    res = subprocess.check_output([base_cmd, "--help"])
     result.extend(indent(res))
     # Same for the subcommands.
     subcommands = [
-        'find-untranslated',
-        'rebuild-pot',
-        'merge',
-        'sync',
-        'filter',
-        'admix',
-        'list',
-        'trmerge']
+        "find-untranslated",
+        "rebuild-pot",
+        "merge",
+        "sync",
+        "filter",
+        "admix",
+        "list",
+        "trmerge",
+    ]
     for sub in subcommands:
-        result.append('')
+        result.append("")
         result.append(sub)
-        result.append('-' * len(sub))
+        result.append("-" * len(sub))
         result.append("\n::\n")
-        res = subprocess.check_output([base_cmd, sub, '--help'])
+        res = subprocess.check_output([base_cmd, sub, "--help"])
         result.extend(indent(res))
 
-    result.append('')
-    open(target, 'w').write('\n'.join(result))
+    result.append("")
+    open(target, "w").write("\n".join(result))
     print("Wrote command line documentation to", target)
 
     # If there is a diff, we want to commit it.
     from zest.releaser import choose
     from zest.releaser.utils import ask
     from zest.releaser.utils import execute_command
+
     vcs = choose.version_control()
     diff_cmd = vcs.cmd_diff()
     diff = execute_command(diff_cmd)
@@ -270,7 +277,7 @@ def quote(s):
 
 
 def undouble_unicode_escape(value):
-    """ The mother of all hacks.
+    """The mother of all hacks.
     This tries to work around unicode/string confusion between
     python2 and python3 while opening files in text mode that contain
     bytes, or strings, that represent UTF-8 encoded unicode, or various
@@ -285,7 +292,7 @@ def undouble_unicode_escape(value):
 
     # first pass -- handle triply escaped python2
     try:
-        value = value.decode('raw_unicode_escape')
+        value = value.decode("raw_unicode_escape")
     except UnicodeEncodeError:
         # debug("1-- UnicodeEncodeError on {}".format(repr(value)))
         # py2: 'ascii' codec can't encode characters
@@ -298,7 +305,7 @@ def undouble_unicode_escape(value):
 
     # second pass -- handle triply escaped python3
     try:
-        value = value.encode('raw_unicode_escape').decode('utf-8')
+        value = value.encode("raw_unicode_escape").decode("utf-8")
     except UnicodeDecodeError:
         # debug("2-- UnicodeDecodeError on {}".format(repr(value)))
         pass
@@ -314,18 +321,18 @@ def undouble_unicode_escape(value):
     # third pass --
     try:
         # doubly encoded?
-        value = value.encode('raw_unicode_escape').decode('utf-8')
+        value = value.encode("raw_unicode_escape").decode("utf-8")
     except UnicodeDecodeError:
         # normal unicode, either from input or first pass
         # debug("3-- UnicodeDecodeError on {}".format(repr(value)))
         pass
 
     # fourth pass - suffices in python3
-    value = value.encode('raw_unicode_escape').decode('raw_unicode_escape')
+    value = value.encode("raw_unicode_escape").decode("raw_unicode_escape")
 
     # fifth pass - needed in python2.7 only for escaped encoded
     try:
-        value = value.decode('raw_unicode_escape')
+        value = value.decode("raw_unicode_escape")
     except UnicodeEncodeError:
         # py27 UnicodeEncodeError: 'ascii' codec can't encode character
         pass
