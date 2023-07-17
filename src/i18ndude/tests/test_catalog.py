@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from i18ndude import catalog
 from i18ndude import utils
 from .utils import TESTDATA_DIR
@@ -47,10 +46,10 @@ class TestMessageEntry(unittest.TestCase):
         self.msgstr = 'test text'
         self.references = ['test1.pt', 'test2.pt']
         self.default_text = 'test default'
-        self.default_comment = '%s"%s"' % (catalog.DEFAULT_COMMENT, self.default_text)  # noqa
+        self.default_comment = '{}"{}"'.format(catalog.DEFAULT_COMMENT, self.default_text)  # noqa
         self.automatic_comments = ['first line', 'second line', self.default_comment]  # noqa
         self.orig_text = 'test original'
-        self.orig_comment = '%s"%s"' % (catalog.ORIGINAL_COMMENT, self.orig_text)  # noqa
+        self.orig_comment = '{}"{}"'.format(catalog.ORIGINAL_COMMENT, self.orig_text)  # noqa
         self.comments = ['A comment', self.orig_comment]
 
     def test_init(self):
@@ -102,89 +101,89 @@ class TestMessageCatalogInit(unittest.TestCase):
             'Plural-Forms': 'nplurals=1; plural=0;',
             'Project-Id-Version': 'i18ndude',
             'Preferred-Encodings': 'utf-8 latin1',
-            'Last-Translator': u'Unicödé Guy',
+            'Last-Translator': 'Unicödé Guy',
             'Language-Team': 'Plone i18n <plone-i18n@lists.sourceforge.net>',
             'POT-Creation-Date': '2005-08-01 12:00+0000',
             'Content-Type': 'text/plain; charset=utf-8', 'MIME-Version': '1.0'
         }
 
         self.msgids = {
-            u'msgid1': self.me(
+            'msgid1': self.me(
                 'msgid1',
                 msgstr='msgstr1',
                 references=['file1', 'file2'],
                 automatic_comments=[' Default: "msgstr1"'],
                 comments=[' comment1']),
 
-            u'msgid2': self.me(
+            'msgid2': self.me(
                 'msgid2',
                 msgstr='msgstr2',
                 references=['file2']),
 
-            u'msgid3': self.me(
+            'msgid3': self.me(
                 'msgid3',
                 msgstr='\\n\\nmsgstr\\n3',
                 references=['file3'],
                 comments=[' comment3']),
 
-            u'msgid4': self.me(
+            'msgid4': self.me(
                 'msgid4',
                 msgstr='msgstr4',
                 references=['file4']),
 
-            u'msgid5': self.me(
+            'msgid5': self.me(
                 'msgid5',
                 msgstr='msgstr5',
                 comments=[' comment5']),
 
-            u'msgid6': self.me(
+            'msgid6': self.me(
                 'msgid6',
                 msgstr='msgstr6'),
 
-            u'msgid7': self.me(
+            'msgid7': self.me(
                 'msgid7',
                 msgstr='msgstr7',
                 comments=[', fuzzy']),
 
-            u'msgid8': self.me(
+            'msgid8': self.me(
                 'msgid8'),
 
-            u'msgid has spaces': self.me(
+            'msgid has spaces': self.me(
                 'msgid has spaces',
                 msgstr='msgstr has spaces',
                 comments=['# I am a dead comment']),
 
-            u'msgid_has_underlines': self.me(
+            'msgid_has_underlines': self.me(
                 'msgid_has_underlines',
                 msgstr='msgstr_has_underlines'),
 
-            u'msgid_has_underlines and spaces': self.me(
+            'msgid_has_underlines and spaces': self.me(
                 'msgid_has_underlines and spaces',
                 msgstr='msgstr_has_underlines and spaces'),
 
-            u'msgid for unicode text': self.me(
+            'msgid for unicode text': self.me(
                 'msgid for unicode text',
-                msgstr=u'unicode msgstr \xb7\xb7\xb7'),
+                msgstr='unicode msgstr \xb7\xb7\xb7'),
 
-            u'msgid for unicode text with comment': self.me(
+            'msgid for unicode text with comment': self.me(
                 'msgid for unicode text with comment',
-                msgstr=u'unicode msgstr \xb7\xb7\xb7',
+                msgstr='unicode msgstr \xb7\xb7\xb7',
                 references=['./folder/file_unicode'],
                 automatic_comments=[' Default: [···]']),
 
-            u'msgid for text with german umlaut': self.me(
+            'msgid for text with german umlaut': self.me(
                 'msgid for text with german umlaut',
-                msgstr=u'\xe4\xf6\xfc\xdf text'),
+                msgstr='\xe4\xf6\xfc\xdf text'),
 
-            u'msgid for text with html-entity': self.me(
+            'msgid for text with html-entity': self.me(
                 'msgid for text with html-entity',
                 msgstr='&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;'),  # noqa
 
-            (u"Its quite annoying that all translation editors wrap "
+            ("Its quite annoying that all translation editors wrap "
              "translations strings at 80 characters, but then when you "
              "update the po files with i18ndude they are unwrapped and "
              "kept as huge lines. Can we fix that?"): self.me(
-                 u"Its quite annoying that all translation editors wrap "
+                 "Its quite annoying that all translation editors wrap "
                  "translations strings at 80 characters, but then when you "
                  "update the po files with i18ndude they are unwrapped and "
                  "kept as huge lines. Can we fix that?",
@@ -197,7 +196,7 @@ class TestMessageCatalogInit(unittest.TestCase):
                      (" Note that the unix msgattrib command can wrap or "
                       "unwrap long lines in po files.")]),
 
-            u'msgid_with_long_lines_including_backslash_n.': self.me(
+            'msgid_with_long_lines_including_backslash_n.': self.me(
                 'msgid_with_long_lines_including_backslash_n.',
                 msgstr=("Falls aktiv wird der entsprechende \\nLinkcycle einen"
                         " Button haben, mit dem man durch ihn blaettern kann. "
@@ -293,10 +292,10 @@ class TestMessageCatalog(unittest.TestCase):
         self.msgstr = 'test text'
         self.references = ['test1.pt', 'test2.pt']
         self.default_text = 'test default'
-        self.default_comment = '%s"%s"' % (catalog.DEFAULT_COMMENT, self.default_text)  # noqa
+        self.default_comment = '{}"{}"'.format(catalog.DEFAULT_COMMENT, self.default_text)  # noqa
         self.automatic_comments = ['first line', 'second line', self.default_comment]  # noqa
         self.orig_text = 'test original'
-        self.orig_comment = '%s"%s"' % (catalog.ORIGINAL_COMMENT, self.orig_text)  # noqa
+        self.orig_comment = '{}"{}"'.format(catalog.ORIGINAL_COMMENT, self.orig_text)  # noqa
         self.comments = ['A comment', self.orig_comment]
 
     def test_add(self):
@@ -403,8 +402,8 @@ class TestMessagePoWriter(unittest.TestCase):
         # Restore original value.
         utils.WRAP = orig_wrap
 
-        input_ = open(self.input, 'r')
-        output = open(self.output, 'r')
+        input_ = open(self.input)
+        output = open(self.output)
 
         # compare line by line
         inlines = input_.readlines()
@@ -428,8 +427,8 @@ class TestMessagePoWriter(unittest.TestCase):
         pow.write(sort=True)
         fd.close()
 
-        output = open(self.output2, 'r')
-        expected = open(self.expectedOutput2, 'r')
+        output = open(self.output2)
+        expected = open(self.expectedOutput2)
 
         # compare line by line
         outlines = output.readlines()
@@ -463,21 +462,21 @@ class TestMessagePTReader(unittest.TestCase):
         filename3 = input_ + os.sep + 'test3.pt'
         filename5 = input_ + os.sep + 'test5.pt'
         output = {
-            u'Buzz': me(u'Buzz', references=[filename]),
-            u'${foo} ${with-dash-and_underscore}': me(u'${foo} ${with-dash-and_underscore}', references=[filename]),  # noqa
-            u'dig_this': me(u'dig_this', msgstr=u'Dig this', references=[filename]),  # noqa
-            u'text_buzz': me(u'text_buzz', msgstr=u'Buzz', references=[filename]),  # noqa
-            u'some_alt': me(u'some_alt', msgstr=u'Some alt', references=[filename, filename3]),  # noqa
-            u'title_some_alt': me(u'title_some_alt', msgstr=u'Some title', references=[filename]),  # noqa
-            u'Job started at ${datetime} by user ${userid}.': me(u'Job started at ${datetime} by user ${userid}.', references=[filename]),  # noqa
-            u'spacing': me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename]),  # noqa
-            u'spacing_strong': me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename]),  # noqa
-            u'<tt>domain</tt> is one of the <em>local domains</em>:': me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename]),  # noqa
-            u'odd': me(u'odd', references=[filename]),
-            u'even': me(u'even', references=[filename]),
-            u'Test for issue 15, html5 attributes without value': me(u'Test for issue 15, html5 attributes without value', references=[filename]),  # noqa
-            u'rebuild-pot should not complain about Chameleon repeat syntax.': me(u'rebuild-pot should not complain about Chameleon repeat syntax.', references=[filename5]),  # noqa
-            u'rebuild-pot should not complain about Chameleon define syntax.': me(u'rebuild-pot should not complain about Chameleon define syntax.', references=[filename5]),  # noqa
+            'Buzz': me('Buzz', references=[filename]),
+            '${foo} ${with-dash-and_underscore}': me('${foo} ${with-dash-and_underscore}', references=[filename]),  # noqa
+            'dig_this': me('dig_this', msgstr='Dig this', references=[filename]),  # noqa
+            'text_buzz': me('text_buzz', msgstr='Buzz', references=[filename]),  # noqa
+            'some_alt': me('some_alt', msgstr='Some alt', references=[filename, filename3]),  # noqa
+            'title_some_alt': me('title_some_alt', msgstr='Some title', references=[filename]),  # noqa
+            'Job started at ${datetime} by user ${userid}.': me('Job started at ${datetime} by user ${userid}.', references=[filename]),  # noqa
+            'spacing': me('spacing', msgstr='Space <br /> before and after.', references=[filename]),  # noqa
+            'spacing_strong': me('spacing_strong', msgstr='Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename]),  # noqa
+            '<tt>domain</tt> is one of the <em>local domains</em>:': me('<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename]),  # noqa
+            'odd': me('odd', references=[filename]),
+            'even': me('even', references=[filename]),
+            'Test for issue 15, html5 attributes without value': me('Test for issue 15, html5 attributes without value', references=[filename]),  # noqa
+            'rebuild-pot should not complain about Chameleon repeat syntax.': me('rebuild-pot should not complain about Chameleon repeat syntax.', references=[filename5]),  # noqa
+            'rebuild-pot should not complain about Chameleon define syntax.': me('rebuild-pot should not complain about Chameleon define syntax.', references=[filename5]),  # noqa
         }
 
         ptr = catalog.PTReader(input_, domain='testing', include_line_numbers = False)
@@ -496,7 +495,7 @@ class TestMessagePTReader(unittest.TestCase):
                             in contents or
                             "bad: Buzzer, should be: Buzz"  # py27
                             in contents,
-                            u'bad Buzzer not in contents: {}'.format(contents))
+                            'bad Buzzer not in contents: {}'.format(contents))
 
         out = ptr.catalogs['testing']
         for key in out:
@@ -517,21 +516,21 @@ class TestMessagePTReader(unittest.TestCase):
         filename3 = input_ + os.sep + 'test3.pt'
         filename5 = input_ + os.sep + 'test5.pt'
         output = {
-            u'Buzz': me(u'Buzz', references=[filename + ':21']),
-            u'${foo} ${with-dash-and_underscore}': me(u'${foo} ${with-dash-and_underscore}', references=[filename + ':26']),  # noqa
-            u'dig_this': me(u'dig_this', msgstr=u'Dig this', references=[filename + ':52']),  # noqa
-            u'text_buzz': me(u'text_buzz', msgstr=u'Buzz', references=[filename + ':29', filename + ':31']),  # noqa
-            u'some_alt': me(u'some_alt', msgstr=u'Some alt', references=[filename + ':15', filename3 + ':15']),  # noqa
-            u'title_some_alt': me(u'title_some_alt', msgstr=u'Some title', references=[filename + ':15']),  # noqa
-            u'Job started at ${datetime} by user ${userid}.': me(u'Job started at ${datetime} by user ${userid}.', references=[filename + ':46']),  # noqa
-            u'spacing': me(u'spacing', msgstr=u'Space <br /> before and after.', references=[filename + ':37']),  # noqa
-            u'spacing_strong': me(u'spacing_strong', msgstr=u'Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename + ':41']),  # noqa
-            u'<tt>domain</tt> is one of the <em>local domains</em>:': me(u'<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':49']),  # noqa
-            u'odd': me(u'odd', references=[filename + ':58']),
-            u'even': me(u'even', references=[filename + ':59']),
-            u'Test for issue 15, html5 attributes without value': me(u'Test for issue 15, html5 attributes without value', references=[filename + ':62']),  # noqa
-            u'rebuild-pot should not complain about Chameleon repeat syntax.': me(u'rebuild-pot should not complain about Chameleon repeat syntax.', references=[filename5 + ':16']),  # noqa
-            u'rebuild-pot should not complain about Chameleon define syntax.': me(u'rebuild-pot should not complain about Chameleon define syntax.', references=[filename5 + ':19']),  # noqa
+            'Buzz': me('Buzz', references=[filename + ':21']),
+            '${foo} ${with-dash-and_underscore}': me('${foo} ${with-dash-and_underscore}', references=[filename + ':26']),  # noqa
+            'dig_this': me('dig_this', msgstr='Dig this', references=[filename + ':52']),  # noqa
+            'text_buzz': me('text_buzz', msgstr='Buzz', references=[filename + ':29', filename + ':31']),  # noqa
+            'some_alt': me('some_alt', msgstr='Some alt', references=[filename + ':15', filename3 + ':15']),  # noqa
+            'title_some_alt': me('title_some_alt', msgstr='Some title', references=[filename + ':15']),  # noqa
+            'Job started at ${datetime} by user ${userid}.': me('Job started at ${datetime} by user ${userid}.', references=[filename + ':46']),  # noqa
+            'spacing': me('spacing', msgstr='Space <br /> before and after.', references=[filename + ':37']),  # noqa
+            'spacing_strong': me('spacing_strong', msgstr='Please press your browser\'s <strong>Back</strong> button to try again.', references=[filename + ':41']),  # noqa
+            '<tt>domain</tt> is one of the <em>local domains</em>:': me('<tt>domain</tt> is one of the <em>local domains</em>:', references=[filename + ':49']),  # noqa
+            'odd': me('odd', references=[filename + ':58']),
+            'even': me('even', references=[filename + ':59']),
+            'Test for issue 15, html5 attributes without value': me('Test for issue 15, html5 attributes without value', references=[filename + ':62']),  # noqa
+            'rebuild-pot should not complain about Chameleon repeat syntax.': me('rebuild-pot should not complain about Chameleon repeat syntax.', references=[filename5 + ':16']),  # noqa
+            'rebuild-pot should not complain about Chameleon define syntax.': me('rebuild-pot should not complain about Chameleon define syntax.', references=[filename5 + ':19']),  # noqa
         }
 
         ptr = catalog.PTReader(input_, domain='testing')
@@ -550,7 +549,7 @@ class TestMessagePTReader(unittest.TestCase):
                             in contents or
                             "bad: Buzzer, should be: Buzz"  # py27
                             in contents,
-                            u'bad Buzzer not in contents: {}'.format(contents))
+                            'bad Buzzer not in contents: {}'.format(contents))
 
         out = ptr.catalogs['testing']
         for key in out:
@@ -573,15 +572,15 @@ class TestMessagePYReader(unittest.TestCase):
         filepath = os.path.join(dirpath, 'test2.py')
         input_ = dirpath
         output = {
-            u'Zero': me(u'Zero', references=[filepath]),
-            u'One': me(u'One', references=[filepath]),
-            u'msgid_three': me(u'msgid_three', msgstr='Three', references=[filepath]),  # noqa
-            u'msgid_four': me(u'msgid_four', msgstr='Four ${map}', references=[filepath]),  # noqa
-            u'msgid_five': me(u'msgid_five', msgstr=u"五番目", references=[filepath]),  # noqa
-            u'msgid_six': me(u'msgid_six', msgstr=u"\nLine 1\nLine 2\nLine 3\n", references=[filepath]),  # noqa
+            'Zero': me('Zero', references=[filepath]),
+            'One': me('One', references=[filepath]),
+            'msgid_three': me('msgid_three', msgstr='Three', references=[filepath]),  # noqa
+            'msgid_four': me('msgid_four', msgstr='Four ${map}', references=[filepath]),  # noqa
+            'msgid_five': me('msgid_five', msgstr="五番目", references=[filepath]),  # noqa
+            'msgid_six': me('msgid_six', msgstr="\nLine 1\nLine 2\nLine 3\n", references=[filepath]),  # noqa
             # XXX This should not be found as it's in a different domain
             # instead it recognizes the domain as a msgstr now
-            u'Out1': me(u'Out1', msgstr='running', references=[filepath])  # noqa
+            'Out1': me('Out1', msgstr='running', references=[filepath])  # noqa
         }
 
         pyr = catalog.PYReader(input_, 'testing', include_line_numbers = False)
@@ -608,15 +607,15 @@ class TestMessagePYReader(unittest.TestCase):
         filepath = os.path.join(dirpath, 'test2.py')
         input_ = dirpath
         output = {
-            u'Zero': me(u'Zero', references=[filepath + ':4']),
-            u'One': me(u'One', references=[filepath + ':5']),
-            u'msgid_three': me(u'msgid_three', msgstr='Three', references=[filepath + ':10']),  # noqa
-            u'msgid_four': me(u'msgid_four', msgstr='Four ${map}', references=[filepath + ':13']),  # noqa
-            u'msgid_five': me(u'msgid_five', msgstr=u"五番目", references=[filepath + ':17']),  # noqa
-            u'msgid_six': me(u'msgid_six', msgstr=u"\nLine 1\nLine 2\nLine 3\n", references=[filepath + ':19']),  # noqa
+            'Zero': me('Zero', references=[filepath + ':4']),
+            'One': me('One', references=[filepath + ':5']),
+            'msgid_three': me('msgid_three', msgstr='Three', references=[filepath + ':10']),  # noqa
+            'msgid_four': me('msgid_four', msgstr='Four ${map}', references=[filepath + ':13']),  # noqa
+            'msgid_five': me('msgid_five', msgstr="五番目", references=[filepath + ':17']),  # noqa
+            'msgid_six': me('msgid_six', msgstr="\nLine 1\nLine 2\nLine 3\n", references=[filepath + ':19']),  # noqa
             # XXX This should not be found as it's in a different domain
             # instead it recognizes the domain as a msgstr now
-            u'Out1': me(u'Out1', msgstr='running', references=[filepath + ':7'])  # noqa
+            'Out1': me('Out1', msgstr='running', references=[filepath + ':7'])  # noqa
         }
 
         pyr = catalog.PYReader(input_, 'testing')
@@ -647,11 +646,11 @@ class TestMessageGSReader(unittest.TestCase):
         filepath = os.path.join(dirpath, 'test.xml')
         input_ = dirpath
         output = {
-            u'RSS feed':
-                me(u'RSS feed',
+            'RSS feed':
+                me('RSS feed',
                         references=[filepath]),
-            u'Print this':
-                me(u'Print this',
+            'Print this':
+                me('Print this',
                         references=[filepath]),
         }
 
@@ -682,23 +681,23 @@ class TestMessageZCMLReader(unittest.TestCase):
         filepath = os.path.join(dirpath, 'test.zcml')
         input_ = dirpath
         output = {
-            u'Plone Site':
-                me(u'Plone Site',
+            'Plone Site':
+                me('Plone Site',
                         references=[filepath]),
-            u'Profile for a default Plone.':
-                me(u'Profile for a default Plone.',
+            'Profile for a default Plone.':
+                me('Profile for a default Plone.',
                         references=[filepath]),
-            u'Mandatory dependencies for a Plone site':
-                me(u'Mandatory dependencies for a Plone site',
+            'Mandatory dependencies for a Plone site':
+                me('Mandatory dependencies for a Plone site',
                         references=[filepath]),
-            u'Adds title and description fields.':
-                me(u'Adds title and description fields.',
+            'Adds title and description fields.':
+                me('Adds title and description fields.',
                         references=[filepath]),
-            u'Basic metadata':
-                me(u'Basic metadata',
+            'Basic metadata':
+                me('Basic metadata',
                         references=[filepath]),
-            u'Content rule names should be translated.':
-                me(u'Content rule names should be translated.',
+            'Content rule names should be translated.':
+                me('Content rule names should be translated.',
                         references=[filepath]),
         }
 
@@ -726,23 +725,23 @@ class TestMessageZCMLReader(unittest.TestCase):
         filepath = os.path.join(dirpath, 'test.zcml')
         input_ = dirpath
         output = {
-            u'Plone Site':
-                me(u'Plone Site',
+            'Plone Site':
+                me('Plone Site',
                         references=[filepath + ':14']),
-            u'Profile for a default Plone.':
-                me(u'Profile for a default Plone.',
+            'Profile for a default Plone.':
+                me('Profile for a default Plone.',
                         references=[filepath + ':14']),
-            u'Mandatory dependencies for a Plone site':
-                me(u'Mandatory dependencies for a Plone site',
+            'Mandatory dependencies for a Plone site':
+                me('Mandatory dependencies for a Plone site',
                         references=[filepath + ':22']),
-            u'Adds title and description fields.':
-                me(u'Adds title and description fields.',
+            'Adds title and description fields.':
+                me('Adds title and description fields.',
                         references=[filepath + ':42']),
-            u'Basic metadata':
-                me(u'Basic metadata',
+            'Basic metadata':
+                me('Basic metadata',
                         references=[filepath + ':42']),
-            u'Content rule names should be translated.':
-                me(u'Content rule names should be translated.',
+            'Content rule names should be translated.':
+                me('Content rule names should be translated.',
                         references=[filepath + ':53']),
         }
 
@@ -767,16 +766,16 @@ class TestMessageZCMLReader(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestGlobal))
-    suite.addTest(unittest.makeSuite(TestMessageEntry))
-    suite.addTest(unittest.makeSuite(TestMessageCatalogInit))
-    suite.addTest(unittest.makeSuite(TestMessageCatalog))
-    suite.addTest(unittest.makeSuite(TestMessageCatalogSync))
-    suite.addTest(unittest.makeSuite(TestMessagePoWriter))
-    suite.addTest(unittest.makeSuite(TestMessagePTReader))
-    suite.addTest(unittest.makeSuite(TestMessagePYReader))
-    suite.addTest(unittest.makeSuite(TestMessageGSReader))
-    suite.addTest(unittest.makeSuite(TestMessageZCMLReader))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestGlobal))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMessageEntry))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMessageCatalogInit))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMessageCatalog))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMessageCatalogSync))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMessagePoWriter))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMessagePTReader))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMessagePYReader))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMessageGSReader))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMessageZCMLReader))
     return suite
 
 if __name__ == '__main__':

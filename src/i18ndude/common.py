@@ -67,7 +67,7 @@ def prepare_xml(file):
             content = content.decode('utf-8')
         except UnicodeDecodeError:
             print('ERROR: {} not decodable as utf-8'.format(file.name))
-            content = u''
+            content = ''
     return StringIO(content)
 
 

@@ -38,7 +38,7 @@ def _severity(tag, attrs):
     # <block condition...
 
     # So lets simplify the keys.
-    keys = set([key[key.find(':') + 1:] for key in keys])
+    keys = {key[key.find(':') + 1:] for key in keys}
 
     if 'use-macro' in keys:
         # metal
@@ -180,7 +180,7 @@ class Handler(xml.sax.ContentHandler):
             # or pipe the output through 'grep', we get a UnicodeEncodeError.
             # Solution: export PYTHONIOENCODING=utf-8
             # See https://stackoverflow.com/questions/492483
-            print(value + u'\n')
+            print(value + '\n')
 
     def clear_output(self):
         self._out = io.StringIO()
@@ -265,7 +265,7 @@ class VerboseHandler(Handler):
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
-        self._out.write(unicode('%s:%s:%s:\n-%s- - %s\n' % (
+        self._out.write(unicode('{}:{}:{}:\n-{}- - {}\n'.format(
             self._filename,
             self._parser.getLineNumber(),
             self._parser.getColumnNumber(),
@@ -290,13 +290,13 @@ class NoSummaryVerboseHandler(Handler):
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
-        self._out.write(unicode('%s:%s:%s:\n-%s- - %s' % (
+        self._out.write(unicode('{}:{}:{}:\n-{}- - {}'.format(
             self._filename,
             self._parser.getLineNumber(),
             self._parser.getColumnNumber(),
             severity,
             msg)))
-        self._out.write(u'\n')
+        self._out.write('\n')
 
     def endDocument(self):
         pass

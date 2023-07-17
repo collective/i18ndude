@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from zope.tal import taldefs
 from zope.tal.taldefs import I18NError
 from zope.tal.taldefs import TAL_VERSION
@@ -251,7 +250,7 @@ class DudeGenerator(TALGenerator):
 
     def emitRepeat(self, arg):
         try:
-            super(DudeGenerator, self).emitRepeat(arg)
+            super().emitRepeat(arg)
         except TALError:
             # Could be Chameleon syntax.
             # It might be okay to simply return, as we are not really

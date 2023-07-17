@@ -67,7 +67,7 @@ def parse_wrapping_arguments(arguments):
 def short_usage(code, msg=''):
     if msg:
         sys.stderr.write(msg)
-    sys.stderr.write(u"Type i18ndude -h<Enter> to see the help.")
+    sys.stderr.write("Type i18ndude -h<Enter> to see the help.")
     sys.exit(code)
 
 
@@ -320,7 +320,7 @@ def rebuild_pot(arguments):
         pyreader = catalog.PYReader(*reader_args, **reader_kwargs)
         gsreader = catalog.GSReader(*reader_args, **reader_kwargs)
         zcmlreader = catalog.ZCMLReader(*reader_args, **reader_kwargs)
-    except IOError as e:
+    except OSError as e:
         short_usage(0, 'I/O Error: %s' % e)
 
     # Read the data.
@@ -426,16 +426,16 @@ def merge(arguments):
         merge2_fn = False
 
     if not pot_fn:
-        short_usage(1, u"No pot file specified as target with --pot.")
+        short_usage(1, "No pot file specified as target with --pot.")
     if not merge_fn:
-        short_usage(1, u"No potfile specified as source with --merge.")
+        short_usage(1, "No potfile specified as source with --merge.")
 
     try:
         orig_ctl = catalog.MessageCatalog(filename=pot_fn)
         merge_ctl = catalog.MessageCatalog(filename=merge_fn)
         if merge2_fn:
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
-    except IOError as e:
+    except OSError as e:
         short_usage(0, 'I/O Error: %s' % e)
 
     # merge
@@ -476,14 +476,14 @@ def sync_parser(subparsers):
 def sync(arguments):
     pot_fn = arguments.pot_fn
     if not pot_fn:
-        short_usage(1, u"No pot file specified as target with --pot.")
+        short_usage(1, "No pot file specified as target with --pot.")
 
     files = filter_isfile(arguments.files)
 
     try:
         pot_ctl = catalog.MessageCatalog(filename=pot_fn)
         po_ctls = [catalog.MessageCatalog(filename=fn) for fn in files]
-    except IOError as e:
+    except OSError as e:
         short_usage(1, 'I/O Error: %s' % e)
 
     for po in po_ctls:
@@ -493,7 +493,7 @@ def sync(arguments):
         writer = catalog.POWriter(file, po)
         writer.write(msgstrToComment=False, sync=True)
 
-        print('%s: %s added, %s removed' % (po.filename,
+        print('{}: {} added, {} removed'.format(po.filename,
                                             len(added_msgids),
                                             len(removed_msgids)))
         file.close()

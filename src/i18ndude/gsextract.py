@@ -10,7 +10,7 @@ I18N_TRANSLATE = '{%s}translate' % I18N_NS
 I18N_ATTRIBUTES = '{%s}attributes' % I18N_NS
 
 
-class GSParser(object):
+class GSParser:
     """GenericSetup profile i18n parser.
     """
 
@@ -23,7 +23,7 @@ class GSParser(object):
         try:
             tree = etree.parse(filename)
         except Exception as e:
-            print(u"There was an error in parsing %s: %s" % (filename, e))
+            print("There was an error in parsing {}: {}".format(filename, e))
             sys.exit(0)
         elem = tree.getroot()
         domain = elem.get(I18N_DOMAIN, None)
@@ -52,7 +52,7 @@ class GSParser(object):
                     if translate:
                         msgid = translate
                     else:
-                        msgstr = u""
+                        msgstr = ""
                     if msgid:
                         self.catalogs[domain].append(
                             (msgid, msgstr, self.filename))
@@ -64,7 +64,7 @@ class GSParser(object):
                         attr, msgid = parts
                     else:
                         attr = parts[0]
-                        msgid = u""
+                        msgid = ""
                     text = elem.get(attr)
                     if text is not None:
                         text = text.strip()
@@ -73,7 +73,7 @@ class GSParser(object):
                             msgstr = text
                         else:
                             msgid = text
-                            msgstr = u""
+                            msgstr = ""
                         self.catalogs[domain].append(
                             (msgid, msgstr, self.filename))
 

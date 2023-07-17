@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from i18ndude.utils import wrapAndQuoteString
 from i18ndude.utils import wrapString
 from i18ndude.utils import undouble_unicode_escape
@@ -85,16 +84,16 @@ class TestUtils(unittest.TestCase):
     def test_wrapAndQuoteString(self):
         self.assertEqual(wrapAndQuoteString(''), '""')
         lineA = 'a' * 50
-        self.assertEqual(wrapAndQuoteString(lineA), '"{0}"'.format(lineA))
+        self.assertEqual(wrapAndQuoteString(lineA), '"{}"'.format(lineA))
         lineB = 'b' * 50
         lineAB = lineA + ' ' + lineB
         self.assertEqual(wrapAndQuoteString(lineAB),
-                         '"{0} "\n"{1}"'.format(lineA, lineB))
+                         '"{} "\n"{}"'.format(lineA, lineB))
 
     def test_wrapAndQuoteString_singleline_unicode(self):
         # disable wrapping
         i18ndude.utils.WRAP = False
-        val = u'ø' * 100
+        val = 'ø' * 100
         try:
             wrapAndQuoteString(val)
         except UnicodeEncodeError:
@@ -107,25 +106,25 @@ class TestUndoubleEscape(unittest.TestCase):
         self.assertEqual(undouble_unicode_escape('foo'), 'foo')
 
     def test_roundtrip_simple_unicode(self):
-        self.assertEqual(undouble_unicode_escape(u'foo'), u'foo')
+        self.assertEqual(undouble_unicode_escape('foo'), 'foo')
 
     def test_roundtrip_complex_unicode(self):
-        goodname = u'Kılıçaslan'
+        goodname = 'Kılıçaslan'
         self.assertEqual(undouble_unicode_escape(goodname), goodname)
 
     def test_encoded(self):
-        garbled = u'K\u0131l\u0131\xe7aslan'
-        goodname = u'Kılıçaslan'
+        garbled = 'K\u0131l\u0131\xe7aslan'
+        goodname = 'Kılıçaslan'
         self.assertEqual(undouble_unicode_escape(garbled), goodname)
 
     def test_double_encoded(self):
-        garbled = u'K\xc4\xb1l\xc4\xb1\xc3\xa7aslan'
-        goodname = u'Kılıçaslan'
+        garbled = 'K\xc4\xb1l\xc4\xb1\xc3\xa7aslan'
+        goodname = 'Kılıçaslan'
         self.assertEqual(undouble_unicode_escape(garbled), goodname)
 
     def test_triple_encoded(self):
         garbled = 'K\xc3\x84\xc2\xb1l\xc3\x84\xc2\xb1\xc3\x83\xc2\xa7aslan'
-        goodname = u'Kılıçaslan'
+        goodname = 'Kılıçaslan'
         self.assertEqual(undouble_unicode_escape(garbled), goodname)
 
     def test_object(self):
@@ -134,17 +133,17 @@ class TestUndoubleEscape(unittest.TestCase):
 
     def test_encoded_escaped_kili(self):
         garbled = 'K\\u0131l\\u0131\xe7aslan'  # actually: bytes
-        goodname = u'Kılıçaslan'
+        goodname = 'Kılıçaslan'
         self.assertEqual(undouble_unicode_escape(garbled), goodname)
 
     def test_encoded_escaped_seen_in_wild(self):
         garbled = 'msgstr "Polo\\u017eka ${title} byla odstran\\u011bna."'
-        goodname = u'msgstr "Položka ${title} byla odstraněna."'
+        goodname = 'msgstr "Položka ${title} byla odstraněna."'
         self.assertEqual(undouble_unicode_escape(garbled), goodname)
 
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestUtils))
-    suite.addTest(unittest.makeSuite(TestUndoubleEscape))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestUtils))
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestUndoubleEscape))
     return suite

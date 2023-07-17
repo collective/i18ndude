@@ -114,17 +114,17 @@ def wrapAndQuoteString(value):
     """Wrap a string in multiple quoted lines.
     """
     if not value:
-        return u'""'
+        return '""'
     # Wrap over multiple lines if needed.
     lineparts = wrapString(value)
     if len(lineparts) == 1:
-        return u'"{0}"'.format(lineparts[0])
+        return '"{}"'.format(lineparts[0])
     # We expect the first line to be empty.  Remove it.
     if not lineparts[0]:
         lineparts.pop(0)
     # Quote all and separate them by newlines.
-    newline = u'"\n"'.join(lineparts)
-    return u'"{0}"'.format(newline)
+    newline = '"\n"'.join(lineparts)
+    return '"{}"'.format(newline)
 
 
 def wrapString(value):
@@ -150,15 +150,15 @@ def wrapString(value):
         return [value]
     # The line maybe is just in between max_len and single_line_max_len
     if len(value) <= max_len:
-        return [u'', value]
+        return ['', value]
     # No, the value does not fit on one line.  This means we need to
     # reserve room for a space at the end of all but the last line.
     max_len -= 1
-    words = value.split(u' ')
+    words = value.split(' ')
     len_words = len(words)
     # We always start with an empty first line
-    lines = [u'']
-    line = u''
+    lines = ['']
+    line = ''
     for index, word in enumerate(words):
         if index == len_words - 1:
             # This is the last word.  The last line needs no space at
@@ -167,7 +167,7 @@ def wrapString(value):
         if not line:
             new_line = word
         else:
-            new_line = u'{0} {1}'.format(line, word)
+            new_line = '{} {}'.format(line, word)
         if len(new_line) <= max_len or not line:
             # There is room or we had an empty line and the current
             # single word is already too large so we accept it as a
@@ -178,7 +178,7 @@ def wrapString(value):
         # There is no more room so we store the line.  If it is not
         # empty it should end with a space.
         if line:
-            line += u' '
+            line += ' '
         lines.append(line)
         # Start a fresh line with the current word.
         line = word
@@ -254,7 +254,7 @@ def prepare_cli_documentation(data):
     diff_cmd = vcs.cmd_diff()
     diff = execute_command(diff_cmd)
     if diff.strip():
-        print("The %r:\n\n%s\n" % (diff_cmd, diff))
+        print("The {!r}:\n\n{}\n".format(diff_cmd, diff))
         if ask("OK to commit this"):
             msg = "Wrote command line documentation."
             commit_cmd = vcs.cmd_commit(msg)

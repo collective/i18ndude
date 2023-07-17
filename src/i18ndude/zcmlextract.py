@@ -39,7 +39,7 @@ TRANSLATABLE_PROPERTIES = [
 ]
 
 
-class ZCMLParser(object):
+class ZCMLParser:
     """ZCML profile i18n parser.
     """
 
@@ -52,7 +52,7 @@ class ZCMLParser(object):
         try:
             tree = etree.parse(filename)
         except Exception as e:
-            print(u"There was an error in parsing %s: %s" % (filename, e))
+            print("There was an error in parsing {}: {}".format(filename, e))
             sys.exit(0)
         elem = tree.getroot()
         domain = elem.get(I18N_DOMAIN, None)
@@ -85,7 +85,7 @@ class ZCMLParser(object):
         if not text:
             return
         msgid = text
-        msgstr = u""
+        msgstr = ""
         self.catalogs[domain].append(
             (msgid, msgstr,
              '{}:{}'.format(self.filename, elem.sourceline)))

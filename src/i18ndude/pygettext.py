@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
 # Originally written by Barry Warsaw <barry@zope.com>
 #
 # Minimally patched to make it even more xgettext compatible
@@ -608,7 +607,7 @@ def main():
             fp = open(options.excludefilename)
             options.toexclude = fp.readlines()
             fp.close()
-        except IOError:
+        except OSError:
             sys.stderr.write(_(
                 "Can't read --exclude-file: %s") % options.excludefilename)
             sys.exit(1)
@@ -669,7 +668,7 @@ def main():
 if __name__ == '__main__':
     main()
     # some more test strings
-    _(u'a unicode string')
+    _('a unicode string')
     # this one creates a warning
     _('*** Seen unexpected token "%(token)s"') % {'token': 'test'}
     _('more' 'than' 'one' 'string')

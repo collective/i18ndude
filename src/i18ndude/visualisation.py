@@ -88,7 +88,7 @@ def output_table(out, languagelist, total, tiered):
                     name = code
                 else:
                     name = lang['name']
-                desc = '%s (%s)' % (name, code)
+                desc = '{} ({})'.format(name, code)
                 table += print_row(0, desc)
 
         body += _TABLE % dict(table=table)
@@ -105,7 +105,7 @@ def output_table(out, languagelist, total, tiered):
                     name = code
                 else:
                     name = lang['name']
-                desc = '%s (%s)' % (name, code)
+                desc = '{} ({})'.format(name, code)
                 table += print_row(0, desc)
 
         body += _TABLE % dict(table=table)
@@ -130,7 +130,7 @@ def aligned_print(percentage, desc):
         percentage = '  %d' % percentage
     elif percentage < 100:
         percentage = ' %d' % percentage
-    print("%s%% - %s" % (percentage, desc))
+    print("{}% - {}".format(percentage, desc))
 
 
 def output_list(out, languagelist, total, tiered):
@@ -155,7 +155,7 @@ def output_list(out, languagelist, total, tiered):
                 name = code
             else:
                 name = lang['name']
-            desc = '%s (%s)' % (name, code)
+            desc = '{} ({})'.format(name, code)
             aligned_print(0, desc)
 
     print('\nTier 2:\n')
@@ -170,7 +170,7 @@ def output_list(out, languagelist, total, tiered):
                 name = code
             else:
                 name = lang['name']
-            desc = '%s (%s)' % (name, code)
+            desc = '{} ({})'.format(name, code)
             aligned_print(0, desc)
 
     print('\nTier 3:\n')
@@ -200,9 +200,9 @@ def make_listing(pot, pos, table=False, tiered=False):
         name = po.mime_header.get('Language-Name')
         language = languagelist.get(code)
         if language is not None:
-            desc = "%s (%s)" % (language['name'], code)
+            desc = "{} ({})".format(language['name'], code)
         else:
-            desc = "%s (%s)" % (name, code)
+            desc = "{} ({})".format(name, code)
 
         value = 0
         for msgid in msgids:

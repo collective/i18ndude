@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from i18ndude.utils import quote
 from i18ndude.utils import wrapAndQuoteString
 from i18ndude.utils import wrapString
@@ -248,14 +247,14 @@ class MessageCatalog(OrderedDict):
             if msgstr != self[msgid].msgstr:
                 # XXX this does not appear to have any test coverage
                 # the actual warnings are emitted by zope.tal
-                msg = u"Warning: msgid '%s' in %s already exists " \
-                      u"with a different default (bad: %s, should be: %s)\n" \
-                      u"The references for the existent value are:\n%s\n"
+                msg = "Warning: msgid '%s' in %s already exists " \
+                      "with a different default (bad: %s, should be: %s)\n" \
+                      "The references for the existent value are:\n%s\n"
                 msg = msg % (msgid,
-                             u'\n'.join(references),
+                             '\n'.join(references),
                              msgstr,
                              self[msgid].msgstr,
-                             u'\n'.join(self[msgid].references))
+                             '\n'.join(self[msgid].references))
                 if not PY3:
                     msg = msg.encode('utf-8')
                 sys.stderr.write(msg)
@@ -550,7 +549,7 @@ class POWriter:
         self._printToFile(f, 'msgstr ""')
 
         for key in ctl.mime_header.keys():
-            self._printToFile(f, '"%s: %s\\n"' % (key, ctl.mime_header[key]))
+            self._printToFile(f, '"{}: {}\\n"'.format(key, ctl.mime_header[key]))
 
     def _write_messages(self, sort, msgstrToComment, sync):
         """Writes the messages out."""
@@ -600,13 +599,13 @@ class POWriter:
             msgstr = msgstr.replace('&quot;', '\\\"')
             msgstr = msgstr.replace('&#xa0;', ' ')
             msgstr = msgstr.replace('&amp;', '&')
-            msgstr = msgstr.replace('&hellip;', u'\u2026')
-            msgstr = msgstr.replace('&#8230;', u'\u2026')
-            msgstr = msgstr.replace('&mdash;', u'\u2014')
-            msgstr = msgstr.replace('&#9632;', u'\u25A0')
-            msgstr = msgstr.replace('&#9675;', u'\u25CB')
-            msgstr = msgstr.replace('&#9679;', u'\u25CF')
-            self._printToFile(f, '#.%s"%s"' % (DEFAULT_COMMENT, msgstr))
+            msgstr = msgstr.replace('&hellip;', '\u2026')
+            msgstr = msgstr.replace('&#8230;', '\u2026')
+            msgstr = msgstr.replace('&mdash;', '\u2014')
+            msgstr = msgstr.replace('&#9632;', '\u25A0')
+            msgstr = msgstr.replace('&#9675;', '\u25CB')
+            msgstr = msgstr.replace('&#9679;', '\u25CF')
+            self._printToFile(f, '#.{}"{}"'.format(DEFAULT_COMMENT, msgstr))
             msgstr = ''
 
         # used in sync to filter duplicate default comments
@@ -657,7 +656,7 @@ class POWriter:
             self._printToFile(f, '#, fuzzy')
 
         # Add backslash escape to id.
-        if '"' in id and u'\\"' not in id:
+        if '"' in id and '\\"' not in id:
             id = id.replace('"', '\\"')
 
         self._printToFile(f, self._create_msgid(id))
@@ -708,7 +707,7 @@ class PTReader:
                 if self.include_line_numbers:
                     filenames = [l[0] + ':' + str(l[1]) for l in tal[msgid]]
                 else:
-                    filenames = sorted(set([l[0] for l in tal[msgid]]))
+                    filenames = sorted({l[0] for l in tal[msgid]})
                 self._add_msg(msgid,
                               msgstr,
                               [],
@@ -766,7 +765,7 @@ class PYReader:
             if self.include_line_numbers:
                 filenames = [l[0] + ':' + str(l[1]) for l in py[msgid]]
             else:
-                filenames = sorted(set([l[0] for l in py[msgid]]))
+                filenames = sorted({l[0] for l in py[msgid]})
             self._add_msg(msgid,
                           msgid.default or '',
                           [],
@@ -790,7 +789,7 @@ class PYReader:
                                   automatic_comments=automatic_comments)
 
 
-class GSReader(object):
+class GSReader:
     """Reads in a list of GenericSetup profile files.
     """
 
@@ -843,7 +842,7 @@ class GSReader(object):
                                   automatic_comments=automatic_comments)
 
 
-class ZCMLReader(object):
+class ZCMLReader:
     """Reads in a list of ZCML files.
     """
 

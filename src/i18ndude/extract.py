@@ -1,5 +1,4 @@
 #!/usr/bin/env python2.4
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 # Copyright (c) 2003 Zope Corporation and Contributors.
@@ -98,7 +97,7 @@ msgstr ""
 
 
 @implementer(IPOTEntry)
-class POTEntry(object):
+class POTEntry:
     r"""This class represents a single message entry in the POT file.
 
     >>> import sys
@@ -151,7 +150,7 @@ class POTEntry(object):
         self.comments += comment + '\n'
 
     def addLocationComment(self, filename, line):
-        self.comments += '#: %s:%s\n' % (
+        self.comments += '#: {}:{}\n'.format(
             filename.replace(os.sep, '/'), line)
 
     def write(self, file):
@@ -174,7 +173,7 @@ class POTEntry(object):
 
 
 @implementer(IPOTMaker)
-class POTMaker(object):
+class POTMaker:
     """This class inserts sets of strings into a POT file.
     """
 
@@ -199,7 +198,7 @@ class POTMaker(object):
         # First, try to get the product version
         fn = os.path.join(self.path, 'version.txt')
         if os.path.exists(fn):
-            return open(fn, 'r').read().strip()
+            return open(fn).read().strip()
 
         # Do not fall back to the Zope version, as this makes no sense for the
         # general project.
@@ -227,7 +226,7 @@ class POTMaker(object):
 
 
 @implementer(ITokenEater)
-class TokenEater(object):
+class TokenEater:
     """This is almost 100% taken from `pygettext.py`, except that I
     removed all option handling and output a dictionary.
 
@@ -516,7 +515,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
     from zope.tal.talparser import TALParser
     engine = POEngine()
 
-    class Devnull(object):
+    class Devnull:
 
         def write(self, s):
             pass
