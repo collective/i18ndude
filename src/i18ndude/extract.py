@@ -161,9 +161,6 @@ class POTEntry:
         file.write('msgstr ""\n')
         file.write("\n")
 
-    def __cmp__(self, other):
-        return cmp(self.comments, other.comments)
-
 
 @implementer(IPOTMaker)
 class POTMaker:
@@ -547,7 +544,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
             POTALInterpreter(program, macros, engine, stream=Devnull(), metal=False)()
         except KeyboardInterrupt:
             raise
-        except:  # Hee hee, I love bare excepts!
+        except Exception:
             if ext == ".html" or ext.endswith("pt"):
                 # We can have one retry with our own generator.
                 gen = DudeGenerator(xml=0)
@@ -558,7 +555,7 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
                     POTALInterpreter(
                         program, macros, engine, stream=Devnull(), metal=False
                     )()
-                except:  # Hee hee, I love bare excepts!
+                except Exception:
                     print("There was an error processing", filename)
                     traceback.print_exc()
             else:
@@ -575,5 +572,5 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
     if include_default_domain:
         catalog.update(engine.catalog["default"])
     for msgid, locations in catalog.items():
-        catalog[msgid] = [(l[0], l[1][0]) for l in locations]
+        catalog[msgid] = [(loc[0], loc[1][0]) for loc in locations]
     return catalog

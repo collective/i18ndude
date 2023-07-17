@@ -1,10 +1,10 @@
 # bla
-_ = lambda x: x
+def _(x):
+    return x
+
+
 zero = _("Zero")
 one = _("One")
-
-out = _("Out1", domain="running")
-
 if True:
     three = _(msgid="msgid_three", default="Three")
 

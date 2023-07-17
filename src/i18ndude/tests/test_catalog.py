@@ -700,9 +700,6 @@ class TestMessagePYReader(unittest.TestCase):
             "msgid_six": me(
                 "msgid_six", msgstr="\nLine 1\nLine 2\nLine 3\n", references=[filepath]
             ),  # noqa
-            # XXX This should not be found as it's in a different domain
-            # instead it recognizes the domain as a msgstr now
-            "Out1": me("Out1", msgstr="running", references=[filepath]),  # noqa
         }
 
         pyr = catalog.PYReader(input_, "testing", include_line_numbers=False)
@@ -730,8 +727,8 @@ class TestMessagePYReader(unittest.TestCase):
         filepath = os.path.join(dirpath, "test2.py")
         input_ = dirpath
         output = {
-            "Zero": me("Zero", references=[filepath + ":3"]),
-            "One": me("One", references=[filepath + ":4"]),
+            "Zero": me("Zero", references=[filepath + ":6"]),
+            "One": me("One", references=[filepath + ":7"]),
             "msgid_three": me(
                 "msgid_three", msgstr="Three", references=[filepath + ":9"]
             ),  # noqa
@@ -746,9 +743,6 @@ class TestMessagePYReader(unittest.TestCase):
                 msgstr="\nLine 1\nLine 2\nLine 3\n",
                 references=[filepath + ":15"],
             ),  # noqa
-            # XXX This should not be found as it's in a different domain
-            # instead it recognizes the domain as a msgstr now
-            "Out1": me("Out1", msgstr="running", references=[filepath + ":6"]),  # noqa
         }
 
         pyr = catalog.PYReader(input_, "testing")

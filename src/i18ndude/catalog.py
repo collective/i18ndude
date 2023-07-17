@@ -690,9 +690,9 @@ class PTReader:
 
             if msgid and msgid != "${DYNAMIC_CONTENT}":
                 if self.include_line_numbers:
-                    filenames = [l[0] + ":" + str(l[1]) for l in tal[msgid]]
+                    filenames = [line[0] + ":" + str(line[1]) for line in tal[msgid]]
                 else:
-                    filenames = sorted({l[0] for l in tal[msgid]})
+                    filenames = sorted({line[0] for line in tal[msgid]})
                 self._add_msg(msgid, msgstr, [], filenames, [], self.domain)
 
         return []
@@ -744,9 +744,9 @@ class PYReader:
 
         for msgid in py:
             if self.include_line_numbers:
-                filenames = [l[0] + ":" + str(l[1]) for l in py[msgid]]
+                filenames = [line[0] + ":" + str(line[1]) for line in py[msgid]]
             else:
-                filenames = sorted({l[0] for l in py[msgid]})
+                filenames = sorted({line[0] for line in py[msgid]})
             self._add_msg(msgid, msgid.default or "", [], filenames, [], self.domain)
         return []
 
