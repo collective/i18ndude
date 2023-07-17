@@ -88,7 +88,7 @@ def output_table(out, languagelist, total, tiered):
                     name = code
                 else:
                     name = lang['name']
-                desc = '{} ({})'.format(name, code)
+                desc = f'{name} ({code})'
                 table += print_row(0, desc)
 
         body += _TABLE % dict(table=table)
@@ -105,7 +105,7 @@ def output_table(out, languagelist, total, tiered):
                     name = code
                 else:
                     name = lang['name']
-                desc = '{} ({})'.format(name, code)
+                desc = f'{name} ({code})'
                 table += print_row(0, desc)
 
         body += _TABLE % dict(table=table)
@@ -130,7 +130,7 @@ def aligned_print(percentage, desc):
         percentage = '  %d' % percentage
     elif percentage < 100:
         percentage = ' %d' % percentage
-    print("{}% - {}".format(percentage, desc))
+    print(f"{percentage}% - {desc}")
 
 
 def output_list(out, languagelist, total, tiered):
@@ -155,7 +155,7 @@ def output_list(out, languagelist, total, tiered):
                 name = code
             else:
                 name = lang['name']
-            desc = '{} ({})'.format(name, code)
+            desc = f'{name} ({code})'
             aligned_print(0, desc)
 
     print('\nTier 2:\n')
@@ -170,7 +170,7 @@ def output_list(out, languagelist, total, tiered):
                 name = code
             else:
                 name = lang['name']
-            desc = '{} ({})'.format(name, code)
+            desc = f'{name} ({code})'
             aligned_print(0, desc)
 
     print('\nTier 3:\n')
@@ -202,7 +202,7 @@ def make_listing(pot, pos, table=False, tiered=False):
         if language is not None:
             desc = "{} ({})".format(language['name'], code)
         else:
-            desc = "{} ({})".format(name, code)
+            desc = f"{name} ({code})"
 
         value = 0
         for msgid in msgids:

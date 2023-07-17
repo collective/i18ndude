@@ -549,7 +549,7 @@ class POWriter:
         self._printToFile(f, 'msgstr ""')
 
         for key in ctl.mime_header.keys():
-            self._printToFile(f, '"{}: {}\\n"'.format(key, ctl.mime_header[key]))
+            self._printToFile(f, f'"{key}: {ctl.mime_header[key]}\\n"')
 
     def _write_messages(self, sort, msgstrToComment, sync):
         """Writes the messages out."""
@@ -605,7 +605,7 @@ class POWriter:
             msgstr = msgstr.replace('&#9632;', '\u25A0')
             msgstr = msgstr.replace('&#9675;', '\u25CB')
             msgstr = msgstr.replace('&#9679;', '\u25CF')
-            self._printToFile(f, '#.{}"{}"'.format(DEFAULT_COMMENT, msgstr))
+            self._printToFile(f, f'#.{DEFAULT_COMMENT}"{msgstr}"')
             msgstr = ''
 
         # used in sync to filter duplicate default comments

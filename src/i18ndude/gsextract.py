@@ -23,7 +23,7 @@ class GSParser:
         try:
             tree = etree.parse(filename)
         except Exception as e:
-            print("There was an error in parsing {}: {}".format(filename, e))
+            print(f"There was an error in parsing {filename}: {e}")
             sys.exit(0)
         elem = tree.getroot()
         domain = elem.get(I18N_DOMAIN, None)

@@ -52,7 +52,7 @@ class ZCMLParser:
         try:
             tree = etree.parse(filename)
         except Exception as e:
-            print("There was an error in parsing {}: {}".format(filename, e))
+            print(f"There was an error in parsing {filename}: {e}")
             sys.exit(0)
         elem = tree.getroot()
         domain = elem.get(I18N_DOMAIN, None)
@@ -88,7 +88,7 @@ class ZCMLParser:
         msgstr = ""
         self.catalogs[domain].append(
             (msgid, msgstr,
-             '{}:{}'.format(self.filename, elem.sourceline)))
+             f'{self.filename}:{elem.sourceline}'))
 
     def getCatalogs(self):
         return self.catalogs

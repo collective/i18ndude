@@ -84,11 +84,11 @@ class TestUtils(unittest.TestCase):
     def test_wrapAndQuoteString(self):
         self.assertEqual(wrapAndQuoteString(''), '""')
         lineA = 'a' * 50
-        self.assertEqual(wrapAndQuoteString(lineA), '"{}"'.format(lineA))
+        self.assertEqual(wrapAndQuoteString(lineA), f'"{lineA}"')
         lineB = 'b' * 50
         lineAB = lineA + ' ' + lineB
         self.assertEqual(wrapAndQuoteString(lineAB),
-                         '"{} "\n"{}"'.format(lineA, lineB))
+                         f'"{lineA} "\n"{lineB}"')
 
     def test_wrapAndQuoteString_singleline_unicode(self):
         # disable wrapping

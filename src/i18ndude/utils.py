@@ -118,13 +118,13 @@ def wrapAndQuoteString(value):
     # Wrap over multiple lines if needed.
     lineparts = wrapString(value)
     if len(lineparts) == 1:
-        return '"{}"'.format(lineparts[0])
+        return f'"{lineparts[0]}"'
     # We expect the first line to be empty.  Remove it.
     if not lineparts[0]:
         lineparts.pop(0)
     # Quote all and separate them by newlines.
     newline = '"\n"'.join(lineparts)
-    return '"{}"'.format(newline)
+    return f'"{newline}"'
 
 
 def wrapString(value):
@@ -167,7 +167,7 @@ def wrapString(value):
         if not line:
             new_line = word
         else:
-            new_line = '{} {}'.format(line, word)
+            new_line = f'{line} {word}'
         if len(new_line) <= max_len or not line:
             # There is room or we had an empty line and the current
             # single word is already too large so we accept it as a
@@ -254,7 +254,7 @@ def prepare_cli_documentation(data):
     diff_cmd = vcs.cmd_diff()
     diff = execute_command(diff_cmd)
     if diff.strip():
-        print("The {!r}:\n\n{}\n".format(diff_cmd, diff))
+        print(f"The {diff_cmd!r}:\n\n{diff}\n")
         if ask("OK to commit this"):
             msg = "Wrote command line documentation."
             commit_cmd = vcs.cmd_commit(msg)

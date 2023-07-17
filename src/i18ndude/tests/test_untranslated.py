@@ -181,7 +181,7 @@ class TestUntranslatedScript(unittest.TestCase):
             sys.stdout = old_stdout
         self.assertEqual(result, 1)
         # A specific line should be reported as missing an i18n.
-        self.assertIn('{}:16'.format(path), output.getvalue())
+        self.assertIn(f'{path}:16', output.getvalue())
 
     def test_script_chameleon(self):
         path = os.path.join(TESTDATA_DIR, 'input', 'chameleon.pt')

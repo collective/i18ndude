@@ -46,10 +46,10 @@ class TestMessageEntry(unittest.TestCase):
         self.msgstr = 'test text'
         self.references = ['test1.pt', 'test2.pt']
         self.default_text = 'test default'
-        self.default_comment = '{}"{}"'.format(catalog.DEFAULT_COMMENT, self.default_text)  # noqa
+        self.default_comment = f'{catalog.DEFAULT_COMMENT}"{self.default_text}"'  # noqa
         self.automatic_comments = ['first line', 'second line', self.default_comment]  # noqa
         self.orig_text = 'test original'
-        self.orig_comment = '{}"{}"'.format(catalog.ORIGINAL_COMMENT, self.orig_text)  # noqa
+        self.orig_comment = f'{catalog.ORIGINAL_COMMENT}"{self.orig_text}"'  # noqa
         self.comments = ['A comment', self.orig_comment]
 
     def test_init(self):
@@ -292,10 +292,10 @@ class TestMessageCatalog(unittest.TestCase):
         self.msgstr = 'test text'
         self.references = ['test1.pt', 'test2.pt']
         self.default_text = 'test default'
-        self.default_comment = '{}"{}"'.format(catalog.DEFAULT_COMMENT, self.default_text)  # noqa
+        self.default_comment = f'{catalog.DEFAULT_COMMENT}"{self.default_text}"'  # noqa
         self.automatic_comments = ['first line', 'second line', self.default_comment]  # noqa
         self.orig_text = 'test original'
-        self.orig_comment = '{}"{}"'.format(catalog.ORIGINAL_COMMENT, self.orig_text)  # noqa
+        self.orig_comment = f'{catalog.ORIGINAL_COMMENT}"{self.orig_text}"'  # noqa
         self.comments = ['A comment', self.orig_comment]
 
     def test_add(self):
@@ -495,7 +495,7 @@ class TestMessagePTReader(unittest.TestCase):
                             in contents or
                             "bad: Buzzer, should be: Buzz"  # py27
                             in contents,
-                            'bad Buzzer not in contents: {}'.format(contents))
+                            f'bad Buzzer not in contents: {contents}')
 
         out = ptr.catalogs['testing']
         for key in out:
@@ -549,7 +549,7 @@ class TestMessagePTReader(unittest.TestCase):
                             in contents or
                             "bad: Buzzer, should be: Buzz"  # py27
                             in contents,
-                            'bad Buzzer not in contents: {}'.format(contents))
+                            f'bad Buzzer not in contents: {contents}')
 
         out = ptr.catalogs['testing']
         for key in out:
