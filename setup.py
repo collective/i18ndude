@@ -1,18 +1,9 @@
+from pathlib import Path
 from setuptools import find_packages
 from setuptools import setup
 
-import os
-import sys
-
 
 version = "6.0.1.dev0"
-
-install_requires = [
-    "lxml",
-    "zope.i18nmessageid >= 3.3",
-    "zope.interface >= 3.3",
-    "zope.tal >= 4.3.0",
-]
 
 setup(
     name="i18ndude",
@@ -20,11 +11,11 @@ setup(
     description="i18ndude performs various tasks related to ZPT's, Python "
     "Scripts and i18n.",
     long_description=(
-        open("README.rst").read()
-        + "\n"
-        + open(os.path.join("docs", "command.rst")).read()
-        + "\n"
-        + open("CHANGES.rst").read()
+        Path("README.rst").read_text()
+        + "\n\n"
+        + (Path("docs") / "command.rst").read_text()
+        + "\n\n"
+        + Path("CHANGES.rst").read_text()
     ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -57,7 +48,12 @@ setup(
     zip_safe=False,
     test_suite="i18ndude.tests",
     python_requires=">=3.8",
-    install_requires=install_requires,
+    install_requires=[
+        "lxml",
+        "zope.i18nmessageid >= 3.3",
+        "zope.interface >= 3.3",
+        "zope.tal >= 4.3.0",
+    ],
     extras_require={
         "plone": ["plone.i18n"],
     },
