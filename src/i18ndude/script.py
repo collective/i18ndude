@@ -34,10 +34,6 @@ import textwrap
 import xml.sax
 
 
-PY3 = sys.version_info > (3,)
-if PY3:
-    unicode = str
-
 # Define a parent parser for the wrapping arguments.  This is shared
 # by a few commands.  Note: if you use this parser, you need to call
 # the parse_wrapping_arguments function somewhere in the handling of

@@ -26,19 +26,19 @@ msgstr ""
 "Of course we can fix that. After all: i18ndude is awesome, as I am sure you "
 "all agree."
 
+msgid "msgid for standard text"
+msgstr "msgstr ···"
+
+#. Default: [···]
+#: ./folder/file_unicode
+msgid "msgid for text with comment"
+msgstr "msgstr ···"
+
 msgid "msgid for text with german umlaut"
 msgstr "äöüß text"
 
 msgid "msgid for text with html-entity"
 msgstr "&quot;this&nbsp;is&laquo;&auml;&amp;&ouml;&raquo;&quot;"
-
-msgid "msgid for unicode text"
-msgstr "unicode msgstr ···"
-
-#. Default: [···]
-#: ./folder/file_unicode
-msgid "msgid for unicode text with comment"
-msgstr "unicode msgstr ···"
 
 ## I am a dead comment
 msgid "msgid has spaces"

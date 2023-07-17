@@ -42,18 +42,7 @@ import traceback
 
 DEFAULT_CHARSET = 'utf-8'
 DEFAULT_ENCODING = '8bit'
-PY3 = sys.version_info > (3,)
 
-# Sigh. The `tokenize.tokenize()` API deprecated in py22 is actually the
-# py36 API, but not in a py27 backward compatible way. And the py27 API
-# `tokenize.generate_tokens()` apparently exists, but is undocumented and
-# chokes in py36 in a forward incompatible way.
-
-if PY3:
-    unicode = str
-    py2orpy3_tokenize = tokenize.tokenize
-else:
-    py2orpy3_tokenize = tokenize.generate_tokens
 
 # Modified header, which is more suitable for any project
 
@@ -251,7 +240,7 @@ class TokenEater:
     ...     "_(u'hello ${name}', u'buenos dias', {'name': 'Bob'}); "
     ...     "_(u'hi ${name}', mapping={'name': 'Bob'})"
     ...     ).encode('utf-8'))
-    >>> g = py2orpy3_tokenize(file.readline)
+    >>> g = tokenize.tokenize(file.readline)
     >>> for ttype, tstring, stup, etup, line in g:
     ...     eater(ttype, tstring, stup, etup, line)
 
@@ -264,7 +253,7 @@ class TokenEater:
     >>> items == expect
     True
 
-    The key in the catalog is not a unicode string, it's a real
+    The key in the catalog is not a string, it's a real
     message id with a default value:
 
     >>> msgid = items.pop(0)[0]
@@ -279,7 +268,7 @@ class TokenEater:
     >>> msgid.default == u''
     True
 
-    Note that everything gets converted to unicode.
+    Note that everything gets converted to string.
     """
 
     def __init__(self):
@@ -385,7 +374,7 @@ class TokenEater:
             lineno = self.__lineno
 
         if default is not None:
-            default = unicode(default)
+            default = str(default)
         msg = Message(msg, default=default)
         if msg in self.__messages:
             messages = list(self.__messages.keys())
@@ -481,7 +470,7 @@ def py_strings(dir, domain="none", exclude=()):
         try:
             eater.set_filename(filename)
             try:
-                g = py2orpy3_tokenize(fp.readline)
+                g = tokenize.tokenize(fp.readline)
                 for ttype, tstring, stup, etup, line in g:
                     eater(ttype, tstring, stup, etup, line)
             except tokenize.TokenError as e:

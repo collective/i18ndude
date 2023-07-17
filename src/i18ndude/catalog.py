@@ -11,10 +11,6 @@ import sys
 import time
 
 
-PY3 = sys.version_info > (3,)
-if PY3:
-    unicode = str
-
 DEFAULT_PO_HEADER = [
     '--- PLEASE EDIT THE LINES BELOW CORRECTLY ---',
     'SOME DESCRIPTIVE TITLE.',
@@ -212,12 +208,12 @@ class MessageCatalog(OrderedDict):
             return
         for (key, val) in dict.items():
             if getattr(val, 'msgid', None) is not None \
-               and not isinstance(val.msgid, unicode):
+               and not isinstance(val.msgid, str):
                 val.msgid = val.msgid.decode(self.encoding)
             if getattr(val, 'msgstr', None) is not None \
-               and not isinstance(val.msgstr, unicode):
+               and not isinstance(val.msgstr, str):
                 val.msgstr = val.msgstr.decode(self.encoding)
-            if isinstance(key, unicode):
+            if isinstance(key, str):
                 self[key] = val
             else:
                 self[key.decode(self.encoding)] = val
@@ -234,9 +230,9 @@ class MessageCatalog(OrderedDict):
             automatic_comments = msgid.automatic_comments
             comments = msgid.comments
             msgid = msgid.msgid
-        if not isinstance(msgid, unicode):
+        if not isinstance(msgid, str):
             msgid = msgid.decode(self.encoding)
-        if not isinstance(msgstr, unicode):
+        if not isinstance(msgstr, str):
             msgstr = msgstr.decode(self.encoding)
         if msgid not in self:
             self[msgid] = MessageEntry(msgid, msgstr=msgstr, comments=comments,
@@ -257,8 +253,6 @@ class MessageCatalog(OrderedDict):
                              msgstr,
                              self[msgid].msgstr,
                              '\n'.join(self[msgid].references))
-                if not PY3:
-                    msg = msg.encode('utf-8')
                 sys.stderr.write(msg)
             if comments:
                 comments = [
@@ -292,8 +286,6 @@ class MessageCatalog(OrderedDict):
             elif mergewarn:
                 message = 'Merge-Warning: Key is already in target-catalog: %s'\
                     % key
-                if not PY3:
-                    message = message.encode('utf-8')
                 sys.stderr.write(message)
 
         return ids
@@ -493,38 +485,11 @@ class POWriter:
         self._file = file
         self._msgctl = catalog
 
-    def _encode(self, line, input_encoding=None, output_encoding=None):
-        """encode a given unicode type or string type to string type
-        in encoding output_encoding
-        """
-        if PY3:
-            return line
-        # all of the below is a python2-only unicode hack
-        # just goes to show why python3 was needed
-
-        content_type = self._msgctl.mime_header.get(
-            'Content-Type', 'text/plain; charset=utf-8')
-        charset = content_type.split('=')
-        encoding = charset[-1]
-
-        # check if input is not type unicode
-        if not isinstance(line, unicode):
-            if input_encoding is None:
-                # get input encoding from message catalog
-                input_encoding = encoding
-            line = unicode(line, input_encoding)
-
-        if output_encoding is None:
-            # get output encoding from message catalog
-            output_encoding = encoding
-
-        return line.encode(output_encoding)
-
     def _printToFile(self, file, string):
-        """ Print wrapper which allows to specifiy an output encoding"""
+        """Print wrapper which allows to specifiy an output encoding"""
         if string:
             string = string.strip()
-            file.write(self._encode(string))
+            file.write(string)
         file.write('\n')
 
     def write(self, sort=True, msgstrToComment=False, sync=False):

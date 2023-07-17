@@ -3,14 +3,8 @@ from i18ndude import catalog
 from i18ndude import utils
 
 import os
-import sys
 import unittest
 import warnings
-
-
-PY3 = sys.version_info > (3,)
-if PY3:
-    unicode = str
 
 
 class TestGlobal(unittest.TestCase):
@@ -163,13 +157,13 @@ class TestMessageCatalogInit(unittest.TestCase):
                 'msgid_has_underlines and spaces',
                 msgstr='msgstr_has_underlines and spaces'),
 
-            'msgid for unicode text': self.me(
-                'msgid for unicode text',
-                msgstr='unicode msgstr \xb7\xb7\xb7'),
+            'msgid for standard text': self.me(
+                'msgid for standard text',
+                msgstr='msgstr \xb7\xb7\xb7'),
 
-            'msgid for unicode text with comment': self.me(
-                'msgid for unicode text with comment',
-                msgstr='unicode msgstr \xb7\xb7\xb7',
+            'msgid for text with comment': self.me(
+                'msgid for text with comment',
+                msgstr='msgstr \xb7\xb7\xb7',
                 references=['./folder/file_unicode'],
                 automatic_comments=[' Default: [···]']),
 
@@ -609,15 +603,15 @@ class TestMessagePYReader(unittest.TestCase):
         filepath = os.path.join(dirpath, 'test2.py')
         input_ = dirpath
         output = {
-            'Zero': me('Zero', references=[filepath + ':4']),
-            'One': me('One', references=[filepath + ':5']),
-            'msgid_three': me('msgid_three', msgstr='Three', references=[filepath + ':10']),  # noqa
-            'msgid_four': me('msgid_four', msgstr='Four ${map}', references=[filepath + ':13']),  # noqa
-            'msgid_five': me('msgid_five', msgstr="五番目", references=[filepath + ':17']),  # noqa
-            'msgid_six': me('msgid_six', msgstr="\nLine 1\nLine 2\nLine 3\n", references=[filepath + ':19']),  # noqa
+            'Zero': me('Zero', references=[filepath + ':3']),
+            'One': me('One', references=[filepath + ':4']),
+            'msgid_three': me('msgid_three', msgstr='Three', references=[filepath + ':9']),  # noqa
+            'msgid_four': me('msgid_four', msgstr='Four ${map}', references=[filepath + ':12']),  # noqa
+            'msgid_five': me('msgid_five', msgstr="五番目", references=[filepath + ':16']),  # noqa
+            'msgid_six': me('msgid_six', msgstr="\nLine 1\nLine 2\nLine 3\n", references=[filepath + ':18']),  # noqa
             # XXX This should not be found as it's in a different domain
             # instead it recognizes the domain as a msgstr now
-            'Out1': me('Out1', msgstr='running', references=[filepath + ':7'])  # noqa
+            'Out1': me('Out1', msgstr='running', references=[filepath + ':6'])  # noqa
         }
 
         pyr = catalog.PYReader(input_, 'testing')

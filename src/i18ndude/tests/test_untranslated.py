@@ -13,24 +13,12 @@ import unittest
 import xml.sax
 
 
-PY3 = sys.version_info > (3,)
-if PY3:
-    unicode = str
-    unicode_StringIO = io.StringIO
-else:
-    import StringIO
-
-    # io.StringIO in python2 (but not in python3) raises:
-    # TypeError: unicode argument expected, got 'str'
-    unicode_StringIO = StringIO.StringIO
-
-
 def find_untranslated(input):
-    out = unicode_StringIO()
+    out = io.StringIO()
     parser = xml.sax.make_parser(['expat'])
     handler = i18ndude.untranslated.VerboseHandler(parser, out)
     parser.setContentHandler(handler)
-    parser.parse(unicode_StringIO(input))
+    parser.parse(io.StringIO(input))
     return out.getvalue()
 
 
@@ -175,7 +163,7 @@ class TestUntranslatedScript(unittest.TestCase):
 
     def test_script_template_4(self):
         path = os.path.join(TESTDATA_DIR, 'input', 'test4.pt')
-        output = unicode_StringIO()
+        output = io.StringIO()
         old_stdout = sys.stdout
         sys.stdout = output
         try:

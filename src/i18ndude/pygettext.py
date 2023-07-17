@@ -670,7 +670,7 @@ def main():
 if __name__ == '__main__':
     main()
     # some more test strings
-    _('a unicode string')
+    _('a string')
     # this one creates a warning
     _('*** Seen unexpected token "%(token)s"') % {'token': 'test'}
     _('more' 'than' 'one' 'string')

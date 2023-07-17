@@ -1,12 +1,7 @@
 import io
 import re
-import sys
 import xml.sax
 
-
-PY3 = sys.version_info > (3,)
-if PY3:
-    unicode = str
 
 IGNORE_UNTRANSLATED = 'i18n:ignore'
 IGNORE_UNTRANSLATED_ATTRIBUTES = 'i18n:ignore-attributes'
@@ -175,7 +170,7 @@ class Handler(xml.sax.ContentHandler):
     def show_output(self):
         value = self._out.getvalue().strip()
         if value:
-            if not isinstance(value, unicode):
+            if not isinstance(value, str):
                 value = value.decode('utf-8')
             # Note: if value contains non-ascii and we redirect stdout
             # or pipe the output through 'grep', we get a UnicodeEncodeError.
@@ -266,7 +261,7 @@ class VerboseHandler(Handler):
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
-        self._out.write(unicode('{}:{}:{}:\n-{}- - {}\n'.format(
+        self._out.write(str('{}:{}:{}:\n-{}- - {}\n'.format(
             self._filename,
             self._parser.getLineNumber(),
             self._parser.getColumnNumber(),
@@ -277,13 +272,13 @@ class VerboseHandler(Handler):
             char = '='
         else:
             char = '-'
-        self._out.write(unicode(char * 79) + '\n')
+        self._out.write(str(char * 79) + '\n')
 
     def endDocument(self):
-        self._out.write(unicode(
+        self._out.write(str(
             'Processing of %s finished. (%s warnings, %s errors)\n'
             % (self._filename, self._stats['WARNING'], self._stats['ERROR'])))
-        self._out.write(unicode('=' * 79) + '\n')
+        self._out.write(str('=' * 79) + '\n')
 
 
 class NoSummaryVerboseHandler(Handler):
@@ -291,7 +286,7 @@ class NoSummaryVerboseHandler(Handler):
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
-        self._out.write(unicode('{}:{}:{}:\n-{}- - {}'.format(
+        self._out.write(str('{}:{}:{}:\n-{}- - {}'.format(
             self._filename,
             self._parser.getLineNumber(),
             self._parser.getColumnNumber(),

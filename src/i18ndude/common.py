@@ -2,12 +2,7 @@ from io import StringIO
 from lxml import etree
 
 import re
-import sys
 
-
-PY3 = sys.version_info > (3,)
-if PY3:
-    unicode = str
 
 # These are included in the file if missing.
 DEFAULT_DECL = {
@@ -64,7 +59,7 @@ def prepare_xml(file):
                 '</body></html>')
 
     content = content.strip()
-    if not isinstance(content, unicode):
+    if not isinstance(content, str):
         try:
             content = content.decode('utf-8')
         except UnicodeDecodeError:

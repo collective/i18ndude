@@ -1,9 +1,6 @@
 import os
 import subprocess
-import sys
 
-
-PY3 = sys.version_info > (3,)
 
 # Two parameters determine the wrapping of lines.  If WRAP is False,
 # no wrapping is done.  If WRAP is True, the lines will be wrapped at
