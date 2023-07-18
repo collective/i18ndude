@@ -202,9 +202,14 @@ class Handler(xml.sax.ContentHandler):
         self._filename = filename
 
     def startDocument(self):
-        self._history = []  # history contains 3-tuples in the form
+        # history contains 3-tuples in the form
         # (tag, attrs, characterdata)
-        self._i18nlevel = 0  # 0 means not inside i18n:translate area
+        self._history = []
+        # 0 means not inside i18n:translate area
+        self._i18nlevel = 0
+        # When you add i18n:ignore on a tag, then all untranslated messages on this
+        # or enclosed tags are ignored.
+        self._ignore_untranslated = False
         self._stats = {"WARNING": 0, "ERROR": 0, "FATAL": 0}
 
     def endDocument(self):
@@ -213,36 +218,38 @@ class Handler(xml.sax.ContentHandler):
     def startElement(self, tag, attrs):
         self._history.append([tag, attrs, ""])
 
-        attr_validator(tag, attrs, self.log)
-
         if "i18n:translate" in attrs.keys():
             self._i18nlevel += 1
         elif self._i18nlevel != 0:
             self._i18nlevel += 1
+        if IGNORE_UNTRANSLATED in attrs:
+            self._ignore_untranslated = True
+        if not self._ignore_untranslated:
+            attr_validator(tag, attrs, self.log)
 
     def endElement(self, tag):
         tag, attrs, data = self._history.pop()
         data = data.strip()
 
-        if _translatable(data) and not _tal_replaced_content(tag, attrs):
-            # not enclosed
-            if (self._i18nlevel == 0) and tag not in ["script", "style", "html"]:
-                severity = _severity(tag, attrs) or ""
-                if severity:
-                    if IGNORE_UNTRANSLATED in attrs.keys():
-                        # Ignore untranslated data. This is necessary for
-                        # including literal content, that does not need to be
-                        # translated.
-                        pass
-                    elif not CHAMELEON_SUBST.match(data):
-                        self.log(
-                            "i18n:translate missing for this:\n"
-                            '"""\n%s\n"""' % (data,),
-                            severity,
-                        )
+        if (
+            not self._ignore_untranslated
+            and _translatable(data)
+            and not _tal_replaced_content(tag, attrs)
+            and (self._i18nlevel == 0)
+            and tag not in ["script", "style", "html"]
+        ):
+            severity = _severity(tag, attrs) or ""
+            if severity and not CHAMELEON_SUBST.match(data):
+                self.log(
+                    "i18n:translate missing for this:\n" '"""\n%s\n"""' % (data,),
+                    severity,
+                )
 
         if self._i18nlevel != 0:
             self._i18nlevel -= 1
+        if IGNORE_UNTRANSLATED in attrs:
+            # reset
+            self._ignore_untranslated = False
 
     def characters(self, data):
         self._history[-1][2] += data
