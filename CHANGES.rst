@@ -8,6 +8,22 @@ Changelog
 
 .. towncrier release notes start
 
+6.1.0 (2023-07-18)
+------------------
+
+New features:
+
+
+- Let i18n:ignore ignore all translatable strings in its scope. (#109)
+
+
+Bug fixes:
+
+
+- Remove Python 2 support code.  Use pyupgrade, isort, black, flake8.
+  [maurits] (#23)
+
+
 6.0.0 (2023-05-30)
 ------------------
 
