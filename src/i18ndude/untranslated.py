@@ -222,7 +222,7 @@ class Handler(xml.sax.ContentHandler):
             self._i18nlevel += 1
         elif self._i18nlevel != 0:
             self._i18nlevel += 1
-        if IGNORE_UNTRANSLATED in attrs.keys():
+        if IGNORE_UNTRANSLATED in attrs:
             self._ignore_untranslated = True
         if not self._ignore_untranslated:
             attr_validator(tag, attrs, self.log)
@@ -247,7 +247,7 @@ class Handler(xml.sax.ContentHandler):
 
         if self._i18nlevel != 0:
             self._i18nlevel -= 1
-        if IGNORE_UNTRANSLATED in attrs.keys():
+        if IGNORE_UNTRANSLATED in attrs:
             # reset
             self._ignore_untranslated = False
 
