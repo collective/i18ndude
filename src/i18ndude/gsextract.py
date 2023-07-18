@@ -1,18 +1,17 @@
-import sys
-
+from i18ndude.extract import find_files
 from lxml import etree
 
-from i18ndude.extract import find_files
-
-I18N_NS = 'http://xml.zope.org/namespaces/i18n'
-I18N_DOMAIN = '{%s}domain' % I18N_NS
-I18N_TRANSLATE = '{%s}translate' % I18N_NS
-I18N_ATTRIBUTES = '{%s}attributes' % I18N_NS
+import sys
 
 
-class GSParser(object):
-    """GenericSetup profile i18n parser.
-    """
+I18N_NS = "http://xml.zope.org/namespaces/i18n"
+I18N_DOMAIN = "{%s}domain" % I18N_NS
+I18N_TRANSLATE = "{%s}translate" % I18N_NS
+I18N_ATTRIBUTES = "{%s}attributes" % I18N_NS
+
+
+class GSParser:
+    """GenericSetup profile i18n parser."""
 
     def __init__(self):
         self.catalogs = {}
@@ -23,7 +22,7 @@ class GSParser(object):
         try:
             tree = etree.parse(filename)
         except Exception as e:
-            print(u"There was an error in parsing %s: %s" % (filename, e))
+            print(f"There was an error in parsing {filename}: {e}")
             sys.exit(0)
         elem = tree.getroot()
         domain = elem.get(I18N_DOMAIN, None)
@@ -52,19 +51,18 @@ class GSParser(object):
                     if translate:
                         msgid = translate
                     else:
-                        msgstr = u""
+                        msgstr = ""
                     if msgid:
-                        self.catalogs[domain].append(
-                            (msgid, msgstr, self.filename))
+                        self.catalogs[domain].append((msgid, msgstr, self.filename))
             if attributes is not None:
-                attributes = attributes.strip().split(';')
+                attributes = attributes.strip().split(";")
                 for attr in attributes:
                     parts = attr.split()
                     if len(parts) == 2:
                         attr, msgid = parts
                     else:
                         attr = parts[0]
-                        msgid = u""
+                        msgid = ""
                     text = elem.get(attr)
                     if text is not None:
                         text = text.strip()
@@ -73,19 +71,17 @@ class GSParser(object):
                             msgstr = text
                         else:
                             msgid = text
-                            msgstr = u""
-                        self.catalogs[domain].append(
-                            (msgid, msgstr, self.filename))
+                            msgstr = ""
+                        self.catalogs[domain].append((msgid, msgstr, self.filename))
 
     def getCatalogs(self):
         return self.catalogs
 
 
 def gs_strings(dir, domain="none", exclude=()):
-    """Retrieve all messages from `dir` that are in the `domain`.
-    """
+    """Retrieve all messages from `dir` that are in the `domain`."""
     parser = GSParser()
-    for filename in find_files(dir, '*.xml', exclude=tuple(exclude)):
+    for filename in find_files(dir, "*.xml", exclude=tuple(exclude)):
         parser.parse(filename)
 
     return parser.getCatalogs()

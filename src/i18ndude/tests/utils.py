@@ -1,23 +1,25 @@
+from contextlib import contextmanager
+
 import os
 import sys
-from contextlib import contextmanager
 
 
 def package_home(globals_dict):
-    __name__ = globals_dict['__name__']
+    __name__ = globals_dict["__name__"]
     m = sys.modules[__name__]
-    if hasattr(m, '__path__'):
+    if hasattr(m, "__path__"):
         r = m.__path__[0]
     elif "." in __name__:
-        r = sys.modules[__name__[:__name__.rfind('.')]].__path__[0]
+        r = sys.modules[__name__[: __name__.rfind(".")]].__path__[0]
     else:
         r = __name__
     return os.path.abspath(r)
 
+
 GLOBALS = globals()
 PACKAGE_HOME = os.path.dirname(package_home(GLOBALS))
 
-TESTDATA_DIR = os.path.join(PACKAGE_HOME, 'testdata')
+TESTDATA_DIR = os.path.join(PACKAGE_HOME, "testdata")
 
 
 @contextmanager

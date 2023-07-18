@@ -1,0 +1,2 @@
+Remove Python 2 support code.  Use pyupgrade, isort, black, flake8.
+[maurits]

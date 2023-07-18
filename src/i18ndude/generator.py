@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from zope.tal import taldefs
 from zope.tal.taldefs import I18NError
 from zope.tal.taldefs import TAL_VERSION
@@ -11,7 +10,7 @@ from zope.tal.translationcontext import TranslationContext
 import re
 
 
-NOT_ALLOWED_IN_NAME = re.compile(r'[^\w-]')
+NOT_ALLOWED_IN_NAME = re.compile(r"[^\w-]")
 
 
 class DudeGenerator(TALGenerator):
@@ -27,8 +26,16 @@ class DudeGenerator(TALGenerator):
     chameleon-specific ones.
     """
 
-    def emitStartElement(self, name, attrlist, taldict, metaldict, i18ndict,
-                         position=(None, None), isend=0):
+    def emitStartElement(
+        self,
+        name,
+        attrlist,
+        taldict,
+        metaldict,
+        i18ndict,
+        position=(None, None),
+        isend=0,
+    ):
         if not taldict and not metaldict and not i18ndict:
             # Handle the simple, common case
             self.emitStartTag(name, attrlist, isend)
@@ -48,8 +55,9 @@ class DudeGenerator(TALGenerator):
             if key not in taldefs.KNOWN_I18N_ATTRIBUTES:
                 raise I18NError("bad i18n attribute: " + repr(key), position)
             if not value and key in ("attributes", "data", "id"):
-                raise I18NError("missing value for i18n attribute: " +
-                                repr(key), position)
+                raise I18NError(
+                    "missing value for i18n attribute: " + repr(key), position
+                )
 
         todo = {}
         defineMacro = metaldict.get("define-macro")
@@ -71,30 +79,30 @@ class DudeGenerator(TALGenerator):
         # code with the msgid='' and calculate the right implicit msgid during
         # interpretation phase.
         msgid = i18ndict.get("translate")
-        varname = i18ndict.get('name')
-        i18ndata = i18ndict.get('data')
+        varname = i18ndict.get("name")
+        i18ndata = i18ndict.get("data")
 
         if varname and not self.i18nLevel:
             raise I18NError(
-                "i18n:name can only occur inside a translation unit",
-                position)
+                "i18n:name can only occur inside a translation unit", position
+            )
 
         if varname and NOT_ALLOWED_IN_NAME.search(varname):
             raise I18NError(
-                "i18n:name cannot contain non-word characters "
-                "(spaces, punctuation)", position)
+                "i18n:name cannot contain non-word characters " "(spaces, punctuation)",
+                position,
+            )
 
         if i18ndata and not msgid:
-            raise I18NError("i18n:data must be accompanied by i18n:translate",
-                            position)
+            raise I18NError("i18n:data must be accompanied by i18n:translate", position)
 
         if defineMacro or extendMacro or useMacro:
             useMacro = useMacro or extendMacro
 
         if content and msgid:
             raise I18NError(
-                "explicit message id and tal:content can't be used together",
-                position)
+                "explicit message id and tal:content can't be used together", position
+            )
 
         repeatWhitespace = None
         if repeat:
@@ -135,20 +143,17 @@ class DudeGenerator(TALGenerator):
                 todo["defineSlot"] = defineSlot
 
         if defineSlot or i18ndict:
-
             domain = i18ndict.get("domain") or self.i18nContext.domain
             source = i18ndict.get("source") or self.i18nContext.source
             target = i18ndict.get("target") or self.i18nContext.target
-            if (domain != DEFAULT_DOMAIN
-                    or source is not None
-                    or target is not None):
-                self.i18nContext = TranslationContext(self.i18nContext,
-                                                      domain=domain,
-                                                      source=source,
-                                                      target=target)
-                self.emit("beginI18nContext",
-                          {"domain": domain, "source": source,
-                           "target": target})
+            if domain != DEFAULT_DOMAIN or source is not None or target is not None:
+                self.i18nContext = TranslationContext(
+                    self.i18nContext, domain=domain, source=source, target=target
+                )
+                self.emit(
+                    "beginI18nContext",
+                    {"domain": domain, "source": source, "target": target},
+                )
                 todo["i18ncontext"] = 1
         if taldict or i18ndict:
             dict = {}
@@ -179,7 +184,7 @@ class DudeGenerator(TALGenerator):
                 self.emitText(repeatWhitespace)
         if content:
             if varname:
-                todo['i18nvar'] = varname
+                todo["i18nvar"] = varname
                 todo["content"] = content
                 self.pushProgram()
             else:
@@ -187,13 +192,13 @@ class DudeGenerator(TALGenerator):
         # i18n:name w/o tal:replace uses the content as the interpolation
         # dictionary values
         elif varname:
-            todo['i18nvar'] = varname
+            todo["i18nvar"] = varname
             self.pushProgram()
         if msgid is not None:
             self.i18nLevel += 1
-            todo['msgid'] = msgid
+            todo["msgid"] = msgid
         if i18ndata:
-            todo['i18ndata'] = i18ndata
+            todo["i18ndata"] = i18ndata
         optTag = omitTag is not None or TALtag
         if optTag:
             todo["optional tag"] = omitTag, TALtag
@@ -201,15 +206,13 @@ class DudeGenerator(TALGenerator):
         if attrsubst or i18nattrs:
             if attrsubst:
                 try:
-                    repldict = taldefs.parseAttributeReplacements(
-                        attrsubst, self.xml)
+                    repldict = taldefs.parseAttributeReplacements(attrsubst, self.xml)
                 except TALError:
                     repldict = {}
             else:
                 repldict = {}
             if i18nattrs:
-                i18nattrs = _parseI18nAttributes(i18nattrs, self.position,
-                                                 self.xml)
+                i18nattrs = _parseI18nAttributes(i18nattrs, self.position, self.xml)
             else:
                 i18nattrs = {}
             # Convert repldict's name-->expr mapping to a
@@ -219,7 +222,8 @@ class DudeGenerator(TALGenerator):
                     raise I18NError(
                         "attribute [%s] cannot both be part of tal:attributes"
                         " and have a msgid in i18n:attributes" % key,
-                        position)
+                        position,
+                    )
                 ce = self.compileExpression(value)
                 repldict[key] = ce, key in i18nattrs, i18nattrs.get(key)
             for key in sorted(i18nattrs):
@@ -251,7 +255,7 @@ class DudeGenerator(TALGenerator):
 
     def emitRepeat(self, arg):
         try:
-            super(DudeGenerator, self).emitRepeat(arg)
+            super().emitRepeat(arg)
         except TALError:
             # Could be Chameleon syntax.
             # It might be okay to simply return, as we are not really
@@ -260,8 +264,7 @@ class DudeGenerator(TALGenerator):
             # in a way similar to zope.tal.
             m = re.match(r"(?s)\s*(\(.+\))\s+(.*)\Z", arg)
             if not m:
-                raise TALError("invalid repeat syntax: " + repr(arg),
-                               self.position)
+                raise TALError("invalid repeat syntax: " + repr(arg), self.position)
             name, expr = m.group(1, 2)
             cexpr = self.compileExpression(expr)
             program = self.popProgram()

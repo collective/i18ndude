@@ -1,14 +1,14 @@
 """Tests for the message string extraction tool.
 """
 
-import unittest
 from doctest import DocTestSuite
+
+import unittest
 
 
 def test_suite():
-    return unittest.TestSuite((
-        DocTestSuite('i18ndude.extract'),
-    ))
+    return unittest.TestSuite((DocTestSuite("i18ndude.extract"),))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

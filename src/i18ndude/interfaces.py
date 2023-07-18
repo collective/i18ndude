@@ -13,7 +13,7 @@
 ##############################################################################
 """Abstract objects for the i18n extraction machinery
 """
-__docformat__ = 'restructuredtext'
+__docformat__ = "restructuredtext"
 
 # INFO: This is a modified copy of zope3's zope.app.locales.interfaces (r71023)
 
@@ -21,12 +21,10 @@ from zope.interface import Interface
 
 
 class IPOTEntry(Interface):
-    """Represents a single message entry in a POT file
-    """
+    """Represents a single message entry in a POT file"""
 
     def addComment(comment):
-        """Add a comment to the entry
-        """
+        """Add a comment to the entry"""
 
     def addLocationComment(filename, line):
         """Add a comment regarding the location where this message id
@@ -34,26 +32,21 @@ class IPOTEntry(Interface):
         """
 
     def write(file):
-        """Write the entry to the file
-        """
+        """Write the entry to the file"""
 
 
 class IPOTMaker(Interface):
-    """Writes POT entries to a POT file
-    """
+    """Writes POT entries to a POT file"""
 
     def add(strings, base_dir=None):
-        """Add `strings` to the internal catalog.
-        """
+        """Add `strings` to the internal catalog."""
 
     def write():
-        """Write strings to the POT file
-        """
+        """Write strings to the POT file"""
 
 
 class ITokenEater(Interface):
-    """Eats tokens from the python tokenizer
-    """
+    """Eats tokens from the python tokenizer"""
 
     def getCatalog():
         """Return the catalog of collected message ids as keys of a

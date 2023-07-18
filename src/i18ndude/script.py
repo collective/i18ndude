@@ -21,17 +21,18 @@
 
 # -----------------------------------------------------------------------------
 
+from i18ndude import catalog
+from i18ndude import common
+from i18ndude import untranslated
+from i18ndude import utils
+from i18ndude import visualisation
+
 import argparse
 import os
 import sys
 import textwrap
 import xml.sax
 
-from i18ndude import common, untranslated, catalog, visualisation, utils
-
-PY3 = sys.version_info > (3,)
-if PY3:
-    unicode = str
 
 # Define a parent parser for the wrapping arguments.  This is shared
 # by a few commands.  Note: if you use this parser, you need to call
@@ -39,14 +40,18 @@ if PY3:
 # your command.
 wrapper_parser = argparse.ArgumentParser(add_help=False)
 wrapping_group = wrapper_parser.add_mutually_exclusive_group()
+wrapping_group.add_argument("--wrap", action="store_true", help="Wrap long lines.")
 wrapping_group.add_argument(
-    '--wrap', action='store_true', help="Wrap long lines.")
-wrapping_group.add_argument(
-    '--no-wrap', action='store_true',
-    help="Do not wrap long lines. This is the default.")
+    "--no-wrap",
+    action="store_true",
+    help="Do not wrap long lines. This is the default.",
+)
 wrapper_parser.add_argument(
-    '--width', metavar='NUMBER', type=int,
-    help="Set output page width. Default is %d." % utils.MAX_WIDTH)
+    "--width",
+    metavar="NUMBER",
+    type=int,
+    help="Set output page width. Default is %d." % utils.MAX_WIDTH,
+)
 
 
 def parse_wrapping_arguments(arguments):
@@ -56,18 +61,18 @@ def parse_wrapping_arguments(arguments):
     and utils.WRAP.  If the arguments are not set, we do nothing: the
     default values of those variables are used.
     """
-    if 'width' in arguments and arguments.width:
+    if "width" in arguments and arguments.width:
         utils.MAX_WIDTH = arguments.width
-    if 'wrap' in arguments and arguments.wrap:
+    if "wrap" in arguments and arguments.wrap:
         utils.WRAP = True
-    elif 'no_wrap' in arguments and arguments.no_wrap:
+    elif "no_wrap" in arguments and arguments.no_wrap:
         utils.WRAP = False
 
 
-def short_usage(code, msg=''):
+def short_usage(code, msg=""):
     if msg:
         sys.stderr.write(msg)
-    sys.stderr.write(u"Type i18ndude -h<Enter> to see the help.")
+    sys.stderr.write("Type i18ndude -h<Enter> to see the help.")
     sys.exit(code)
 
 
@@ -78,18 +83,16 @@ def filter_isfile(files):
         if os.path.isdir(name):  # descend recursively
             subdirs = []
             for subpath in os.listdir(name):
-                if subpath.startswith('.'):
+                if subpath.startswith("."):
                     # ignore hidden file
                     continue
                 path = os.path.join(name, subpath)
-                if (os.path.isdir(path) or
-                        os.path.splitext(subpath)[1].endswith('pt')):
+                if os.path.isdir(path) or os.path.splitext(subpath)[1].endswith("pt"):
                     subdirs.append(path)
             result += filter_isfile(subdirs)
 
         elif not os.path.isfile(name):
-            sys.stderr.write(
-                'Warning: %s is not a file or is ignored.' % name)
+            sys.stderr.write("Warning: %s is not a file or is ignored." % name)
 
         else:
             result.append(name)
@@ -120,22 +123,32 @@ def find_untranslated_parser(subparsers):
     Chameleon 2.23 or higher, or the to be released zope.tal 4.1.2.
     """
     parser = subparsers.add_parser(
-        'find-untranslated',
+        "find-untranslated",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description
+        description=description,
     )
-    parser.add_argument('-s', '--silent', action='store_true', help=(
-        "The report will only contain a summary of errors and warnings for "
-        "each file (or no output if there are no errors or warnings)."))
-    parser.add_argument('-n', '--nosummary', action='store_true', help=(
-        "The report will contain only the errors for each file."))
-    parser.add_argument('files', nargs='*', help="list of ZPT filenames")
+    parser.add_argument(
+        "-s",
+        "--silent",
+        action="store_true",
+        help=(
+            "The report will only contain a summary of errors and warnings for "
+            "each file (or no output if there are no errors or warnings)."
+        ),
+    )
+    parser.add_argument(
+        "-n",
+        "--nosummary",
+        action="store_true",
+        help=("The report will contain only the errors for each file."),
+    )
+    parser.add_argument("files", nargs="*", help="list of ZPT filenames")
     parser.set_defaults(func=find_untranslated)
     return parser
 
 
 def find_untranslated(arguments):
-    parser = xml.sax.make_parser(['expat'])
+    parser = xml.sax.make_parser(["expat"])
     # disable external validation to make it work without network access
     parser.setFeature(xml.sax.handler.feature_external_ges, False)
     parser.setFeature(xml.sax.handler.feature_external_pes, False)
@@ -154,8 +167,7 @@ def find_untranslated(arguments):
                 if not myfile.read().strip():
                     continue
             except UnicodeDecodeError:
-                print('ERROR: UnicodeDecodeError while reading {}'.format(
-                    filename))
+                print("ERROR: UnicodeDecodeError while reading {}".format(filename))
                 continue
         # Reinitialize the handler, resetting errors.
         handler.set_filename(filename)
@@ -173,7 +185,7 @@ def find_untranslated(arguments):
             try:
                 parser.parse(content)
             except KeyboardInterrupt:
-                sys.stderr.write('Interrupted by user.')
+                sys.stderr.write("Interrupted by user.")
                 sys.exit(1)
             except xml.sax.SAXException as error:
                 file_errors.append(error)
@@ -201,10 +213,10 @@ def find_untranslated(arguments):
             continue
         if file_errors:
             errors += 1
-            report = 'ERRORs found trying to parse document in various ways:\n'
+            report = "ERRORs found trying to parse document in various ways:\n"
             for error in file_errors:
-                report += '%s\n' % error
-            handler.log(report, 'FATAL')
+                report += "%s\n" % error
+            handler.log(report, "FATAL")
     return errors
 
 
@@ -262,27 +274,34 @@ def rebuild_pot_parser(subparsers):
     of i18ndude.  If you specify both options, the last one wins.
     """
     parser = subparsers.add_parser(
-        'rebuild-pot',
+        "rebuild-pot",
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description
+        description=description,
     )
-    parser.add_argument('-p', '--pot', metavar='filename',
-                        dest='pot_fn', required=True)
-    parser.add_argument('-c', '--create', metavar='domain',
-                        dest='create_domain', required=False)
-    parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn')
-    parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
+    parser.add_argument("-p", "--pot", metavar="filename", dest="pot_fn", required=True)
     parser.add_argument(
-        '--exclude', metavar='"<ignore1> <ignore2> ..."', default='')
+        "-c", "--create", metavar="domain", dest="create_domain", required=False
+    )
+    parser.add_argument("-m", "--merge", metavar="filename", dest="merge_fn")
+    parser.add_argument("--merge2", metavar="filename", dest="merge2_fn")
+    parser.add_argument("--exclude", metavar='"<ignore1> <ignore2> ..."', default="")
     # You can switch line numbers on or off.  Both options store their value
     # in include_line_numbers.  The order is important:
     # the last one here wins, both in this file and on the command line.
-    parser.add_argument('--no-line-numbers', action="store_false",
-                        dest='include_line_numbers', required=False)
-    parser.add_argument('--line-numbers', action="store_true",
-                        dest='include_line_numbers', required=False)
-    parser.add_argument('path', nargs='*')
+    parser.add_argument(
+        "--no-line-numbers",
+        action="store_false",
+        dest="include_line_numbers",
+        required=False,
+    )
+    parser.add_argument(
+        "--line-numbers",
+        action="store_true",
+        dest="include_line_numbers",
+        required=False,
+    )
+    parser.add_argument("path", nargs="*")
     parser.set_defaults(func=rebuild_pot)
     return parser
 
@@ -320,8 +339,8 @@ def rebuild_pot(arguments):
         pyreader = catalog.PYReader(*reader_args, **reader_kwargs)
         gsreader = catalog.GSReader(*reader_args, **reader_kwargs)
         zcmlreader = catalog.ZCMLReader(*reader_args, **reader_kwargs)
-    except IOError as e:
-        short_usage(0, 'I/O Error: %s' % e)
+    except OSError as e:
+        short_usage(0, "I/O Error: %s" % e)
 
     # Read the data.
     ptreader.read()
@@ -337,16 +356,14 @@ def rebuild_pot(arguments):
         for key in orig_ctl.keys():
             if key in ptctl:
                 # preserve comments
-                ptctl[key].comments = ptctl[
-                    key].comments + orig_ctl.getComments(key)
+                ptctl[key].comments = ptctl[key].comments + orig_ctl.getComments(key)
 
     if domain in pyreader.catalogs:
         pyctl = pyreader.catalogs[domain]
         for key in orig_ctl.keys():
             if key in pyctl:
                 # preserve comments
-                pyctl[key].comments = pyctl[
-                    key].comments + orig_ctl.getComments(key)
+                pyctl[key].comments = pyctl[key].comments + orig_ctl.getComments(key)
 
     if domain in gsreader.catalogs:
         gsctl = gsreader.catalogs[domain]
@@ -381,8 +398,8 @@ def rebuild_pot(arguments):
     if merge2_fn:
         ctl.add_missing(merge2_ctl, mergewarn=True)
 
-    ctl.mime_header['POT-Creation-Date'] = catalog.now()
-    file = open(pot_fn, 'w')
+    ctl.mime_header["POT-Creation-Date"] = catalog.now()
+    file = open(pot_fn, "w")
     writer = catalog.POWriter(file, ctl)
     writer.write(msgstrToComment=True)
 
@@ -403,16 +420,16 @@ def merge_parser(subparsers):
     in addition to the first one.
     """
     parser = subparsers.add_parser(
-        'merge',
+        "merge",
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description
+        description=description,
     )
-    parser.add_argument('-p', '--pot', metavar='filename',
-                        dest='pot_fn', required=True)
-    parser.add_argument('-m', '--merge', metavar='filename', dest='merge_fn',
-                        required=True)
-    parser.add_argument('--merge2', metavar='filename', dest='merge2_fn')
+    parser.add_argument("-p", "--pot", metavar="filename", dest="pot_fn", required=True)
+    parser.add_argument(
+        "-m", "--merge", metavar="filename", dest="merge_fn", required=True
+    )
+    parser.add_argument("--merge2", metavar="filename", dest="merge2_fn")
     parser.set_defaults(func=merge)
     return parser
 
@@ -426,24 +443,24 @@ def merge(arguments):
         merge2_fn = False
 
     if not pot_fn:
-        short_usage(1, u"No pot file specified as target with --pot.")
+        short_usage(1, "No pot file specified as target with --pot.")
     if not merge_fn:
-        short_usage(1, u"No potfile specified as source with --merge.")
+        short_usage(1, "No potfile specified as source with --merge.")
 
     try:
         orig_ctl = catalog.MessageCatalog(filename=pot_fn)
         merge_ctl = catalog.MessageCatalog(filename=merge_fn)
         if merge2_fn:
             merge2_ctl = catalog.MessageCatalog(filename=merge2_fn)
-    except IOError as e:
-        short_usage(0, 'I/O Error: %s' % e)
+    except OSError as e:
+        short_usage(0, "I/O Error: %s" % e)
 
     # merge
-    orig_ctl.add_missing(merge_ctl, '', 1)
+    orig_ctl.add_missing(merge_ctl, "", 1)
     if merge2_fn:
-        orig_ctl.add_missing(merge2_ctl, '', 1)
-    orig_ctl.mime_header['POT-Creation-Date'] = catalog.now()
-    file = open(pot_fn, 'w')
+        orig_ctl.add_missing(merge2_ctl, "", 1)
+    orig_ctl.mime_header["POT-Creation-Date"] = catalog.now()
+    file = open(pot_fn, "w")
     writer = catalog.POWriter(file, orig_ctl)
     writer.write(msgstrToComment=True)
 
@@ -461,14 +478,15 @@ def sync_parser(subparsers):
     but the po-file doesn't.
     """
     parser = subparsers.add_parser(
-        'sync',
+        "sync",
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description
+        description=description,
     )
-    parser.add_argument('-p', '--pot', metavar='potfilename',
-                        dest='pot_fn', required=True)
-    parser.add_argument('files', nargs='+', metavar='pofilename')
+    parser.add_argument(
+        "-p", "--pot", metavar="potfilename", dest="pot_fn", required=True
+    )
+    parser.add_argument("files", nargs="+", metavar="pofilename")
     parser.set_defaults(func=sync)
     return parser
 
@@ -476,26 +494,28 @@ def sync_parser(subparsers):
 def sync(arguments):
     pot_fn = arguments.pot_fn
     if not pot_fn:
-        short_usage(1, u"No pot file specified as target with --pot.")
+        short_usage(1, "No pot file specified as target with --pot.")
 
     files = filter_isfile(arguments.files)
 
     try:
         pot_ctl = catalog.MessageCatalog(filename=pot_fn)
         po_ctls = [catalog.MessageCatalog(filename=fn) for fn in files]
-    except IOError as e:
-        short_usage(1, 'I/O Error: %s' % e)
+    except OSError as e:
+        short_usage(1, "I/O Error: %s" % e)
 
     for po in po_ctls:
         added_msgids, removed_msgids = po.sync(pot_ctl)
 
-        file = open(po.filename, 'w')
+        file = open(po.filename, "w")
         writer = catalog.POWriter(file, po)
         writer.write(msgstrToComment=False, sync=True)
 
-        print('%s: %s added, %s removed' % (po.filename,
-                                            len(added_msgids),
-                                            len(removed_msgids)))
+        print(
+            "{}: {} added, {} removed".format(
+                po.filename, len(added_msgids), len(removed_msgids)
+            )
+        )
         file.close()
 
 
@@ -509,10 +529,10 @@ def two_file_parser(subparsers, cmd, description):
         cmd,
         parents=[wrapper_parser],
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description
+        description=description,
     )
-    parser.add_argument('file1')
-    parser.add_argument('file2')
+    parser.add_argument("file1")
+    parser.add_argument("file2")
     return parser
 
 
@@ -526,7 +546,7 @@ def filter_parser(subparsers):
     Given two pot-files I will write a copy of file1 to stdout with all
     messages removed that are also in file2, i.e. where msgids match.
     """
-    parser = two_file_parser(subparsers, 'filter', description)
+    parser = two_file_parser(subparsers, "filter", description)
     parser.set_defaults(func=filter)
     return parser
 
@@ -561,7 +581,7 @@ def admix_parser(subparsers):
     file1. Note that this will not affect the number of entries in file1.
     The result will be on stdout.
     """
-    parser = two_file_parser(subparsers, 'admix', description)
+    parser = two_file_parser(subparsers, "admix", description)
     parser.set_defaults(func=admix)
     return parser
 
@@ -602,12 +622,21 @@ def trmerge_parser(subparsers):
 
       i18ndude trmerge file1.po file2.po > tmp_merge && mv tmp_merge file1.po
     """
-    parser = two_file_parser(subparsers, 'trmerge', description)
-    parser.add_argument('-i', '--ignore-extra', action='store_true', help=(
-        "Ignore extra messages: do not add msgids that are not in the "
-        "original po-file. Only update translations for existing msgids."))
-    parser.add_argument('--no-override', action='store_true', help=(
-        "Do not override translations, only add missing translations."))
+    parser = two_file_parser(subparsers, "trmerge", description)
+    parser.add_argument(
+        "-i",
+        "--ignore-extra",
+        action="store_true",
+        help=(
+            "Ignore extra messages: do not add msgids that are not in the "
+            "original po-file. Only update translations for existing msgids."
+        ),
+    )
+    parser.add_argument(
+        "--no-override",
+        action="store_true",
+        help=("Do not override translations, only add missing translations."),
+    )
     parser.set_defaults(func=trmerge)
     return parser
 
@@ -627,23 +656,25 @@ def trmerge(arguments):
         if not mixin_msgstr:
             # The mixin translation is empty.
             continue
-        if ', fuzzy' in mixin_entry.comments:
+        if ", fuzzy" in mixin_entry.comments:
             # The mixin translation is fuzzy.
             continue
-        if (arguments.no_override
-                and base_entry is not None
-                and base_entry.msgstr
-                and ', fuzzy' not in base_entry.comments):
+        if (
+            arguments.no_override
+            and base_entry is not None
+            and base_entry.msgstr
+            and ", fuzzy" not in base_entry.comments
+        ):
             # The user does not want to override and we have an
             # existing, non-fuzzy translation.
             continue
         # Okay, we have a fine new translation.
         entry = base_entry or mixin_entry
         entry.msgstr = mixin_msgstr
-        if ', fuzzy' in entry.comments:
+        if ", fuzzy" in entry.comments:
             # The base entry was fuzzy, but the mixin has a different
             # or non-fuzzy translation.
-            entry.comments.remove(', fuzzy')
+            entry.comments.remove(", fuzzy")
         # Finally store the new entry
         base_ctl[msgid] = entry
 
@@ -672,18 +703,17 @@ def list_parser(subparsers):
     This was the default output for years.
     """
     parser = subparsers.add_parser(
-        'list',
+        "list",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=description
+        description=description,
     )
-    parser.add_argument('-p', '--products', metavar='product', nargs='+',
-                        required=True)
+    parser.add_argument("-p", "--products", metavar="product", nargs="+", required=True)
     parser.add_argument(
-        '-t', '--table', action='store_true',
-        help="Output as html table")
+        "-t", "--table", action="store_true", help="Output as html table"
+    )
     parser.add_argument(
-        '--tiered', action='store_true',
-        help="Show in traditional three-tiered order")
+        "--tiered", action="store_true", help="Show in traditional three-tiered order"
+    )
     parser.set_defaults(func=arg_list)
     return parser
 
@@ -715,7 +745,7 @@ def arg_list(arguments):
                 pot_ctl.merge(ctl)
 
     if not pot_ctl:
-        short_usage(1, 'Error: No pot files found.')
+        short_usage(1, "Error: No pot files found.")
 
     po_ctls = {}
     for product in pos:
@@ -729,7 +759,7 @@ def arg_list(arguments):
                 po_ctls[language].merge(ctl)
 
     if not po_ctls:
-        short_usage(1, 'Error: No po files found.')
+        short_usage(1, "Error: No po files found.")
 
     po_catalogs = []
     # flatten to list and sort
@@ -737,8 +767,7 @@ def arg_list(arguments):
     for key in keys:
         po_catalogs.append(po_ctls[key])
 
-    visualisation.make_listing(
-        pot_ctl, po_catalogs, table=table, tiered=tiered)
+    visualisation.make_listing(pot_ctl, po_catalogs, table=table, tiered=tiered)
 
 
 def main():
@@ -755,8 +784,9 @@ def main():
     """
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent(description))
-    subparsers = parser.add_subparsers(title='subcommands')
+        description=textwrap.dedent(description),
+    )
+    subparsers = parser.add_subparsers(title="subcommands")
     # Add subparsers.
     find_untranslated_parser(subparsers)
     rebuild_pot_parser(subparsers)
@@ -773,7 +803,7 @@ def main():
         # See https://github.com/collective/i18ndude/issues/68
         # Pretend that 'bin/i18ndude --help' was called.
         # This makes sense in general anyway.
-        sys_args = ['--help']
+        sys_args = ["--help"]
     arguments = parser.parse_args(sys_args)
     # Special handling for the wrapping arguments, if any.
     parse_wrapping_arguments(arguments)
@@ -782,5 +812,6 @@ def main():
     if errors:
         sys.exit(1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

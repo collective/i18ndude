@@ -1,19 +1,14 @@
-from lxml import etree
 from io import StringIO
+from lxml import etree
+
 import re
 
-import sys
-PY3 = sys.version_info > (3,)
-if PY3:
-    unicode = str
 
 # These are included in the file if missing.
 DEFAULT_DECL = {
-    '<!DOCTYPE':
-    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
+    "<!DOCTYPE": '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
     '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
-
-    '<?xml': '<?xml version="1.0" encoding="utf-8"?>'
+    "<?xml": '<?xml version="1.0" encoding="utf-8"?>',
 }
 HTML_PARSER = etree.HTMLParser()
 
@@ -21,53 +16,54 @@ HTML_PARSER = etree.HTMLParser()
 def prepare_xml(file):
     """Tidies up things within the zpts."""
 
-    content = ''.join(file.readlines())
+    content = "".join(file.readlines())
 
-    for el in ['<!DOCTYPE', '<?xml']:
+    for el in ["<!DOCTYPE", "<?xml"]:
         idx = content.find(el)
         if idx >= 0:
             if content[0:idx].strip():
-                idx2 = content.find('>', idx + 1)
-                extraction = content[idx:idx2 + 1]
-                content = extraction + content[:idx] + content[idx2 + 1:]
+                idx2 = content.find(">", idx + 1)
+                extraction = content[idx : idx2 + 1]
+                content = extraction + content[:idx] + content[idx2 + 1 :]
                 # mispositioned element fixed at this point
         else:  # element was not found, replace with default
             content = DEFAULT_DECL[el] + content
 
     # We want namespace declarations for tal, metal and i18n.
     # http://sf.net/tracker/?func=detail&atid=516339&aid=982527&group_id=66950
-    mobj = re.search(r'<([a-zA-Z]+)', content)
+    mobj = re.search(r"<([a-zA-Z]+)", content)
     if mobj:
-        if mobj.group(1) == 'html':
+        if mobj.group(1) == "html":
             m = mobj.end()
-            extra = ''
-            if 'xmlns:i18n=' not in content:
+            extra = ""
+            if "xmlns:i18n=" not in content:
                 extra += 'xmlns:i18n="http://xml.zope.org/namespaces/i18n" '
-            if 'xmlns:metal=' not in content:
+            if "xmlns:metal=" not in content:
                 extra += 'xmlns:metal="http://xml.zope.org/namespaces/metal" '
-            if 'xmlns:tal=' not in content:
+            if "xmlns:tal=" not in content:
                 extra += 'xmlns:tal="http://xml.zope.org/namespaces/tal">'
             if extra:
-                content = content[:m] + ' ' + extra + content[m:]
+                content = content[:m] + " " + extra + content[m:]
         else:
             m = mobj.start()
             content = (
-                content[:m] +
-                '<html ' +
-                'xmlns:i18n="http://xml.zope.org/namespaces/i18n" '
-                'xmlns:metal="http://xml.zope.org/namespaces/metal" ' +
-                'xmlns:tal="http://xml.zope.org/namespaces/tal">' +
-                '<head><title></title></head><body>' +
-                content[m:] +
-                '</body></html>')
+                content[:m]
+                + "<html "
+                + 'xmlns:i18n="http://xml.zope.org/namespaces/i18n" '
+                'xmlns:metal="http://xml.zope.org/namespaces/metal" '
+                + 'xmlns:tal="http://xml.zope.org/namespaces/tal">'
+                + "<head><title></title></head><body>"
+                + content[m:]
+                + "</body></html>"
+            )
 
     content = content.strip()
-    if not isinstance(content, unicode):
+    if not isinstance(content, str):
         try:
-            content = content.decode('utf-8')
+            content = content.decode("utf-8")
         except UnicodeDecodeError:
-            print('ERROR: {} not decodable as utf-8'.format(file.name))
-            content = u''
+            print(f"ERROR: {file.name} not decodable as utf-8")
+            content = ""
     return StringIO(content)
 
 

@@ -1,16 +1,12 @@
 import io
-import xml.sax
 import re
+import xml.sax
 
-import sys
-PY3 = sys.version_info > (3,)
-if PY3:
-    unicode = str
 
-IGNORE_UNTRANSLATED = 'i18n:ignore'
-IGNORE_UNTRANSLATED_ATTRIBUTES = 'i18n:ignore-attributes'
-CHAMELEON_SUBST = re.compile(r'^\${.*}$')
-NOT_ALLOWED_IN_NAME = re.compile(r'[^\w-]')
+IGNORE_UNTRANSLATED = "i18n:ignore"
+IGNORE_UNTRANSLATED_ATTRIBUTES = "i18n:ignore-attributes"
+CHAMELEON_SUBST = re.compile(r"^\${.*}$")
+NOT_ALLOWED_IN_NAME = re.compile(r"[^\w-]")
 
 
 def _translatable(data):
@@ -38,23 +34,23 @@ def _severity(tag, attrs):
     # <block condition...
 
     # So lets simplify the keys.
-    keys = set([key[key.find(':') + 1:] for key in keys])
+    keys = {key[key.find(":") + 1 :] for key in keys}
 
-    if 'use-macro' in keys:
+    if "use-macro" in keys:
         # metal
-        return ''
+        return ""
 
     # comments
-    if 'condition' in keys:
-        cond_val = attrs.get('tal:condition', attrs.get('condition', None))
-        if cond_val == 'nothing':
-            return ''
-        return 'ERROR'
+    if "condition" in keys:
+        cond_val = attrs.get("tal:condition", attrs.get("condition", None))
+        if cond_val == "nothing":
+            return ""
+        return "ERROR"
 
-    elif 'replace' in keys or 'content' in keys:
-        return 'WARNING'
+    elif "replace" in keys or "content" in keys:
+        return "WARNING"
 
-    return 'ERROR'
+    return "ERROR"
 
 
 def _tal_replaced_content(tag, attrs):
@@ -65,23 +61,26 @@ def _tal_replaced_content(tag, attrs):
     parser strips off the 'tal:' namespace, unlike the standard lxml
     parser that is tried first.
     """
-    if 'tal:content' in attrs or 'content' in attrs:
+    if "tal:content" in attrs or "content" in attrs:
         return True
-    if 'tal:replace' in attrs or 'replace' in attrs:
+    if "tal:replace" in attrs or "replace" in attrs:
         return True
     return False
 
 
 def _tal_replaced_attr(attrs, attr):
     # Is the attribute replaced by tal?
-    if 'tal:attributes' not in attrs and 'attributes' not in attrs:
+    if "tal:attributes" not in attrs and "attributes" not in attrs:
         # Not replaced by tal, but could be chameleon syntax.
-        value = attrs.get(attr, '')
+        value = attrs.get(attr, "")
         if CHAMELEON_SUBST.match(value):
             return True
         return False
-    talattrs = [talattr.strip().split()[0] for talattr in
-                attrs['tal:attributes'].split(';') if talattr]
+    talattrs = [
+        talattr.strip().split()[0]
+        for talattr in attrs["tal:attributes"].split(";")
+        if talattr
+    ]
     if attr in talattrs:
         return True
     return False
@@ -97,17 +96,21 @@ def _valid_i18ned_attr(attr, attrs):
 
     if attr in attrs and _translatable(attrs[attr]):
         if IGNORE_UNTRANSLATED_ATTRIBUTES in attrs:
-            if attr in attrs[IGNORE_UNTRANSLATED_ATTRIBUTES].split(';'):
+            if attr in attrs[IGNORE_UNTRANSLATED_ATTRIBUTES].split(";"):
                 return 1
-        if 'i18n:attributes' in attrs:
+        if "i18n:attributes" in attrs:
             # First check old syntax, or the simple case of one single
             # i18n:attribute.
-            if attrs['i18n:attributes'].find(';') == -1:
-                i18nattrs = [i18nattr.strip() for i18nattr in
-                             attrs['i18n:attributes'].split()]
+            if attrs["i18n:attributes"].find(";") == -1:
+                i18nattrs = [
+                    i18nattr.strip() for i18nattr in attrs["i18n:attributes"].split()
+                ]
             else:  # new syntax
-                i18nattrs = [i18nattr.strip().split()[0] for i18nattr in
-                             attrs['i18n:attributes'].split(';') if i18nattr]
+                i18nattrs = [
+                    i18nattr.strip().split()[0]
+                    for i18nattr in attrs["i18n:attributes"].split(";")
+                    if i18nattr
+                ]
             if attr in i18nattrs:
                 return 1
             if _tal_replaced_attr(attrs, attr):
@@ -130,68 +133,70 @@ def attr_validator(tag, attrs, logfct):
           i18ned.
     """
 
-    if not _valid_i18ned_attr('title', attrs):
-        logfct('title attribute of <%s> lacks i18n:attributes' % tag,
-               'ERROR')
+    if not _valid_i18ned_attr("title", attrs):
+        logfct("title attribute of <%s> lacks i18n:attributes" % tag, "ERROR")
 
-    if not _valid_i18ned_attr('aria-label', attrs):
-        logfct('aria-label attribute of <%s> lacks i18n:attributes' % tag,
-               'ERROR')
+    if not _valid_i18ned_attr("aria-label", attrs):
+        logfct("aria-label attribute of <%s> lacks i18n:attributes" % tag, "ERROR")
 
-    if tag == 'img':
-        if not _valid_i18ned_attr('alt', attrs):
-            logfct('alt attribute of <img> lacks i18n:attributes',
-                   'ERROR')
+    if tag == "img":
+        if not _valid_i18ned_attr("alt", attrs):
+            logfct("alt attribute of <img> lacks i18n:attributes", "ERROR")
 
-    if tag == 'input' and \
-              'type' in attrs.keys() and \
-              attrs['type'] in ('submit', 'button'):
-        if not _valid_i18ned_attr('value', attrs):
-            logfct('value attribute of <... submit/button> lacks '
-                   'i18n:attributes', 'ERROR')
+    if (
+        tag == "input"
+        and "type" in attrs.keys()
+        and attrs["type"] in ("submit", "button")
+    ):
+        if not _valid_i18ned_attr("value", attrs):
+            logfct(
+                "value attribute of <... submit/button> lacks " "i18n:attributes",
+                "ERROR",
+            )
 
-    if tag == 'input' and 'placeholder' in attrs.keys():
-        if not _valid_i18ned_attr('placeholder', attrs):
-            logfct('placeholder attribute of <%s> lacks i18n:attributes' % tag,
-                   'ERROR')
+    if tag == "input" and "placeholder" in attrs.keys():
+        if not _valid_i18ned_attr("placeholder", attrs):
+            logfct("placeholder attribute of <%s> lacks i18n:attributes" % tag, "ERROR")
 
-    name = attrs.get('i18n:name')
+    name = attrs.get("i18n:name")
     if name and NOT_ALLOWED_IN_NAME.search(name):
-        logfct('invalid non-word characters (space, punctuation) '
-               'in i18n:name="{}"'.format(name), 'ERROR')
+        logfct(
+            "invalid non-word characters (space, punctuation) "
+            'in i18n:name="{}"'.format(name),
+            "ERROR",
+        )
 
 
 class Handler(xml.sax.ContentHandler):
-
     def __init__(self, parser, out=None):
         self._parser = parser
         if out is None:
             self._out = io.StringIO()
         else:
             self._out = out
-        self._filename = 'Undefined'
+        self._filename = "Undefined"
 
     def show_output(self):
         value = self._out.getvalue().strip()
         if value:
-            if not isinstance(value, unicode):
-                value = value.decode('utf-8')
+            if not isinstance(value, str):
+                value = value.decode("utf-8")
             # Note: if value contains non-ascii and we redirect stdout
             # or pipe the output through 'grep', we get a UnicodeEncodeError.
             # Solution: export PYTHONIOENCODING=utf-8
             # See https://stackoverflow.com/questions/492483
-            print(value + u'\n')
+            print(value + "\n")
 
     def clear_output(self):
         self._out = io.StringIO()
 
     def log(self, msg, severity):
         """Severity may be one out of 'WARNING', 'ERROR' or 'FATAL'."""
-        assert(severity in self._stats.keys())
+        assert severity in self._stats.keys()
         self._stats[severity] += 1
 
     def has_errors(self):
-        return self._stats['ERROR'] or self._stats['FATAL']
+        return self._stats["ERROR"] or self._stats["FATAL"]
 
     def set_filename(self, filename):
         self._filename = filename
@@ -200,17 +205,17 @@ class Handler(xml.sax.ContentHandler):
         self._history = []  # history contains 3-tuples in the form
         # (tag, attrs, characterdata)
         self._i18nlevel = 0  # 0 means not inside i18n:translate area
-        self._stats = {'WARNING': 0, 'ERROR': 0, 'FATAL': 0}
+        self._stats = {"WARNING": 0, "ERROR": 0, "FATAL": 0}
 
     def endDocument(self):
         pass
 
     def startElement(self, tag, attrs):
-        self._history.append([tag, attrs, ''])
+        self._history.append([tag, attrs, ""])
 
         attr_validator(tag, attrs, self.log)
 
-        if 'i18n:translate' in attrs.keys():
+        if "i18n:translate" in attrs.keys():
             self._i18nlevel += 1
         elif self._i18nlevel != 0:
             self._i18nlevel += 1
@@ -221,9 +226,8 @@ class Handler(xml.sax.ContentHandler):
 
         if _translatable(data) and not _tal_replaced_content(tag, attrs):
             # not enclosed
-            if (self._i18nlevel == 0) and tag not in [
-                    'script', 'style', 'html']:
-                severity = _severity(tag, attrs) or ''
+            if (self._i18nlevel == 0) and tag not in ["script", "style", "html"]:
+                severity = _severity(tag, attrs) or ""
                 if severity:
                     if IGNORE_UNTRANSLATED in attrs.keys():
                         # Ignore untranslated data. This is necessary for
@@ -232,8 +236,10 @@ class Handler(xml.sax.ContentHandler):
                         pass
                     elif not CHAMELEON_SUBST.match(data):
                         self.log(
-                            'i18n:translate missing for this:\n'
-                            '"""\n%s\n"""' % (data,), severity)
+                            "i18n:translate missing for this:\n"
+                            '"""\n%s\n"""' % (data,),
+                            severity,
+                        )
 
         if self._i18nlevel != 0:
             self._i18nlevel -= 1
@@ -243,60 +249,71 @@ class Handler(xml.sax.ContentHandler):
 
 
 class SilentHandler(Handler):
-
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
-        if severity == 'FATAL':
-            self._out.write('Fatal error in document %s' % self._filename)
-            self._out.write('\n')
+        if severity == "FATAL":
+            self._out.write("Fatal error in document %s" % self._filename)
+            self._out.write("\n")
 
     def endDocument(self):
-        if not (self._stats['WARNING'] or self._stats['ERROR']):
+        if not (self._stats["WARNING"] or self._stats["ERROR"]):
             return
 
-        self._out.write('%s: %s warnings, %s errors'
-                        % (self._filename, self._stats['WARNING'],
-                           self._stats['ERROR']))
+        self._out.write(
+            "%s: %s warnings, %s errors"
+            % (self._filename, self._stats["WARNING"], self._stats["ERROR"])
+        )
 
 
 class VerboseHandler(Handler):
-
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
-        self._out.write(unicode('%s:%s:%s:\n-%s- - %s\n' % (
-            self._filename,
-            self._parser.getLineNumber(),
-            self._parser.getColumnNumber(),
-            severity,
-            msg)))
+        self._out.write(
+            str(
+                "{}:{}:{}:\n-{}- - {}\n".format(
+                    self._filename,
+                    self._parser.getLineNumber(),
+                    self._parser.getColumnNumber(),
+                    severity,
+                    msg,
+                )
+            )
+        )
 
-        if severity == 'FATAL':
-            char = '='
+        if severity == "FATAL":
+            char = "="
         else:
-            char = '-'
-        self._out.write(unicode(char * 79) + '\n')
+            char = "-"
+        self._out.write(str(char * 79) + "\n")
 
     def endDocument(self):
-        self._out.write(unicode(
-            'Processing of %s finished. (%s warnings, %s errors)\n'
-            % (self._filename, self._stats['WARNING'], self._stats['ERROR'])))
-        self._out.write(unicode('=' * 79) + '\n')
+        self._out.write(
+            str(
+                "Processing of %s finished. (%s warnings, %s errors)\n"
+                % (self._filename, self._stats["WARNING"], self._stats["ERROR"])
+            )
+        )
+        self._out.write(str("=" * 79) + "\n")
 
 
 class NoSummaryVerboseHandler(Handler):
-
     def log(self, msg, severity):
         Handler.log(self, msg, severity)
 
-        self._out.write(unicode('%s:%s:%s:\n-%s- - %s' % (
-            self._filename,
-            self._parser.getLineNumber(),
-            self._parser.getColumnNumber(),
-            severity,
-            msg)))
-        self._out.write(u'\n')
+        self._out.write(
+            str(
+                "{}:{}:{}:\n-{}- - {}".format(
+                    self._filename,
+                    self._parser.getLineNumber(),
+                    self._parser.getColumnNumber(),
+                    severity,
+                    msg,
+                )
+            )
+        )
+        self._out.write("\n")
 
     def endDocument(self):
         pass
