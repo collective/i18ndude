@@ -164,7 +164,7 @@ from functools import reduce
 
 import getopt
 import glob
-import imp
+import importlib
 import operator
 import os
 import sys
@@ -276,66 +276,18 @@ def containsAny(str, set):
     return 1 in [c in str for c in set]
 
 
-def _visit_pyfiles(list, dirname, names):
-    """Helper for getFilesForName()."""
-    # get extension for python source files
-    if "_py_ext" not in globals():
-        global _py_ext
-        _py_ext = [
-            triple[0] for triple in imp.get_suffixes() if triple[2] == imp.PY_SOURCE
-        ][0]
-
-    # don't recurse into CVS directories
-    if "CVS" in names:
-        names.remove("CVS")
-
-    # add all *.py files to list
-    list.extend(
-        [
-            os.path.join(dirname, file)
-            for file in names
-            if os.path.splitext(file)[1] == _py_ext
-        ]
-    )
-
-
-def _get_modpkg_path(dotted_name, pathlist=None):
+def _get_modpkg_path(dotted_name):
     """Get the filesystem path for a module or a package.
 
     Return the file system path to a file for a module, and to a directory for
     a package. Return None if the name is not found, or is a builtin or
     extension module.
     """
-    # split off top-most name
-    parts = dotted_name.split(".", 1)
-
-    if len(parts) > 1:
-        # we have a dotted path, import top-level package
-        try:
-            file, pathname, description = imp.find_module(parts[0], pathlist)
-            if file:
-                file.close()
-        except ImportError:
-            return None
-
-        # check if it's indeed a package
-        if description[2] == imp.PKG_DIRECTORY:
-            # recursively handle the remaining name parts
-            pathname = _get_modpkg_path(parts[1], [pathname])
-        else:
-            pathname = None
-    else:
-        # plain name
-        try:
-            file, pathname, description = imp.find_module(dotted_name, pathlist)
-            if file:
-                file.close()
-            if description[2] not in [imp.PY_SOURCE, imp.PKG_DIRECTORY]:
-                pathname = None
-        except ImportError:
-            pathname = None
-
-    return pathname
+    try:
+        spec = importlib.util.find_spec(dotted_name)
+    except ModuleNotFoundError:
+        return
+    return spec.submodule_search_locations[0]
 
 
 def getFilesForName(name):
@@ -358,9 +310,12 @@ def getFilesForName(name):
 
     if os.path.isdir(name):
         # find all python files in directory
-        list = []
-        os.path.walk(name, _visit_pyfiles, list)
-        return list
+        python_files = []
+        for root, dirs, files in os.walk(name):
+            for file in files:
+                if file.endswith(".py"):
+                    python_files.append(os.path.join(root, file))
+        return python_files
     elif os.path.exists(name):
         # a single file
         return [name]
@@ -449,6 +404,7 @@ class TokenEater:
                 _('*** %(file)s:%(lineno)s: Seen unexpected token "%(token)s"')
                 % {"token": tstring, "file": self.__curfile, "lineno": self.__lineno}
             )
+            sys.stderr.write("\n")
             self.__state = self.__waiting
 
     def __addentry(self, msg, lineno=None, isdocstring=0):
@@ -495,6 +451,7 @@ class TokenEater:
                     for filename, lineno in v:
                         d = {"filename": filename, "lineno": lineno}
                         fp.write(_("# File: %(filename)s, line: %(lineno)d") % d)
+                        fp.write("\n")
                 elif options.locationstyle == options.GNU:
                     # fit as many locations on one line, as long as the
                     # resulting line length doesn't exceeds 'options.width'
@@ -505,14 +462,18 @@ class TokenEater:
                         if len(locline) + len(s) <= options.width:
                             locline = locline + s
                         else:
-                            fp.write(locline)
                             locline = "#:" + s
                     if len(locline) > 2:
                         fp.write(locline)
+                        fp.write("\n")
                 if isdocstring:
                     fp.write("#, docstring")
-                fp.write("msgid", normalize(k))
-                fp.write('msgstr ""\n')
+                    fp.write("\n")
+                fp.write(f"msgid {normalize(k)}")
+                fp.write("\n")
+                fp.write('msgstr ""')
+                fp.write("\n")
+                fp.write("\n")
 
 
 def main():
