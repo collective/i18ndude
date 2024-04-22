@@ -3,7 +3,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = "6.2.0.dev0"
+version = "6.2.0"
 
 setup(
     name="i18ndude",

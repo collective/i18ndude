@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+6.2.0 (2024-04-22)
+------------------
+
+New features:
+
+
+- Add support for python 3.12.  [pbauer] (#113)
+
+
 6.1.0 (2023-07-18)
 ------------------
 
