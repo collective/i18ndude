@@ -47,7 +47,6 @@ setup(
     ),
     include_package_data=True,
     zip_safe=False,
-    test_suite="i18ndude.tests",
     python_requires=">=3.8",
     install_requires=[
         "lxml",
