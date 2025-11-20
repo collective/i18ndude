@@ -1,0 +1,78 @@
+<div xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+     xmlns:tal="http://xml.zope.org/namespaces/tal"
+     id="plone-portal-logo"
+     i18n:domain="imh"
+>
+  <h1 tal:condition="python:context.portal_type in ['LRF']">
+    <a title="Home"
+       tal:attributes="
+         href view/navigation_root_url;
+         title view/navigation_root_title;
+       "
+       i18n:attributes="title"
+    >
+      <img alt="IMH Campus"
+           tal:attributes="
+             alt view/logo_title;
+             title view/logo_title;
+             src view/img_src;
+           "
+      />
+    </a>
+  </h1>
+  <tal:nothome condition="python:context.portal_type not in ['LRF']">
+    <a title="Home"
+       tal:attributes="
+         href view/navigation_root_url;
+         title view/navigation_root_title;
+       "
+       i18n:attributes="title"
+       i18n:domain="plone"
+    >
+      <img alt="IMH Campus"
+           tal:attributes="
+             alt view/logo_title;
+             title view/logo_title;
+             src view/img_src;
+           "
+      />
+    </a>
+  </tal:nothome>
+</div>
+
+<!-- <div id="mobile-portal-logo">
+  <tal:conditionhome tal:condition="python:context.portal_type in ['LRF']">
+    <h1>
+      <a class="navbar-brand d-xl-none"
+         tal:attributes="
+           href view/navigation_root_url;
+           title view/navigation_root_title;
+         "
+      >
+        <img alt="IMH Campus"
+             tal:attributes="
+               alt view/logo_title;
+               title view/logo_title;
+               src view/img_src;
+             "
+        />
+      </a>
+    </h1>
+  </tal:conditionhome>
+  <tal:condition tal:condition="python:context.portal_type not in ['LRF']">
+    <a class="navbar-brand d-xl-none"
+       tal:attributes="
+         href view/navigation_root_url;
+         title view/navigation_root_title;
+       "
+    >
+      <img alt="IMH Campus"
+           tal:attributes="
+             alt view/logo_title;
+             title view/logo_title;
+             src view/img_src;
+           "
+      />
+    </a>
+  </tal:condition>
+</div> -->
