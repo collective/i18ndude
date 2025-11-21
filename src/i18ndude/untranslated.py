@@ -79,7 +79,7 @@ def _tal_replaced_attr(attrs, attr):
     talattrs = [
         talattr.strip().split()[0]
         for talattr in attrs["tal:attributes"].split(";")
-        if talattr
+        if talattr.strip()
     ]
     if attr in talattrs:
         return True
@@ -109,7 +109,7 @@ def _valid_i18ned_attr(attr, attrs):
                 i18nattrs = [
                     i18nattr.strip().split()[0]
                     for i18nattr in attrs["i18n:attributes"].split(";")
-                    if i18nattr
+                    if i18nattr.strip()
                 ]
             if attr in i18nattrs:
                 return 1

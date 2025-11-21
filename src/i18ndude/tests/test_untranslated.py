@@ -1,5 +1,5 @@
-"""Tests for finding untranslated prose.
-"""
+"""Tests for finding untranslated prose."""
+
 from argparse import Namespace
 from i18ndude.script import find_untranslated as script
 from i18ndude.tests.utils import suppress_stdout
@@ -188,3 +188,14 @@ class TestUntranslatedScript(unittest.TestCase):
         with suppress_stdout():
             result = script(Namespace(silent=False, nosummary=False, files=[path]))
         self.assertEqual(result, 2)
+
+    def test_find_untranslated_with_spaces_after_attributes(self):
+        """TAL formatters like zpretty leave spaces after the last attribute in
+        a tal:attributes, which creates some errors. Now we check that we don't get any.
+
+        """
+        path = os.path.join(TESTDATA_DIR, "input", "tags_with_spaces_in_attrs.pt")
+        with suppress_stdout():
+            result = script(Namespace(silent=False, nosummary=True, files=[path]))
+
+        self.assertEqual(result, 0)

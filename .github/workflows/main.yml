@@ -21,7 +21,7 @@ jobs:
       # Needed to avoid error on PyPy3 when installing lxml:
       # Error: Please make sure the libxml2 and libxslt development packages are installed.
       run: sudo apt-get install libxml2-dev libxslt1-dev
-      if: matrix.python-version == 'pypy3.9'
+      if: matrix.python-version == 'pypy-3.9'
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
