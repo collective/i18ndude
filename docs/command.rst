@@ -11,8 +11,7 @@ i18ndude
 ::
 
   usage: i18ndude [-h]
-                  {find-untranslated,rebuild-pot,merge,sync,filter,admix,list,trmerge}
-                  ...
+                  {find-untranslated,rebuild-pot,merge,sync,filter,admix,list,trmerge} ...
 
   i18ndude performs various tasks related to ZPT's, Python Scripts
   and i18n.
@@ -69,8 +68,8 @@ rebuild-pot
 
 ::
 
-  usage: i18ndude rebuild-pot [-h] [--wrap | --no-wrap] [--width NUMBER] -p
-                              filename [-c domain] [-m filename]
+  usage: i18ndude rebuild-pot [-h] [--wrap | --no-wrap] [--width NUMBER]
+                              -p filename [-c domain] [-m filename]
                               [--merge2 filename]
                               [--exclude "<ignore1> <ignore2> ..."]
                               [--no-line-numbers] [--line-numbers]
@@ -129,9 +128,9 @@ rebuild-pot
     --wrap                Wrap long lines.
     --no-wrap             Do not wrap long lines. This is the default.
     --width NUMBER        Set output page width. Default is 79.
-    -p filename, --pot filename
-    -c domain, --create domain
-    -m filename, --merge filename
+    -p, --pot filename
+    -c, --create domain
+    -m, --merge filename
     --merge2 filename
     --exclude "<ignore1> <ignore2> ..."
     --no-line-numbers
@@ -159,8 +158,8 @@ merge
     --wrap                Wrap long lines.
     --no-wrap             Do not wrap long lines. This is the default.
     --width NUMBER        Set output page width. Default is 79.
-    -p filename, --pot filename
-    -m filename, --merge filename
+    -p, --pot filename
+    -m, --merge filename
     --merge2 filename
 
 sync
@@ -185,7 +184,7 @@ sync
     --wrap                Wrap long lines.
     --no-wrap             Do not wrap long lines. This is the default.
     --width NUMBER        Set output page width. Default is 79.
-    -p potfilename, --pot potfilename
+    -p, --pot potfilename
 
 filter
 ------
@@ -254,7 +253,7 @@ list
 
   options:
     -h, --help            show this help message and exit
-    -p product [product ...], --products product [product ...]
+    -p, --products product [product ...]
     -t, --table           Output as html table
     --tiered              Show in traditional three-tiered order
 
