@@ -8,6 +8,21 @@ Changelog
 
 .. towncrier release notes start
 
+6.3.0 (2025-11-21)
+------------------
+
+New features:
+
+
+- Support Python 3.13 and 3.14.  No changes were needed.  [maurits]
+
+
+Bug fixes:
+
+
+- check for non-empty values before looping in find-untranslated @erral (#116)
+
+
 6.2.1 (2024-07-30)
 ------------------
 
